@@ -1,0 +1,38 @@
+# Project: lpc21isp_hr
+# Makefile created by Dev-C++ 5.4.2
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = lpc21isp.o lpcprog.o lpcterm.o adprog.o
+LINKOBJ  = lpc21isp.o lpcprog.o lpcterm.o adprog.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -static-libstdc++ -static-libgcc
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
+BIN      = lpc21isp_hr.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+lpc21isp.o: lpc21isp.c
+	$(CC) -c lpc21isp.c -o lpc21isp.o $(CFLAGS)
+
+lpcprog.o: lpcprog.c
+	$(CC) -c lpcprog.c -o lpcprog.o $(CFLAGS)
+
+lpcterm.o: lpcterm.c
+	$(CC) -c lpcterm.c -o lpcterm.o $(CFLAGS)
+
+adprog.o: adprog.c
+	$(CC) -c adprog.c -o adprog.o $(CFLAGS)
