@@ -127,6 +127,9 @@ endif
 ifeq ($(MAKECMDGOALS),doxygen)
    NOPROJECT = 1
 endif
+ifeq ($(MAKECMDGOALS),codelite_workspace)
+   NOPROJECT = 1
+endif
 
 # the default project name is 'main'
 PROJECT ?= main
@@ -489,7 +492,7 @@ endif
 
 define ARM_V7
    $(eval $(Embedded))
-   PREFIX          := $(GCC-ARM)/bin/arm-none-eabi-
+   PREFIX          := $(GCC-ARM)/bin/arm-eabi-
 #   CORE_FLAGS      += -mcpu=cortex-m0 -fomit-frame-pointer -march=armv6-m
    SEARCH          += $(BMPTK)/targets/armv7 $(BMPTK)/targets/armv7/include
    SOURCES         += bmptk_arm_startup.asm
@@ -532,7 +535,7 @@ endif
 
 define Cortex
    $(eval $(Embedded))
-   PREFIX          := $(GCC-ARM)/bin/arm-none-eabi-
+   PREFIX          := $(GCC-ARM)/bin/arm-eabi-
    ifeq ($(wildcard $(PREFIX)* ),)
       PREFIX          := $(GCC-ARM)/bin/arm-eabi-
    endif
@@ -989,7 +992,7 @@ LN_FLAGS      += $(LN_ERRORS)
 
 # target-specific and project-specific flags are last 
 # so they can override all previous flags
-AS_FLAGS      += $(TARGET_AS_FLAGS)  $(PROJECT_AS_FLAGS)
+AS_FLAGS      += $(TARGET_AS_FLAGS)  $(PROJECT_AS_FLAGS) 
 C_FLAGS       += $(TARGET_C_FLAGS)   $(PROJECT_C_FLAGS)
 CPP_FLAGS     += $(TARGET_CPP_FLAGS) $(PROJECT_CPP_FLAGS)
 LN_FLAGS      += $(TARGET_LN_FLAGS)  $(PROJECT_LN_FLAGS)
@@ -1235,15 +1238,15 @@ $(PROJECT): $(RESULTS)
 run: $(PROJECT)
 	$(PORT_CHECK)
 	$(RUN_PRE)   
-	$(RUN)
+	-$(RUN)
 	$(RUN_TERMINAL)
 	$(RUN_PAUSE)
     
 doxygen: doxyfile
 	Doxygen
    
-mef: 
-	python $(BMPTK)/tools/bmptk_mef.py -bmptk   
+codelite_workspace:
+	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py  
    
 # Cleanup
 CLEAN += -rf doxygen_docs

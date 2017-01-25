@@ -24,18 +24,18 @@ ifeq ($(OS),Windows_NT)
    # used (only) to create a bmptk zip file
    7za             ?= "$(WPF32)/7-Zip/7za"
 
-   # select the windows toolchain: SysProgs (=default) or Nuwen
-   # GCC-WIN         ?= C:/SysGCC/MinGW64
-   GCC-WIN         ?= $(WPF32)/mingw-w64/i686-6.2.0-posix-dwarf-rt_v5-rev1/mingw32
+   # the windows toolchain
+   GCC-WIN         ?= C:/TDM-GCC-32
+   #GCC-WIN         ?= $(WPF32)/mingw-w64/i686-6.2.0-posix-dwarf-rt_v5-rev1/mingw32
    #GCC-WIN         ?= C:/MinGW
 
    # select the AVR toolchain: Atmel (=default) or Arduino
    #GCC-AVR         ?= $(WPF32)/Arduino/hardware/tools/avr
-   GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
+   #GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
 
-   # select the ARM toolchain: launchpad (=default), SysProgs, or Chopin
-   GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/5.4 2016q3
-   #GCC-ARM         ?= C:/SysGCC/arm-eabi
+   # the ARM toolchain
+   GCC-ARM         ?= C:/SysGCC/arm-eabi
+   #GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/5.4 2016q3
    #GCC-ARM         ?= C:/gcc-arm-none-eabi-4_9-141220
 
    # no alternatives to choose, but maybe a different directory
@@ -56,7 +56,7 @@ ifeq ($(OS),Windows_NT)
    CONSOLE_BAUDRATE ?= 38400 
    
    # python interpreter
-   PYTHON          ?= "C:/Python27/Python"
+   PYTHON          ?= "C:/Program Files (x86)/Python/Python.exe"
    
 else
 
