@@ -73,18 +73,10 @@ clean:
 	@echo "**** cleanup completed succesfully"
 		
 push: 
-	# make clean
-   # git add -A
-	# git commit -a -m 'work'
-	# git push
+	make clean
+	git add -A
+	git commit -a
+	git push
 
-ftp: zip
-	bmptk-rm -rf transfer
-	mkdir transfer
-	-cp ../_ftp_crc_s transfer
-	cp bmptk.zip transfer
-	python \ftpbmptk.py
-	cp transfer/_ftp_crc_s ..
-	@echo "**** ftp transfer completed succesfully"
       
 		

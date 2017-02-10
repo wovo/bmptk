@@ -106,7 +106,7 @@ def arguments_parser():
       'Create the editor files for CodeLite for the '
       'projects in a set of subdirectories, '
       'which can be native or bmptk '
-      '(identified by the presence of a Makefile). '
+      '(identified by the presence of a makefile). '
    )       
    parser.add_argument(
       '-root', 
@@ -178,7 +178,7 @@ def add_to_edit_files( file ):
 
 def codelite_project_file( name, main, files ):
    print( files )
-   if 'Makefile' in files:
+   if 'makefile' in files:
       print( "bmptk" )
       s = codelite_project_template_bmptk()
    else:
@@ -226,7 +226,7 @@ def codelite_project_template_bmptk():
   <Dependencies/>
   <VirtualDirectory Name="source">
     <File Name="%%MAIN%%"/>%%FILES%%
-    <File Name="Makefile"/>
+    <File Name="makefile"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

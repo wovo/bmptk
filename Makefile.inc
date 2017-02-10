@@ -38,10 +38,10 @@ ifeq ($(OS),Windows_NT)
    endif
 endif
 
-ifneq ($(wildcard $(BMPTK)/Makefile.custom),)
-   include $(BMPTK)/Makefile.custom
+ifneq ($(wildcard $(BMPTK)/makefile.custom),)
+   include $(BMPTK)/makefile.custom
 else   
-   include $(BMPTK)/Makefile.local
+   include $(BMPTK)/makefile.local
 endif
 
 
@@ -118,6 +118,9 @@ endif
 #============================================================================
 
 # some targets can be build are not C/C++/asm projects
+ifeq ($(MAKECMDGOALS),notab)
+   NOPROJECT = 1
+endif
 ifeq ($(MAKECMDGOALS),clean)
    NOPROJECT = 1
 endif
@@ -416,7 +419,7 @@ define Atmega
    # LDFLAGS	       += -T "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\lib\ldscripts\avr5.xn"
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
-   CPP_LANGUAGE      := -std=c++11
+   # niet meer nodig? CPP_LANGUAGE      := -std=c++11
 endef
 
 ifeq ($(CHIP),atmega328p)
@@ -1219,7 +1222,7 @@ $(SREC): $(ELF)
 # 
 #============================================================================
 
-.PHONY: $(PROJECT) all build new fresh run clean doxygen mef
+.PHONY: $(PROJECT) all build new fresh run clean doxygen mef notab
 
 .DEFAULT_GOAL := build
 
@@ -1245,11 +1248,19 @@ run: $(PROJECT)
 doxygen: doxyfile
 	Doxygen
    
+NOTABFILES = $(SOURCES) $(HEADERS)
+NOTABFAKES = $(NOTABFILES:%=notab-%)   
+.PHONY: $(NOTABFAKES)
+notab: $(NOTABFAKES)
+$(sort $(NOTABFAKES)):
+	@$(PYTHON) $(BMPTK)/tools/bmptk-notab.py $(@:notab-%=%)
+   
 codelite_workspace:
 	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py  
    
 # Cleanup
 CLEAN += -rf doxygen_docs
 CLEAN += -rf .settings temp .cproject .project
+CLEAN += -rf .clang .codelite __codelite.workspace _codelite.project
 clean:
 	$(REMOVE) $(CLEAN)
