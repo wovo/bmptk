@@ -71,7 +71,7 @@ else
    GCC-MSP430      ?= 
    
    # serial port defaults
-   SERIAL_PORT      ?= /dev/ttyUSB0
+   SERIAL_PORT      := /dev/ttyACM0
    SERIAL_BAUDRATE  ?= 38400
    CONSOLE_BAUDRATE ?= 38400 
 

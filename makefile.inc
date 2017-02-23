@@ -105,6 +105,9 @@ else
    
    # installed separately
    AVRDUDE       ?= avrdude
+   BOSSAC        ?= bossac
+
+   DUE_BOOTMODE  ?= stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
    
 endif
 
@@ -755,7 +758,7 @@ define Atmel_SAM3
    RUN_PRE        := $(DUE_BOOTMODE)
    # was al gezet?
    RESULTS        += $(BIN)
-   RUN            := $(BOSSAC) -p $(SERIAL_PORT) -U false -e -w -v -b $(BIN) -R
+   RUN            := $(BOSSAC) -p $(subst /dev/,,$(SERIAL_PORT)) -U false -e -w -v -b $(BIN) -R
    # RUN            := $(BOSSAC) -e -w -v -b $(BIN)   
    DEFINES        += -DDONT_USE_CMSIS_INIT 
    DEFINES        += -DBMPTK_INCLUDE_CHIP=sam.h 
@@ -1129,7 +1132,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: Makefile
+$(FIXED_SIZE_STACK_FILE).c: makefile
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
@@ -1228,6 +1231,8 @@ rerun:   clean build run
 
 # Build the project
 $(PROJECT): $(RESULTS)
+
+PORT_CHECK :=
 
 # Run (= download and start) the project
 run: $(PROJECT)

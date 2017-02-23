@@ -32,12 +32,16 @@ ifeq ($(OS),Windows_NT)
    else
       WPF := C:/Program Files (x86)
    endif
+   REMOVE = bmptk-rm
+else
+   # linux
+   REMOVE = rm -rf
 endif
 
 ifneq ($(wildcard Makefile.custom),)
-   include Makefile.custom
+   include makefile.custom
 else   
-   include Makefile.local
+   include makefile.local
 endif
 
 .PHONY: clean doc docs documentation build all examples 
@@ -59,7 +63,7 @@ zip: clean
 	@echo "**** zip build completed succesfully"
    
 webpage:
-	bmptk-rm -rf transfer
+	$(REMOVE) -rf transfer
 	mkdir transfer
 	-cp ../_ftp_crc_s transfer
 	cp webpage/* transfer
@@ -69,7 +73,7 @@ webpage:
    
 	# cd examples && make clean   
 clean:
-	bmptk-rm -rf index.html docs bmptk.zip transfer
+	$(REMOVE) -rf index.html docs bmptk.zip transfer
 		
 	@echo "**** cleanup completed succesfully"
 		

@@ -576,6 +576,12 @@ static void OpenSerialPort(ISP_ENVIRONMENT *IspEnvironment)
 #ifdef B9600
           case    9600: NEWTERMIOS_SETBAUDARTE(B9600); break;
 #endif // B9600
+#ifdef B4800
+         case    4800: NEWTERMIOS_SETBAUDARTE(B4800); break;
+#endif // B4800
+#ifdef B2400
+         case    2400: NEWTERMIOS_SETBAUDARTE(B2400); break;
+#endif // B2400
 
           // Special value
           // case   32000: NEWTERMIOS_SETBAUDARTE(32000); break;
