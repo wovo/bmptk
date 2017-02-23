@@ -1,10 +1,10 @@
 #############################################################################
 #
-# file: bmptk/Makefile.inc
+# file: bmptk/makefile.inc
 #
-# Makefile 'body' for bare metal C / C++ / assembler projects using GCC
+# makefile 'body' for bare metal C / C++ / assembler projects using GCC
 #
-# This file is meant to be included by a project-specific Makefile.
+# This file is meant to be included by a project-specific makefile.
 #
 # Copyright (c) 2012 .. 2016 Wouter van Ooijen (wouter@voti.nl)
 # 
@@ -22,7 +22,7 @@ VERSION := V04_00_work_in_progress_2017_01_23
 
 #============================================================================
 #
-# Invoke the Makefile.custom (if it exists) or else the Makefile.local,
+# Invoke the makefile.custom (if it exists) or else the makefile.local,
 # to get the locations of the external toolsets
 # 
 #============================================================================
@@ -853,19 +853,6 @@ INCLUDES  += $(foreach x, $(SEARCH), -I$(x))
    
 #============================================================================
 #
-# hwcpp
-# 
-#============================================================================
-
-#ifeq ($(LANGUAGE),C++)
-#   include $(BMPTK)/hwcpp/Makefile.inc
-#   SEARCH    += $(foreach x, $(HWCPP_DIRECTORIES), $(BMPTK)/$(x))
-#   HEADERS   += $(HWCPP_DEPENDENCIES)
-#endif
-
-
-#============================================================================
-#
 # GCC (and other) executables
 # 
 #============================================================================
@@ -938,8 +925,8 @@ endif
 #============================================================================
 
 # Assume compilation depends on 
-# all headers, the LN_SOURCE, and the Makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
+# all headers, the LN_SOURCE, and the makefile
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) makefile
 $(OBJECTS): $(DEPENDENCIES)
 
 
