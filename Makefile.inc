@@ -433,7 +433,7 @@ ifeq ($(CHIP),atmega328p)
    DEFINES        += -D__AVR_ATmega328P__ 
    ARCH_FLAGS     += -mmcu=atmega328p
    # PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)  
-   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   #RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
    LINKERSCRIPT := 

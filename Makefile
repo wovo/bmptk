@@ -67,9 +67,10 @@ webpage:
 	cp transfer/_ftp_crc_s ..
 	@echo "**** ftp transfer completed succesfully"
    
+	# cd examples && make clean   
 clean:
 	bmptk-rm -rf index.html docs bmptk.zip transfer
-	# cd examples && make clean		
+		
 	@echo "**** cleanup completed succesfully"
 		
 push: 

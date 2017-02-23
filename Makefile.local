@@ -30,6 +30,7 @@ ifeq ($(OS),Windows_NT)
    #GCC-WIN         ?= C:/MinGW
 
    # select the AVR toolchain: Atmel (=default) or Arduino
+   GCC-AVR         ?= C:/SysGCC/avr
    #GCC-AVR         ?= $(WPF32)/Arduino/hardware/tools/avr
    #GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
 
