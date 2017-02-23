@@ -495,7 +495,7 @@ endif
 
 define ARM_V7
    $(eval $(Embedded))
-   PREFIX          := $(GCC-ARM)/bin/arm-eabi-
+   PREFIX          := $(GCC-ARM)/bin/$(ARM-EABI)-
 #   CORE_FLAGS      += -mcpu=cortex-m0 -fomit-frame-pointer -march=armv6-m
    SEARCH          += $(BMPTK)/targets/armv7 $(BMPTK)/targets/armv7/include
    SOURCES         += bmptk_arm_startup.asm
@@ -538,9 +538,9 @@ endif
 
 define Cortex
    $(eval $(Embedded))
-   PREFIX          := $(GCC-ARM)/bin/arm-eabi-
+   PREFIX          := $(GCC-ARM)/bin/$(ARM-EABI)-
    ifeq ($(wildcard $(PREFIX)* ),)
-      PREFIX          := $(GCC-ARM)/bin/arm-eabi-
+      PREFIX          := $(GCC-ARM)/bin/$(ARM-EABI)-
    endif
    SEARCH          += $(BMPTK)/targets/cortex $(BMPTK)/targets/cortex/cmsis
    SOURCES         += bmptk_cortex.c

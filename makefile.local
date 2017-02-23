@@ -20,6 +20,8 @@ ifeq ($(OS),Windows_NT)
  
    # WPF32 is the windows directory for 32-bit applications
    
+   ARM-EABI        ?= arm-eabi
+   
    # 7za command line
    # used (only) to create a bmptk zip file
    7za             ?= "$(WPF32)/7-Zip/7za"
@@ -60,6 +62,8 @@ ifeq ($(OS),Windows_NT)
    PYTHON          ?= "C:/Program Files (x86)/Python/Python.exe"
    
 else
+
+   ARM-EABI        ?= arm-none-eabi
 
    # on Linux the path can in most cases be omitted
    GCC-ARM         ?= 
