@@ -538,10 +538,15 @@ endif
 
 define Cortex
    $(eval $(Embedded))
-   PREFIX          := $(GCC-ARM)/bin/$(ARM-EABI)-
-   ifeq ($(wildcard $(PREFIX)* ),)
-      PREFIX          := $(GCC-ARM)/bin/$(ARM-EABI)-
+   
+   ifeq ($(GCC-ARM),)
+      # use shell to find the tools   
+      PREFIX := $(ARM-EABI)-
+   else
+      # use absolute paths to find the tools
+      PREFIX := $(GCC-ARM)/bin/$(ARM-EABI)-
    endif
+
    SEARCH          += $(BMPTK)/targets/cortex $(BMPTK)/targets/cortex/cmsis
    SOURCES         += bmptk_cortex.c
    #COREFLAGS    += -nostdlib
