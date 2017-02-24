@@ -105,6 +105,7 @@ else
    
    # installed separately
    AVRDUDE       ?= avrdude
+   AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    BOSSAC        ?= bossac
 
    DUE_BOOTMODE  ?= stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
@@ -344,7 +345,9 @@ define Hosted
    HOSTED            ?= 1
    HAS_FILESYSTEM    ?= 1
    HEAP              ?= NATIVE
-   ALL_LIBRARIES     += -lgdi32
+   ifeq ($(OS),Windows_NT)
+      ALL_LIBRARIES     += -lgdi32
+   endif
 endef
 
 define Embedded 
@@ -411,7 +414,12 @@ endif
    
 define Atmega
    $(eval $(Embedded))
-   PREFIX          := $(GCC-AVR)/bin/avr-
+   ifeq ($(OS),Windows_NT)   
+      PREFIX          := $(GCC-AVR)/bin/avr-
+   else
+      PREFIX          := $(GCC-AVR)
+      # CPP                ?= "$(PREFIX)c++"
+   endif
    SEARCH          += $(BMPTK)/targets/avr $(BMPTK)/targets/avr/include
    DEFINES         += -DBMPTK_INCLUDE_CHIP=io.h   
    RESULTS         += $(ELF) $(BIN) $(HEX) 
@@ -422,7 +430,6 @@ define Atmega
    # LDFLAGS	       += -T "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\lib\ldscripts\avr5.xn"
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
-   # niet meer nodig? CPP_LANGUAGE      := -std=c++11
 endef
 
 ifeq ($(CHIP),atmega328p)
@@ -436,8 +443,8 @@ ifeq ($(CHIP),atmega328p)
    DEFINES        += -D__AVR_ATmega328P__ 
    ARCH_FLAGS     += -mmcu=atmega328p
    # PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)  
-   #RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
-   RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
    LINKERSCRIPT := 
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000 
@@ -866,7 +873,7 @@ INCLUDES  += $(foreach x, $(SEARCH), -I$(x))
 #============================================================================
 
 CC          := "$(PREFIX)gcc"
-CPP         := "$(PREFIX)g++"
+CPP       := "$(PREFIX)g++"
 AS          := "$(PREFIX)gcc"
 OBJCOPY     := "$(PREFIX)objcopy"
 OBJDUMP     := "$(PREFIX)objdump"
