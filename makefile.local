@@ -20,11 +20,13 @@ ifeq ($(OS),Windows_NT)
  
    # WPF32 is the windows directory for 32-bit applications
    
+   # depends on the compiler ...
+   ARM-EABI        ?= arm-none-eabi
    ARM-EABI        ?= arm-eabi
    
    # 7za command line
-   # used (only) to create a bmptk zip file
-   7za             ?= "$(WPF32)/7-Zip/7za"
+   # used (only) to create a bmptk zip file - no longer used
+   # 7za             ?= "$(WPF32)/7-Zip/7za"
 
    # the windows toolchain
    GCC-WIN         ?= C:/TDM-GCC-32
@@ -37,8 +39,8 @@ ifeq ($(OS),Windows_NT)
    #GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
 
    # the ARM toolchain
-   GCC-ARM         ?= C:/SysGCC/arm-eabi
-   #GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/5.4 2016q3
+   #GCC-ARM         ?= C:/SysGCC/arm-eabi
+   GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/5.4 2016q3
    #GCC-ARM         ?= C:/gcc-arm-none-eabi-4_9-141220
 
    # no alternatives to choose, but maybe a different directory

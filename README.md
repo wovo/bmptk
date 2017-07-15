@@ -68,3 +68,4 @@ todo:
 * ST
 * MCP430
 * avrdude-usbasp
+* ESP82366

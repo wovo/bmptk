@@ -175,10 +175,16 @@ def add_to_edit_files( file ):
    if file.find( ".cpp" ) >= 0: return 1
    if file.find( ".hpp" ) >= 0: return 1
    return 0
-
+   
+def has_makefile( list ):
+   for item in list:
+      if item in [ 'Makefile', 'makefile' ]:
+         return 1
+   return 0   
+   
 def codelite_project_file( name, main, files ):
    print( files )
-   if 'makefile' in files:
+   if has_makefile( files ):
       print( "bmptk" )
       s = codelite_project_template_bmptk()
    else:

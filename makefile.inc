@@ -512,7 +512,7 @@ define ARM_V7
    COREFLAGS    += -nostdlib
    COREFLAGS    += -nodefaultlibs  
    LDFLAGS    += -nostdlib
-   LDFLAGS    += -nodefaultlibs  
+   LDFLAGS    += -nodefaultlibs
    CORE_FLAGS      += -nostartfiles 
    LDFLAGS         += -nostartfiles   
    RESULTS         += $(HEX) 
@@ -559,12 +559,12 @@ define Cortex
 
    SEARCH          += $(BMPTK)/targets/cortex $(BMPTK)/targets/cortex/cmsis
    SOURCES         += bmptk_cortex.c
-   #COREFLAGS    += -nostdlib
-   #COREFLAGS    += -nodefaultlibs  
-   #LDFLAGS    += -nostdlib
-   #LDFLAGS    += -nodefaultlibs  
+   COREFLAGS    += -nostdlib
+   COREFLAGS    += -nodefaultlibs  
+   LDFLAGS    += -nostdlib
+   LDFLAGS    += -nodefaultlibs  
    CORE_FLAGS      += -nostartfiles 
-   LDFLAGS         += -nostartfiles   
+   LDFLAGS         += -nostartfiles -lgcc -lc
    LN_TEMPLATE    ?= bmptk_linkerscript_cortex.c
    # should be $(LINKERSCRIPT)
    LDFLAGS	       += -T $(LINKERSCRIPT)
@@ -1011,12 +1011,12 @@ LN_FLAGS      += $(TARGET_LN_FLAGS)  $(PROJECT_LN_FLAGS)
 
 ifeq ($(LANGUAGE),C)
    LINKER  := $(CC)   $(LN_FLAGS)
-   AS      := $(AS)   $(AS_CFLAGS)
+   AS      := $(AS)   $(AS_FLAGS)
    CC      := $(CC)   $(C_FLAGS)
    CPP     := 
 else
    LINKER  := $(CPP)  $(LN_FLAGS)
-   AS      := $(AS)   $(AS_CFLAGS)
+   AS      := $(AS)   $(AS_FLAGS)
    CC      := $(CC)   $(C_FLAGS)
    CPP     := $(CPP)  $(CPP_FLAGS)
 endif   
@@ -1070,7 +1070,7 @@ version:
 # How to make assembler listing from asm
 %.lst: %.asm
 	@echo 'Compiling C file to asm listing: $<'
-	$(AS)  $(ASFLAGS) -c -S > $(patsubst %.o,%.lst,$@) $<
+	$(AS) -c -S > $(patsubst %.o,%.lst,$@) $<
 	@echo ' '   
    
 # How to make assembler listing from C
@@ -1094,7 +1094,7 @@ version:
 # How to make an object file from an assembler file
 %.o: %.asm
 	@echo 'Assembling (.asm) file: $<'
-	$(AS)  $(ASFLAGS)  -c -o $@ $<
+	$(AS)  -c -o $@ $<
 	@echo ' '
 
 # How to make an object file from a C file
@@ -1213,7 +1213,7 @@ $(BIN): $(ELF)
 $(HEX): $(ELF)
 	$(OBJCOPY) --output-target ihex -R .bss $< $@
 	
-# How to make an .src file from an .elf file
+# How to make an .srec file from an .elf file
 $(SREC): $(ELF)
 	$(OBJCOPY) --output-target srec -R .bss $< $@
 	

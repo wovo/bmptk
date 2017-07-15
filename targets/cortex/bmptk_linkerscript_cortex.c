@@ -32,7 +32,7 @@ MEMORY
 {
 	rom (rx)  	: org = ROM_START, len = ROM_SIZE
 	ram (rwx)	: org = RAM_START, len = RAM_SIZE
-	nul (rwx)	: org = 0x20000000, len = 0k
+	nul (rwx)	: org = RAM_START + RAM_SIZE, len = 0k
 }
 
 __rom_start = ORIGIN(rom);
@@ -145,7 +145,7 @@ SECTIONS
 	__exidx_end = .;
 	PROVIDE(__exidx_end = __exidx_end);
 
-	.bss :
+	.bss (NOLOAD) :
 	{
       
 		. = ALIGN(4);
