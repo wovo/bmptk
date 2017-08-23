@@ -80,7 +80,7 @@ clean:
 push: 
 	make clean
 	git add -A
-	git commit -a
+	git commit -a -m "update"
 	git push
 
       
