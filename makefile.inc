@@ -564,7 +564,7 @@ define Cortex
    LDFLAGS    += -nostdlib
    LDFLAGS    += -nodefaultlibs  
    CORE_FLAGS      += -nostartfiles 
-   LDFLAGS         += -nostartfiles -lgcc -lc
+   LDFLAGS         += -nostartfiles -lm -lgcc -lc
    LN_TEMPLATE    ?= bmptk_linkerscript_cortex.c
    # should be $(LINKERSCRIPT)
    LDFLAGS	       += -T $(LINKERSCRIPT)
