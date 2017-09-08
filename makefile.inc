@@ -1265,6 +1265,6 @@ codelite_workspace:
 # Cleanup
 CLEAN += -rf doxygen_docs
 CLEAN += -rf .settings temp .cproject .project
-CLEAN += -rf .clang .codelite __codelite.workspace _codelite.project
+CLEAN += -rf .clang .codelite __codelite.workspace
 clean:
 	$(REMOVE) $(CLEAN)
