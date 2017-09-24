@@ -3,10 +3,11 @@
 # file: bmptk/makefile.inc
 #
 # makefile 'body' for bare metal C / C++ / assembler projects using GCC
+# and some related things
 #
 # This file is meant to be included by a project-specific makefile.
 #
-# Copyright (c) 2012 .. 2016 Wouter van Ooijen (wouter@voti.nl)
+# Copyright (c) 2012 .. 2017 Wouter van Ooijen (wouter@voti.nl)
 # 
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at 
@@ -88,7 +89,14 @@ ifeq ($(OS),Windows_NT)
    # needed to be able to update PATH
    .ONESHELL:
    export PATH=%PATH%;$(GCC-WIN)/bin
-
+   
+   # find python
+   PYTHON_LOCATIONS += "C:\Program Files (x86)\Python"
+   PYTHON_LOCATIONS += "C:\Python36"
+   PYTHON_LOCATION  ?= $(foreach x, $(PYTHON_LOCATIONS), $(wildcard $(x)))
+   PYTHON_LOCATION  := C:\Python36
+   INCLUDES         += -I$(PYTHON_LOCATION)\include
+   PYTHON_DLLS      += $(PYTHON_LOCATION)\Python3.dll $(PYTHON_LOCATION)\Python36.dll
 else
 
    # linux
@@ -381,35 +389,63 @@ endef
    # running native
    # 
    #=========================================================================
+   
+# running native on Windows     
+define Windows      
+   CHIP              := Windows_Native
+   PREFIX            := $(GCC-WIN)/bin/
+   TARGET_CPP_FLAGS  += -mno-ms-bitfields   
+   TARGET_C_FLAGS    += -mno-ms-bitfields   
+   TARGET_LN_FLAGS   += -lgdi32
+   RESULTS           += $(EXE)
+   export PATH       := $PREFIX:$(PATH)
+   RUN               ?= ./$(EXE)
+   RUN_PAUSE         ?= $(PAUSE)
+endef
+
+# assume running native on some Linux
+define Linux      
+   CHIP              := Linux_Native
+   PREFIX            := 
+   RESULTS           += $(EXE)
+   RUN               ?= sudo ./$(EXE)
+   RUN_PAUSE         ?= $(PAUSE)
+endef   
+
+# running native
+define Native
+   $(eval $(Hosted))
+   ifeq ($(OS),Windows_NT)   
+      $(eval $(Windows))
+   else
+      $(eval $(Linux))
+   endif  
+endef
 
 ifeq ($(TARGET),native)
-   $(eval $(Hosted))
-   
-   ifeq ($(OS),Windows_NT)   
-   
-      # running native on Windows  
-      CHIP              := Windows_Native
-      PREFIX            := $(GCC-WIN)/bin/
-      TARGET_CPP_FLAGS  += -mno-ms-bitfields   
-      TARGET_C_FLAGS    += -mno-ms-bitfields   
-      TARGET_LN_FLAGS   += -lgdi32
-      RESULTS           += $(PYD)
-      export PATH       := $PREFIX:$(PATH)
-      RUN               ?= ./$(EXE)
-      RUN_PAUSE         ?= $(PAUSE)
-      
-   else
-   
-      # assume running native on some Linux
-      CHIP              := Linux_Native
-      PREFIX            := 
-      RESULTS           += $(EXE)
-      RUN               ?= sudo ./$(EXE)
-      RUN_PAUSE         ?= $(PAUSE)
-      
-   endif   
+   $(eval $(Native)) 
 endif
 
+ifeq ($(TARGET),pyd)
+   $(eval $(Native))
+   ifeq ($(OS),Windows_NT)   
+      $(eval $(Windows))
+	  
+	  # enable exeptions (disabled by default by bmptk)
+      PROJECT_CPP_FLAGS += -fexceptions -frtti
+	  
+	  # build a .pyd dll file instead of a .exe executable
+	  RESULTS := $(filter-out $(EXE),$(RESULTS)) $(PYD)
+	  
+	  # needed for pybind11
+	  CPP_RTTI          := -frtti 
+      CPP_EXCEPTIONS    := -fexceptions 
+      CPP_LANGUAGE      := -std=gnu++14   
+   else
+      # untested
+   endif   
+endif	  
+      
    #=========================================================================
    #
    # 8-bit AVR chips
@@ -1168,8 +1204,8 @@ $(DLL): $(OBJECTS)
       
 # How to make a .pyd python extension by linking all objects
 $(PYD): $(OBJECTS) 
-	@echo 'Linking DLL target: $(DLL)'
-	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) "C:/Program Files (x86)/Python/Python35.dll" "C:/Program Files (x86)/Python/Python3.dll"
+	@echo 'Linking PYD target: $(PYD)'
+	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(PYTHON_DLLS)
 	@echo ' '  
       
    #=========================================================================

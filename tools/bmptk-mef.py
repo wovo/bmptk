@@ -174,6 +174,7 @@ def add_to_edit_files( file ):
    if file == "main.cpp": return 0
    if file.find( ".cpp" ) >= 0: return 1
    if file.find( ".hpp" ) >= 0: return 1
+   if file.find( ".py" ) >= 0: return 1
    return 0
    
 def has_makefile( list ):
