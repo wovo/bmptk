@@ -175,6 +175,8 @@ DMP           := $(PROJECT).dmp
 LSSX          := $(PROJECT).lssx
 LSS           := $(PROJECT).lss
 EXE           := $(PROJECT).exe
+DLL           := $(PROJECT).dll
+PYD           := $(PROJECT).pyd
 NMDUMP        := $(PROJECT).nmdump   
 ANNOTATED     := $(PROJECT).annotated
    
@@ -189,6 +191,8 @@ CLEAN         += $(DMP)
 CLEAN         += $(LSSX)
 CLEAN         += $(LSS)
 CLEAN         += $(EXE)
+CLEAN         += $(DLL)
+CLEAN         += $(PYD)
 CLEAN         += $(NMDUMP)
 CLEAN         += $(ANNOTATED)
 
@@ -389,7 +393,7 @@ ifeq ($(TARGET),native)
       TARGET_CPP_FLAGS  += -mno-ms-bitfields   
       TARGET_C_FLAGS    += -mno-ms-bitfields   
       TARGET_LN_FLAGS   += -lgdi32
-      RESULTS           += $(EXE)
+      RESULTS           += $(PYD)
       export PATH       := $PREFIX:$(PATH)
       RUN               ?= ./$(EXE)
       RUN_PAUSE         ?= $(PAUSE)
@@ -1154,6 +1158,18 @@ $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBA) $(LINKERSCRIPT)
 $(EXE): $(OBJECTS) 
 	@echo 'Linking EXE target: $(EXE)'
 	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
+	@echo ' '  
+      
+# How to make an .dll dynamic link library by linking all objects
+$(DLL): $(OBJECTS) 
+	@echo 'Linking DLL target: $(DLL)'
+	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
+	@echo ' '  
+      
+# How to make a .pyd python extension by linking all objects
+$(PYD): $(OBJECTS) 
+	@echo 'Linking DLL target: $(DLL)'
+	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) "C:/Program Files (x86)/Python/Python35.dll" "C:/Program Files (x86)/Python/Python3.dll"
 	@echo ' '  
       
    #=========================================================================
