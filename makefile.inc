@@ -304,6 +304,10 @@ ifeq ($(TARGET),stm32f411nucleo)
    CHIP        ?= stm32f411re
 endif
 
+ifeq ($(TARGET),blue_pill)
+   CHIP        ?= stm32f103c8
+endif
+
 ifeq ($(TARGET),frdm_kl25z)
    CHIP        ?= kl25z128vlk4
 endif
@@ -708,6 +712,7 @@ define STM32
    ROM_START      ?= 0x08000000
    RAM_START      ?= 0x20000000     
    INCLUDES       += -I$(BMPTK)/targets/cortex/stm32/cmsis  
+   RESULTS        += $(HEX)   
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    RUN_PAUSE      ?= $(PAUSE)
 endef
@@ -719,6 +724,15 @@ ifeq ($(CHIP),stm32f051r8)
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144  
    DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f051x8.h 
+endif
+
+ifeq ($(CHIP),stm32f103c8)
+   $(eval $(Cortex-M3))
+   $(eval $(STM32))
+   ROM_SIZE       ?= 64k
+   RAM_SIZE       ?= 20k
+   STACK_SIZE     ?= 6144  
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f103xb.h 
 endif
 
 ifeq ($(CHIP),stm32l152rc)
