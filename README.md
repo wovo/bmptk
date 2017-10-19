@@ -69,3 +69,4 @@ todo:
 * MCP430
 * avrdude-usbasp
 * ESP82366
+* use -Wextra?

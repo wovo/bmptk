@@ -91,12 +91,16 @@ ifeq ($(OS),Windows_NT)
    export PATH=%PATH%;$(GCC-WIN)/bin
    
    # find python
-   PYTHON_LOCATIONS += "C:\Program Files (x86)\Python"
-   PYTHON_LOCATIONS += "C:\Python36"
+   PYTHON_LOCATIONS += 'C:/Program Files\ (x86)/Pytho*'
+   #PYTHON_LOCATIONS += C:/temp/readme.tx?
+   #PYTHON_LOCATIONS += C:/Python C:/Python36 C:/Python35
    PYTHON_LOCATION  ?= $(foreach x, $(PYTHON_LOCATIONS), $(wildcard $(x)))
-   PYTHON_LOCATION  := C:\Python36
-   INCLUDES         += -I$(PYTHON_LOCATION)\include
-   PYTHON_DLLS      += $(PYTHON_LOCATION)\Python3.dll $(PYTHON_LOCATION)\Python36.dll
+   # $(error [$(PYTHON_LOCATIONS)] $(PYTHON_LOCATION))  
+   
+   #PYTHON_LOCATION  := C:\Python36
+   PYTHON_LOCATION  := C:\Program Files (x86)\Python
+   #INCLUDES         += -I$(PYTHON_LOCATION)\include
+   PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python35.dll"
 else
 
    # linux
@@ -290,6 +294,10 @@ endif
 
 ifeq ($(TARGET),db105)
    CHIP        ?= lpc810m021fn8
+endif
+
+ifeq ($(TARGET),blue_pill)
+   CHIP        ?= stm32f103c8
 endif
 
 ifeq ($(TARGET),stm32f0discovery)
@@ -707,7 +715,8 @@ endif
 define STM32
    ROM_START      ?= 0x08000000
    RAM_START      ?= 0x20000000     
-   INCLUDES       += -I$(BMPTK)/targets/cortex/stm32/cmsis  
+   INCLUDES       += -I$(BMPTK)/targets/cortex/stm32
+   RESULTS         += $(HEX)
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    RUN_PAUSE      ?= $(PAUSE)
 endef
@@ -719,6 +728,15 @@ ifeq ($(CHIP),stm32f051r8)
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144  
    DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f051x8.h 
+endif
+
+ifeq ($(CHIP),stm32f103c8)
+   $(eval $(Cortex-M3))
+   $(eval $(STM32))
+   ROM_SIZE       ?= 64k
+   RAM_SIZE       ?= 20k
+   STACK_SIZE     ?= 6144  
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f103x6.h 
 endif
 
 ifeq ($(CHIP),stm32l152rc)
@@ -981,7 +999,7 @@ endif
 
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) makefile
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
 $(OBJECTS): $(DEPENDENCIES)
 
 
