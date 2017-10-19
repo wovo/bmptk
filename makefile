@@ -76,12 +76,7 @@ clean:
 	$(REMOVE) -rf index.html docs bmptk.zip transfer
 		
 	@echo "**** cleanup completed succesfully"
-		
-push: 
-	make clean
-	git add -A
-	git commit -a -m "update"
-	git push
+
 
       
 		
