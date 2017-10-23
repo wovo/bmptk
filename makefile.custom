@@ -59,7 +59,7 @@ ifeq ($(OS),Windows_NT)
    CONSOLE_BAUDRATE ?= 38400 
    
    # python interpreter
-   PYTHON          ?= "C:/Program Files (x86)/Python/Python.exe"
+   PYTHON          ?= "C:/Python36/Python.exe"
    
 else
 
