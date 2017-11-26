@@ -417,11 +417,11 @@ endef
 
 # assume running native on some Linux
 define Linux      
-   CHIP              := Linux_Native
-   PREFIX            := 
-   RESULTS           += $(EXE)
-   RUN               ?= sudo ./$(EXE)
-   RUN_PAUSE         ?= $(PAUSE)
+   #CHIP              := Linux_Native
+   #PREFIX            := 
+   #RESULTS           += $(EXE)
+   #RUN               ?= sudo ./$(EXE)
+   #RUN_PAUSE         ?= $(PAUSE)
 endef   
 
 # running native
@@ -969,7 +969,7 @@ CLEAN        += $(OBJECTS)
 #============================================================================
 
 DEFINES   += -DBMPTK_TARGET=$(TARGET) 
-DEFINES   += -DBMPTK_TARGET_$(TARGET) 
+DEFINES   += -DBMPTK_TARGET_$(TARGET) -DHWCPP_TARGET_$(TARGET)
 DEFINES   += -DBMPTK_CHIP=$(CHIP) 
 DEFINES   += -DBMPTK_CHIP_$(CHIP) 
 DEFINES   += -DBMPTK_XTAL=$(XTAL) 
