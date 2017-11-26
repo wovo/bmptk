@@ -353,6 +353,8 @@ define All_Targets
    ALL_IGNORE        += -Wno-unused-local-typedefs
    ALL_IGNORE        += -Wno-unused-but-set-variable
    ALL_IGNORE        += -Wno-unused-local-typedefs
+   ALL_IGNORE        += -Wno-unused-function
+   ALL_IGNORE        += -Wno-attributes
    ALL_OPTIMIZATION  ?= -Os
    
    # cpp: don't use features that are useless and/or too expensive
