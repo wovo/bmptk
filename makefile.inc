@@ -1006,7 +1006,6 @@ endif
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
 DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
-$(OBJECTS): $(DEPENDENCIES)
 
 
 #============================================================================
@@ -1130,33 +1129,37 @@ version:
    # Compile
    # 
    #=========================================================================
+   
+%.lst: $(DEPENDENCIES)
+%.o:   $(DEPENDENCIES)
+%.lss: $(DEPENDENCIES)
 
 # How to make assembler listing from asm
-%.lst: %.asm
+%.lst: %.asm 
 	@echo 'Compiling C file to asm listing: $<'
 	$(AS) -c -S > $(patsubst %.o,%.lst,$@) $<
 	@echo ' '   
    
 # How to make assembler listing from C
-%.lst: %.c
+%.lst: %.c 
 	@echo 'Compiling C file (.c) to asm listing: $<'
 	$(CC) -c -S -o $(patsubst %.o,%.lst,$@) $<
 	@echo ' '   
    
 # How to make assembler listing from C++ (.cpp) 
-%.lst: %.cpp
+%.lst: %.cpp 
 	@echo 'Compiling C++ file (.cpp) to asm listing: $<'
 	$(CPP) -c -S -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make assembler listing from C++ (.cc)  
-%.lst: %.cc
+%.lst: %.cc 
 	@echo 'Compiling C++ file (.cc) to asm listing: $<'
 	$(CPP) -c -S -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make an object file from an assembler file
-%.o: %.asm
+%.o: %.asm 
 	@echo 'Assembling (.asm) file: $<'
 	$(AS)  -c -o $@ $<
 	@echo ' '
@@ -1174,7 +1177,7 @@ version:
 	@echo ' '
     
 # How to make an object file from a C++ file (.cc)
-%.o: %.cc
+%.o: %.cc 
 	@echo 'Compiling C++ (.cc) file: $<'
 	$(CPP) -c -o $@ $< 
 	@echo ' '

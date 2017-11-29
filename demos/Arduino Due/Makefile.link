@@ -1,6 +1,6 @@
 #############################################################################
 #
-# Project Makefile
+# Non-leaf subdirectiory Makefile
 #
 # (c) Wouter van Ooijen (www.voti.nl) 2016
 #
@@ -8,15 +8,10 @@
 # 
 #############################################################################
 
-# source files in this project (main.cpp is automatically assumed)
-SOURCES :=
-
-# header files in this project
-HEADERS :=
-
-# other places to look for files for this project
-SEARCH  := 
+# settings common to this part of the subdirectory tree
+TARGET         ?= arduino-due
 
 # set RELATIVE to the next higher directory and defer to the Makefile.link
 RELATIVE := ..
 include $(RELATIVE)/Makefile.link
+

@@ -34,7 +34,8 @@ ifeq ($(OS),Windows_NT)
    #GCC-WIN         ?= C:/MinGW
 
    # select the AVR toolchain: Atmel (=default) or Arduino
-   GCC-AVR         ?= C:/SysGCC/avr
+   GCC-AVR          ?= C:/avr-gcc-7.2.0-x86-mingw
+   #GCC-AVR         ?= C:/SysGCC/avr
    #GCC-AVR         ?= $(WPF32)/Arduino/hardware/tools/avr
    #GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
 
@@ -61,7 +62,7 @@ ifeq ($(OS),Windows_NT)
    CONSOLE_BAUDRATE ?= 38400 
    
    # python interpreter
-   PYTHON          ?= "C:/Python36/Python.exe"
+   PYTHON          ?= "C:\Program Files (x86)\Python\Python"
    
 else
 
