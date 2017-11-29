@@ -1006,6 +1006,7 @@ endif
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
 DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
+$(OBJECTS): $(DEPENDENCIES)
 
 
 #============================================================================
