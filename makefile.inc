@@ -359,7 +359,7 @@ define All_Targets
    
    # cpp: don't use features that are useless and/or too expensive
    CPP_RTTI          ?= -fno-rtti 
-   CPP_EXCEPTIONS    ?= -fno-exceptions 
+   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
    CPP_THREADSAFE    ?= -fno-threadsafe-statics 
    CPP_CXA           ?= -fno-use-cxa-get-exception-ptr   
    
