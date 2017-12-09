@@ -371,6 +371,7 @@ define Hosted
    HOSTED            ?= 1
    HAS_FILESYSTEM    ?= 1
    HEAP              ?= NATIVE
+   STACK_SIZE        ?= 1   
    ifeq ($(OS),Windows_NT)
       ALL_LIBRARIES     += -lgdi32
    endif
