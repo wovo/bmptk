@@ -260,12 +260,12 @@ ifeq ($(TARGET),tiny_11c14)
 endif
 
 ifeq ($(TARGET),arduino_uno)
-   CHIP        ?= atmega328p
+   CHIP        ?= atmega328
    XTAL        ?= 12000   
 endif
 
 ifeq ($(TARGET),arduino_nano)
-   CHIP        ?= atmega328p
+   CHIP        ?= atmega328
    XTAL        ?= 12000   
 endif
 
@@ -487,7 +487,7 @@ define Atmega
    #LDFLAGS	       += -v
 endef
 
-ifeq ($(CHIP),atmega328p)
+ifeq ($(CHIP),atmega328)
    $(eval $(Atmega))
    ROM_START      ?= 0x0000
    RAM_START      ?= 0x0100
@@ -702,7 +702,6 @@ ifeq ($(CHIP),lpc1114fn28)
    ROM_SIZE       ?= 32k
    RAM_SIZE       ?= 4k
    STACK_SIZE     ?= 3072
-   HWCPP_CHIP     ?= lpc1114fn28.hpp
 endif
 
 ifeq ($(CHIP),lpc11c14fbd48)
@@ -710,7 +709,6 @@ ifeq ($(CHIP),lpc11c14fbd48)
    ROM_SIZE       ?= 32k
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144  
-   HWCPP_CHIP     ?= lpc11c14fbd48.hpp
 endif
 
       #======================================================================

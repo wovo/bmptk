@@ -21,7 +21,7 @@ ifeq ($(OS),Windows_NT)
    # WPF32 is the windows directory for 32-bit applications
    
    # depends on the compiler ...
-   ARM-EABI        ?= arm-none-eabi
+   #ARM-EABI        ?= arm-none-eabi
    ARM-EABI        ?= arm-eabi
    
    # 7za command line
@@ -34,13 +34,14 @@ ifeq ($(OS),Windows_NT)
    #GCC-WIN         ?= C:/MinGW
 
    # select the AVR toolchain: Atmel (=default) or Arduino
-   GCC-AVR         ?= C:/SysGCC/avr
+   GCC-AVR         ?= C:/Program Files/avr-gcc-7.2.0-x64-mingw
+   GCC-AVR         ?= C:/Program Files/
    #GCC-AVR         ?= $(WPF32)/Arduino/hardware/tools/avr
    #GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
 
    # the ARM toolchain
-   #GCC-ARM         ?= C:/SysGCC/arm-eabi
-   GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/5.4 2016q3
+   GCC-ARM         ?= C:/SysGCC/arm-eabi
+   #GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/5.4 2016q3
    #GCC-ARM         ?= C:/gcc-arm-none-eabi-4_9-141220
 
    # no alternatives to choose, but maybe a different directory
@@ -61,7 +62,7 @@ ifeq ($(OS),Windows_NT)
    CONSOLE_BAUDRATE ?= 38400 
    
    # python interpreter
-   PYTHON          ?= "C:/Program Files (x86)/Python/Python.exe"
+   PYTHON          ?= "C:/Python36/Python.exe"
    
 else
 
