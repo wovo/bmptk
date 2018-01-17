@@ -269,6 +269,10 @@ ifeq ($(TARGET),arduino_nano)
    XTAL        ?= 12000   
 endif
 
+ifeq ($(TARGET),arduino_atmega328)
+   CHIP        ?= atmega328p
+endif
+
 ifeq ($(TARGET),arduino_due)
    CHIP        ?= atsam3x8e
    XTAL        ?= 12000   
@@ -297,6 +301,10 @@ ifeq ($(TARGET),db105)
 endif
 
 ifeq ($(TARGET),blue_pill)
+   CHIP        ?= stm32f103c8
+endif
+
+ifeq ($(TARGET),blue_brick)
    CHIP        ?= stm32f103c8
 endif
 
