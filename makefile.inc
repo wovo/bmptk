@@ -274,7 +274,7 @@ ifeq ($(TARGET),arduino_atmega328)
 endif
 
 ifeq ($(TARGET),arduino_due)
-   CHIP        ?= atsam3x8e
+   CHIP        ?= sam3x8e
    XTAL        ?= 12000   
 endif
 
@@ -852,7 +852,7 @@ endef
 #      $(error do not use 1200 baud: it will reset the Due) 
 #   endif 
 
-ifeq ($(CHIP),atsam3x8e)
+ifeq ($(CHIP),sam3x8e)
    $(eval $(Atmel_SAM3))
    ROM_SIZE       ?= 512k
    RAM_SIZE       ?= 96k
