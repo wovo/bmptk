@@ -304,7 +304,7 @@ ifeq ($(TARGET),blue_pill)
    CHIP        ?= stm32f103c8
 endif
 
-ifeq ($(TARGET),blue_brick)
+ifeq ($(TARGET),stm32_minisystem)
    CHIP        ?= stm32f103c8
 endif
 
