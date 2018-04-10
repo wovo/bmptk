@@ -233,7 +233,7 @@ def codelite_project_template_bmptk():
   <Dependencies/>
   <VirtualDirectory Name="source">
     <File Name="%%MAIN%%"/>%%FILES%%
-    <File Name="makefile"/>
+    <File Name="Makefile"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

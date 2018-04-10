@@ -39,9 +39,9 @@ else
 endif
 
 ifneq ($(wildcard Makefile.custom),)
-   include makefile.custom
+   include Makefile.custom
 else   
-   include makefile.local
+   include Makefile.local
 endif
 
 .PHONY: clean doc docs documentation build all examples 
