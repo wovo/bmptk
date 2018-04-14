@@ -97,10 +97,10 @@ ifeq ($(OS),Windows_NT)
    PYTHON_LOCATION  ?= $(foreach x, $(PYTHON_LOCATIONS), $(wildcard $(x)))
    # $(error [$(PYTHON_LOCATIONS)] $(PYTHON_LOCATION))  
    
-   #PYTHON_LOCATION  := C:\Python36
-   PYTHON_LOCATION  := C:\Program Files (x86)\Python
-   #INCLUDES         += -I$(PYTHON_LOCATION)\include
-   PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python35.dll"
+   PYTHON_LOCATION  := C:\Python36
+   #PYTHON_LOCATION  := C:\Program Files (x86)\Python
+   INCLUDES         += -I$(PYTHON_LOCATION)\include
+   PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python36.dll"
 else
 
    # linux
