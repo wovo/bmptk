@@ -1,6 +1,6 @@
 #############################################################################
 #
-# file: bmptk/makefile.inc
+# file: bmptk/Makefile.inc
 #
 # makefile 'body' for bare metal C / C++ / assembler projects using GCC
 # and some related things
@@ -23,7 +23,7 @@ VERSION := V04_00_work_in_progress_2017_01_23
 
 #============================================================================
 #
-# Invoke the makefile.custom (if it exists) or else the makefile.local,
+# Invoke the Makefile.custom (if it exists) or else the Makefile.local,
 # to get the locations of the external toolsets
 # 
 #============================================================================
@@ -39,10 +39,10 @@ ifeq ($(OS),Windows_NT)
    endif
 endif
 
-ifneq ($(wildcard $(BMPTK)/makefile.custom),)
-   include $(BMPTK)/makefile.custom
+ifneq ($(wildcard $(BMPTK)/Makefile.custom),)
+   include $(BMPTK)/Makefile.custom
 else   
-   include $(BMPTK)/makefile.local
+   include $(BMPTK)/Makefile.local
 endif
 
 
@@ -1214,7 +1214,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: makefile
+$(FIXED_SIZE_STACK_FILE).c: Makefile
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
