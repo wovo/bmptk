@@ -29,7 +29,7 @@ ifeq ($(OS),Windows_NT)
    # 7za             ?= "$(WPF32)/7-Zip/7za"
 
    # the windows toolchain
-   #GCC-WIN         ?= C:/TDM-GCC-32
+   #GCC-WIN         ?= C:/TDM-GCC-64
    #GCC-WIN         ?= $(WPF32)/mingw-w64/i686-6.2.0-posix-dwarf-rt_v5-rev1/mingw32
    GCC-WIN         ?= C:\Program Files (x86)\mingw-w64\i686-7.3.0-posix-dwarf-rt_v5-rev0\mingw32
    #GCC-WIN         ?= C:/MinGW
