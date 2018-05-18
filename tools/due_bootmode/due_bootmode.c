@@ -44,6 +44,7 @@ int main( int argc, char *argv[] ){
            return 1;
        }       
 
+       fprintf(stderr, "Wait...");
        Sleep(
           200 // dwMilliseconds
        );
@@ -55,12 +56,15 @@ int main( int argc, char *argv[] ){
           return 1;
        }       
        
-       fprintf(stderr, "Done.");       
+       fprintf(stderr, "Close...");
        CloseHandle(hSerial);       
 
+       fprintf(stderr, "Wait...");
        Sleep(
           200 // dwMilliseconds
        );
+       
+       fprintf(stderr, "Done.");       
    }
    return 0;
 }
