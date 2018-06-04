@@ -807,7 +807,7 @@ ifeq ($(CHIP),mkl27z64vlh4)
    RAM_START      ?= 0x1FFFF000
    RAM_SIZE       ?= 16k
    STACK_SIZE     ?= 8096
-   DOWNLOAD_DRIVE ?= FRDM-KL25Z
+   DOWNLOAD_DRIVE ?= FRDM-KL27Z
    DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL25Z4.h 
    RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
