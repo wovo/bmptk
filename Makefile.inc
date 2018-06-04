@@ -328,6 +328,10 @@ ifeq ($(TARGET),frdm_kl25z)
    CHIP        ?= kl25z128vlk4
 endif
 
+ifeq ($(TARGET),frdm_kl27z)
+   CHIP        ?= mkl27z64vlh4
+endif
+
 ifeq ($(TARGET),xmc_2go_1100)
    CHIP        ?= xmc1100
 endif
@@ -772,7 +776,7 @@ endif
 
       #======================================================================
       #
-      # Freescale Cortex chips
+      # NXP/Freescale Cortex chips
       # 
       #======================================================================
 
@@ -794,6 +798,19 @@ ifeq ($(CHIP),kl25z128vlk4)
    DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL25Z4.h 
    RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
+
+ifeq ($(CHIP),mkl27z64vlh4)
+   $(eval $(Cortex-M0))
+   $(eval $(Freescale))   
+   ROM_SIZE       ?= 64k
+   RAM_START      ?= 0x1FFFF000
+   RAM_SIZE       ?= 16k
+   STACK_SIZE     ?= 8096
+   DOWNLOAD_DRIVE ?= FRDM-KL25Z
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL25Z4.h 
+   RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
+endif
+
 
       #======================================================================
       #
