@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// open the comport argv[1] at 1200 baud, close it and wait a little
+// open the comport argv[1] at 1200 baud, wait a little, close it, wait a little more
 
 int main( int argc, char *argv[] ){
    if( argc < 1 ){
@@ -43,6 +43,11 @@ int main( int argc, char *argv[] ){
            CloseHandle(hSerial);
            return 1;
        }       
+
+       fprintf(stderr, "Wait...");
+       Sleep(
+          200 // dwMilliseconds
+       );
        
        // Close serial port
        fprintf(stderr, "Closing serial port...");
@@ -51,8 +56,15 @@ int main( int argc, char *argv[] ){
           return 1;
        }       
        
-       fprintf(stderr, "Done.");       
+       fprintf(stderr, "Close...");
        CloseHandle(hSerial);       
+
+       fprintf(stderr, "Wait...");
+       Sleep(
+          200 // dwMilliseconds
+       );
+       
+       fprintf(stderr, "Done.");       
    }
    return 0;
 }
