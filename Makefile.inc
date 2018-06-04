@@ -328,6 +328,10 @@ ifeq ($(TARGET),frdm_kl25z)
    CHIP        ?= kl25z128vlk4
 endif
 
+ifeq ($(TARGET),frdm_kl27z)
+   CHIP        ?= mkl27z64vlh4
+endif
+
 ifeq ($(TARGET),xmc_2go_1100)
    CHIP        ?= xmc1100
 endif
@@ -778,7 +782,9 @@ endif
 
 define Freescale
    ROM_START      ?= 0x00000000   
+   RAM_START      ?= 0x20000000
    INCLUDES       += -I$(BMPTK)/targets/cortex/freescale/cmsis 
+   RESULTS        += $(BIN)
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    RUN_PAUSE      ?= $(PAUSE)
 endef
@@ -787,11 +793,21 @@ ifeq ($(CHIP),kl25z128vlk4)
    $(eval $(Cortex-M0))
    $(eval $(Freescale))   
    ROM_SIZE       ?= 128k
-   RAM_START      ?= 0x20000000
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144  
    DOWNLOAD_DRIVE ?= FRDM-KL25Z
    DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL25Z4.h 
+   RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
+endif
+
+ifeq ($(CHIP),mkl27z64vlh4)
+   $(eval $(Cortex-M0+))
+   $(eval $(Freescale))   
+   ROM_SIZE       ?= 64k
+   RAM_SIZE       ?= 16k
+   STACK_SIZE     ?= 8096  
+   DOWNLOAD_DRIVE ?= FRDM-KL27Z
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL27Z644.h 
    RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
 
@@ -923,7 +939,7 @@ endif
 
 ifneq ($(NOPROJECT),1)
    ifeq ($(HOSTED),)
-      $(error invalid or no target specifie$d: "$(TARGET)")
+      $(error invalid or no target specified: "$(TARGET)")
    endif
 endif   
 
