@@ -776,7 +776,7 @@ endif
 
       #======================================================================
       #
-      # Freescale Cortex chips
+      # NXP/Freescale Cortex chips
       # 
       #======================================================================
 
@@ -802,14 +802,16 @@ ifeq ($(CHIP),kl25z128vlk4)
 endif
 
 ifeq ($(CHIP),mkl27z64vlh4)
-   $(eval $(Cortex-M0+))
+   $(eval $(Cortex-M0))
    $(eval $(Freescale))   
    ROM_SIZE       ?= 64k
+   RAM_START      ?= 0x1FFFF000
    RAM_SIZE       ?= 16k
-   STACK_SIZE     ?= 8096  
-   DOWNLOAD_DRIVE ?= FRDM-KL27ZD
-   DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL27Z644.h 
-   RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
+   STACK_SIZE     ?= 8096
+   DOWNLOAD_DRIVE ?= FRDM-KL27Z
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL28Z644.h 
+   RUN            = sudo mount -vo uid=$$(id -u),gid=$$(id -u) /dev/disk/by-label/FRDM-KL27* /mnt/tmp && cp -v $(BIN) /mnt/tmp && sync && sudo umount -v /mnt/tmp
+   #RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
 
       #======================================================================
