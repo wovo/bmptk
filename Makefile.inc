@@ -787,6 +787,7 @@ define Freescale
    RESULTS        += $(BIN)
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    RUN_PAUSE      ?= $(PAUSE)
+   COPY_TO_DRIVE  ?= " "
 endef
 
 ifeq ($(CHIP),kl25z128vlk4)
@@ -806,7 +807,7 @@ ifeq ($(CHIP),mkl27z64vlh4)
    ROM_SIZE       ?= 64k
    RAM_SIZE       ?= 16k
    STACK_SIZE     ?= 8096  
-   DOWNLOAD_DRIVE ?= FRDM-KL27Z
+   DOWNLOAD_DRIVE ?= FRDM-KL27ZD
    DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL27Z644.h 
    RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
