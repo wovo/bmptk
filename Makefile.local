@@ -82,9 +82,10 @@ else
    # serial port defaults
    SERIAL_PORT_DUE      := /dev/ttyACM0
    SERIAL_PORT_UNO      := /dev/ttyUSB0
-   SERIAL_PORT      := $(SERIAL_PORT_UNO)
-   SERIAL_BAUDRATE  ?= 38400
-   CONSOLE_BAUDRATE ?= 38400 
+
+   SERIAL_PORT          := $(SERIAL_PORT_UNO)
+   SERIAL_BAUDRATE      ?= 38400
+   CONSOLE_BAUDRATE     ?= 38400 
 
    PYTHON ?= python3
 
