@@ -488,6 +488,7 @@ define Atmega
       # CPP                ?= "$(PREFIX)c++"
    endif
    SEARCH          += $(BMPTK)/targets/avr $(BMPTK)/targets/avr/include
+   SEARCH          += $(BMPTK)/targets/avr $(BMPTK)/targets/avr/avr8-hacks
    DEFINES         += -DBMPTK_INCLUDE_CHIP=io.h   
    RESULTS         += $(ELF) $(BIN) $(HEX) 
    CPU             ?= avr
@@ -1031,7 +1032,7 @@ endif
 
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) makefile
 $(OBJECTS): $(DEPENDENCIES)
 
 
@@ -1233,7 +1234,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: Makefile
+$(FIXED_SIZE_STACK_FILE).c: makefile
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '

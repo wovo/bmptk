@@ -1,0 +1,28 @@
+// AVR has no <utility>
+
+namespace std {
+    
+template<typename T>
+struct add_rvalue_reference
+{
+   using gtype = T&&;
+};
+
+template<typename T>
+struct add_rvalue_reference<T&>
+{
+   using type = T&;
+};
+
+//////////////////////////////////////////////
+
+template<typename T>
+struct add_lvalue_reference
+{
+   using type = T&;
+};
+
+template<class T>
+typename std::add_rvalue_reference<T>::type declval() noexcept;
+
+}; // namespace std

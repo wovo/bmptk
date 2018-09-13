@@ -1,0 +1,86 @@
+// AVR has no <type_traits>
+
+#include <utility>
+
+namespace std {
+    
+template< class... >
+using void_t = void;
+
+template< class T, T v >
+struct integral_constant {};
+
+template < bool B >
+using bool_constant = integral_constant< bool, B >;
+
+using true_type  = integral_constant< bool, true >;
+using false_type = integral_constant< bool, false >;
+
+template< class T, class U >
+struct is_same : false_type {};
+ 
+template< class T >
+struct is_same< T, T > : true_type {};
+
+template< class T > struct remove_reference      { typedef T type; };
+template< class T > struct remove_reference<T&>  { typedef T type; };
+template< class T > struct remove_reference<T&&> { typedef T type; };
+
+template< class T >
+using remove_reference_t = typename remove_reference< T >::type;
+
+template<bool B, class T = void>
+struct enable_if {};
+ 
+template<class T>
+struct enable_if<true, T> { typedef T type; };
+
+namespace details {
+    template <typename Base> std::true_type is_base_of_test_func(const volatile Base*);
+    template <typename Base> std::false_type is_base_of_test_func(const volatile void*);
+    template <typename Base, typename Derived>
+    using pre_is_base_of = decltype(is_base_of_test_func<Base>(std::declval<Derived*>()));
+ 
+    // with <experimental/type_traits>:
+    // template <typename Base, typename Derived>
+    // using pre_is_base_of2 = std::experimental::detected_or_t<std::true_type, pre_is_base_of, Base, Derived>;
+    template <typename Base, typename Derived, typename = void>
+    struct pre_is_base_of2 : public std::true_type { };
+    // note std::void_t is a C++17 feature
+    template <typename Base, typename Derived>
+    struct pre_is_base_of2<Base, Derived, std::void_t<pre_is_base_of<Base, Derived>>> :
+        public pre_is_base_of<Base, Derived> { };
+}
+
+template<bool B, class T, class F>
+struct conditional { typedef T type; };
+ 
+template<class T, class F>
+struct conditional<false, T, F> { typedef F type; };
+
+template< bool B, class T, class F >
+using conditional_t = typename conditional<B,T,F>::type;
+
+
+
+namespace detail {
+    template <class T> char test(int T::*);
+    struct two { char c[2]; };
+    template <class T> two test(...);
+}
+
+//Not concerned about the is_union<T> implementation right now
+template <class T>
+struct is_class : std::integral_constant<bool, sizeof(detail::test<T>(0))==1 
+                                                   //&& !std::is_union<T>::value
+                                                   > {};
+                                            
+template <typename Base, typename Derived>
+struct is_base_of :
+    public std::conditional_t<
+        std::is_class<Base>::value && std::is_class<Derived>::value,
+        details::pre_is_base_of2<Base, Derived>,
+        std::false_type
+    > { };
+
+}; // namespace std
