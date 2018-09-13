@@ -355,7 +355,7 @@ define All_Targets
    SEARCH            += $(BMPTK)/targets 
    
    # the language dialects to use
-   CPP_LANGUAGE      ?= -std=c++14
+   CPP_LANGUAGE      ?= -std=c++17 -fconcepts
    C_LANGUAGE        ?= -std=c11
    AS_LANGUAGE       ?= -x assembler-with-cpp   
    
@@ -467,7 +467,7 @@ ifeq ($(TARGET),pyd)
 	  # needed for pybind11
 	  CPP_RTTI          := -frtti 
       CPP_EXCEPTIONS    := -fexceptions 
-      CPP_LANGUAGE      := -std=gnu++14   
+      CPP_LANGUAGE      := -std=gnu++17   
    else
       # untested
    endif   
