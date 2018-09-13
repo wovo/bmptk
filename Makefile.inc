@@ -1032,7 +1032,7 @@ endif
 
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) makefile
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
 $(OBJECTS): $(DEPENDENCIES)
 
 
@@ -1234,7 +1234,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: makefile
+$(FIXED_SIZE_STACK_FILE).c: Makefile
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
