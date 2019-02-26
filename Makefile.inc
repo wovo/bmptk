@@ -355,7 +355,7 @@ define All_Targets
    SEARCH            += $(BMPTK)/targets 
    
    # the language dialects to use
-   CPP_LANGUAGE      ?= -std=c++14
+   CPP_LANGUAGE      ?= -std=c++17
    C_LANGUAGE        ?= -std=c11
    AS_LANGUAGE       ?= -x assembler-with-cpp   
    
@@ -517,6 +517,14 @@ ifeq ($(CHIP),atmega328)
    LINKERSCRIPT := 
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000 
 endif
+
+.PHONY: bootloader
+bootloader:
+	@echo 'download the arduino bootloader'
+	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p -b 19200 -v -e -U efuse:w:0x05:m -U hfuse:w:0xD6:m -U lfuse:w:0xFF:m
+	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
+	@echo ' '   
+
 
    #=========================================================================
    #
@@ -998,11 +1006,15 @@ CLEAN        += $(OBJECTS)
 #============================================================================
 
 DEFINES   += -DBMPTK_TARGET=$(TARGET) 
-DEFINES   += -DBMPTK_TARGET_$(TARGET) -DHWCPP_TARGET_$(TARGET)
+DEFINES   += -DBMPTK_TARGET_$(TARGET) 
+DEFINES   += -DHWLIB_TARGET_$(TARGET) 
+DEFINES   += -DHWCPP_TARGET_$(TARGET)
+
 DEFINES   += -DBMPTK_CHIP=$(CHIP) 
 DEFINES   += -DBMPTK_CHIP_$(CHIP) 
 DEFINES   += -DBMPTK_XTAL=$(XTAL) 
 DEFINES   += -DBMPTK_BAUDRATE=$(CONSOLE_BAUDRATE) 
+DEFINES   += -DHWLIB_BAUDRATE=$(CONSOLE_BAUDRATE)
 DEFINES   += -DBMPTK_VERSION=$(VERSION) 
 
 ifeq ($(HOSTED),1)
