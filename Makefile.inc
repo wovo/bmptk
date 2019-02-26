@@ -355,7 +355,11 @@ define All_Targets
    SEARCH            += $(BMPTK)/targets 
    
    # the language dialects to use
+<<<<<<< HEAD
    CPP_LANGUAGE      ?= -std=c++17
+=======
+   CPP_LANGUAGE      ?= -std=c++17 -fconcepts
+>>>>>>> a8b93af78eee384530762704886b4a1e9f84583c
    C_LANGUAGE        ?= -std=c11
    AS_LANGUAGE       ?= -x assembler-with-cpp   
    
@@ -467,7 +471,7 @@ ifeq ($(TARGET),pyd)
 	  # needed for pybind11
 	  CPP_RTTI          := -frtti 
       CPP_EXCEPTIONS    := -fexceptions 
-      CPP_LANGUAGE      := -std=gnu++14   
+      CPP_LANGUAGE      := -std=gnu++17   
    else
       # untested
    endif   
@@ -1044,7 +1048,7 @@ endif
 
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) makefile
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
 $(OBJECTS): $(DEPENDENCIES)
 
 
@@ -1246,7 +1250,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: makefile
+$(FIXED_SIZE_STACK_FILE).c: Makefile
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '

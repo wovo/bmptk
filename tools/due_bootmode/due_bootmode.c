@@ -33,11 +33,13 @@ int main( int argc, char *argv[] ){
            return 1;
        }
        
-       fprintf(stderr, "Set 1200 baud...");
+       fprintf(stderr, "Set 1200 baud & handshakes...");
        dcbSerialParams.BaudRate = CBR_1200;
        dcbSerialParams.ByteSize = 8;
        dcbSerialParams.StopBits = ONESTOPBIT;
-       dcbSerialParams.Parity = NOPARITY;
+       dcbSerialParams.Parity   = NOPARITY;
+       dcbSerialParams.fRtsControl = RTS_CONTROL_ENABLE;
+       dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;    
        if(SetCommState(hSerial, &dcbSerialParams) == 0){
            fprintf(stderr, "Error setting device parameters\n");
            CloseHandle(hSerial);

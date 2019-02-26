@@ -44,6 +44,7 @@
 #define BMPTK_QUOTE( X ) BMPTK_STRINGYFY( X )
 
 #ifdef BMPTK_INCLUDE_CHIP
+   #define register
    #include BMPTK_QUOTE( BMPTK_INCLUDE_CHIP )
 #endif
 #ifdef BMPTK_INCLUDE_BMPTK
