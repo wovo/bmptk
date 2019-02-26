@@ -355,11 +355,7 @@ define All_Targets
    SEARCH            += $(BMPTK)/targets 
    
    # the language dialects to use
-<<<<<<< HEAD
-   CPP_LANGUAGE      ?= -std=c++17
-=======
    CPP_LANGUAGE      ?= -std=c++17 -fconcepts
->>>>>>> a8b93af78eee384530762704886b4a1e9f84583c
    C_LANGUAGE        ?= -std=c11
    AS_LANGUAGE       ?= -x assembler-with-cpp   
    
