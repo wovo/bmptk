@@ -300,6 +300,10 @@ ifeq ($(TARGET),db105)
    CHIP        ?= lpc810m021fn8
 endif
 
+ifeq ($(TARGET),scouting_lock)
+   CHIP        ?= stm32f030k6
+endif
+
 ifeq ($(TARGET),blue_pill)
    CHIP        ?= stm32f103c8
 endif
@@ -746,6 +750,15 @@ ifeq ($(CHIP),stm32f051r8)
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144  
    DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f051x8.h 
+endif
+
+ifeq ($(CHIP),stm32f030k6)
+   $(eval $(Cortex-M0))
+   $(eval $(STM32))
+   ROM_SIZE       ?= 16k
+   RAM_SIZE       ?= 4k
+   STACK_SIZE     ?= 2048  
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f030x6.h 
 endif
 
 ifeq ($(CHIP),stm32f103c8)
@@ -1240,25 +1253,25 @@ $(FIXED_SIZE_STACK_FILE).c: Makefile
 	@echo ' '
    
 # make .elf by linking all objects
-$(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBA) $(LINKERSCRIPT)
+$(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
 	@echo 'Linking ELF target: $(ELF)'
 	$(LINKER) -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS)
 	@echo ' '   
     
 # How to make an .exe executable by linking all objects
-$(EXE): $(OBJECTS) 
+$(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
 	@echo 'Linking EXE target: $(EXE)'
 	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
 	@echo ' '  
       
 # How to make an .dll dynamic link library by linking all objects
-$(DLL): $(OBJECTS) 
+$(DLL): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
 	@echo 'Linking DLL target: $(DLL)'
 	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
 	@echo ' '  
       
 # How to make a .pyd python extension by linking all objects
-$(PYD): $(OBJECTS) 
+$(PYD): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
 	@echo 'Linking PYD target: $(PYD)'
 	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(PYTHON_DLLS)
 	@echo ' '  
@@ -1270,7 +1283,7 @@ $(PYD): $(OBJECTS)
    #=========================================================================
 
 # How to make an .elfx file by linking all objects with a fixed (dummy) stack
-$(ELFX): $(addprefix ./,$(OBJECTS)) $(LIBA) $(FIXED_SIZE_STACK_FILE).o $(LINKERSCRIPT)
+$(ELFX): $(addprefix ./,$(OBJECTS)) $(LIBS) $(FIXED_SIZE_STACK_FILE).o $(LINKERSCRIPT)
 	@echo 'Linking ELFX target: $(ELFX)'
 	$(LINKER) -o $@ $(OBJECTS) $(FIXED_SIZE_STACK_FILE).o $(LDFLAGS) $(LIBS)
 	@echo ' '
