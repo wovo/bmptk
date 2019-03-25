@@ -41,7 +41,7 @@ ifeq ($(OS),Windows_NT)
 
    # the ARM toolchain
    #GCC-ARM         ?= C:/SysGCC/arm-eabi
-   GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/8 2018-q4-major
+   GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/7 2017-q4-major
    #GCC-ARM         ?= C:/gcc-arm-none-eabi-4_9-141220
 
    # no alternatives to choose, but maybe a different directory
