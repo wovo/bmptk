@@ -432,15 +432,17 @@ define Windows
    export PATH       := $PREFIX:$(PATH)
    RUN               ?= ./$(EXE)
    RUN_PAUSE         ?= $(PAUSE)
+   DEFINES           += HWLIB_TARGET_Windows
 endef
 
 # assume running native on some Linux
 define Linux      
-   #CHIP              := Linux_Native
-   #PREFIX            := 
-   #RESULTS           += $(EXE)
-   #RUN               ?= sudo ./$(EXE)
-   #RUN_PAUSE         ?= $(PAUSE)
+   CHIP              := Linux_Native
+   PREFIX            := 
+   RESULTS           += $(EXE)
+   RUN               ?= sudo ./$(EXE)
+   RUN_PAUSE         ?= $(PAUSE)
+   DEFINES           += HWLIB_TARGET_Linux
 endef   
 
 # running native
