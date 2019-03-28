@@ -388,9 +388,6 @@ define Hosted
    HAS_FILESYSTEM    ?= 1
    HEAP              ?= NATIVE
    STACK_SIZE        ?= 1   
-   ifeq ($(OS),Windows_NT)
-#      ALL_LIBRARIES     += -lgdi32
-   endif
 endef
 
 define Embedded 
@@ -432,28 +429,30 @@ define Windows
    export PATH       := $PREFIX:$(PATH)
    RUN               ?= ./$(EXE)
    RUN_PAUSE         ?= $(PAUSE)
-   DEFINES           += HWLIB_TARGET_Windows
+   DEFINES           += -DHWLIB_TARGET_Windows   
 endef
 
-# assume running native on some Linux
+# running native on some Linux
 define Linux      
    CHIP              := Linux_Native
    PREFIX            := 
    RESULTS           += $(EXE)
    RUN               ?= sudo ./$(EXE)
    RUN_PAUSE         ?= $(PAUSE)
-   DEFINES           += HWLIB_TARGET_Linux
+   DEFINES           += -DHWLIB_TARGET_Linux
 endef   
 
-# running native
-define Native
-   $(eval $(Hosted))
-   ifeq ($(OS),Windows_NT)   
+ifeq ($(OS),Windows_NT)   
+   define Native
+      $(eval $(Hosted))
       $(eval $(Windows))
-   else
+   endef
+else 
+   define Native
+      $(eval $(Hosted))
       $(eval $(Linux))
-   endif  
-endef
+   endef  
+endif 
 
 ifeq ($(TARGET),native)
    $(eval $(Native)) 
