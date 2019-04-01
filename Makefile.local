@@ -83,7 +83,11 @@ else
    SERIAL_PORT_DUE      := /dev/ttyACM0
    SERIAL_PORT_UNO      := /dev/ttyUSB0
 
-   SERIAL_PORT          := $(SERIAL_PORT_UNO)
+   ifeq ($(TARGET),arduino_due)
+      SERIAL_PORT          := $(SERIAL_PORT_DUE)
+   else
+      SERIAL_PORT          := $(SERIAL_PORT_UNO)
+   endif
    SERIAL_BAUDRATE      ?= 38400
    CONSOLE_BAUDRATE     ?= 38400 
 

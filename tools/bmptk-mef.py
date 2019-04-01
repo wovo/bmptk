@@ -42,7 +42,8 @@ def remove( dir, file ):
 class projectdir:
    "a single project directory"
 
-   def __init__( self, path, subdir, files ):
+   def __init__( self, target, path, subdir, files ):
+      self.target = target
       self.path = path
       self.subdir = subdir
       self.files = files   
@@ -58,11 +59,11 @@ class projectdir:
    def make_codelite( self, codelite, workspace ):
       file_from_text(
          os.path.join( self.path, self.subdir, codelite ),
-         codelite_project_file( self.name, self.main, self.files )
+         codelite_project_file( self.name, self.main, self.files, self.target )
       );
       if 0: file_from_text(
          os.path.join( self.path, self.subdir, workspace ),
-         codelite_workspace_file( [ self.name ], codelite, 1 )
+         codelite_workspace_file( [ self.name ], codelite, 1, self.target )
       );         
       
    def make_files( self, codelite, workspace ):
@@ -109,10 +110,13 @@ def arguments_parser():
       '(identified by the presence of a makefile). '
    )       
    parser.add_argument(
+      '-os',      
+      help = 'the OS: windows or linux' )
+   parser.add_argument(
       '-root', 
       default = '.',      
       help = 'the directory that contains the subdirectory projects. '
-             'default: the current direcory.' )
+             'default: the current directory.' )
    parser.add_argument(
       '-codelite_project', 
       default = '_codelite.project',      
@@ -133,9 +137,10 @@ def entries( path ):
       return []         
 
 def create_files(  
+   target,
    root, 
    codelite_project, 
-   codelite_workspace 
+   codelite_workspace
 ):
    shutil.rmtree( os.path.join( "", ".clang" ), ignore_errors = True )  
    shutil.rmtree( os.path.join( "", ".codelite" ), ignore_errors = True )  
@@ -145,7 +150,7 @@ def create_files(
       files = entries( os.path.join( root, subdir ) )
       # print( root, subdir, files )
       if files:
-         projects.append( projectdir( root, subdir, files ) )
+         projects.append( projectdir( target, root, subdir, files ) )
          
    names = []
    for project in projects:
@@ -155,13 +160,14 @@ def create_files(
          names.append( project.name )
    file_from_text(
       os.path.join( root, codelite_workspace ),
-         codelite_workspace_file( names, codelite_project, 0 )
+         codelite_workspace_file( names, codelite_project, 0, target )
       );              
 
 def run():
    parser = arguments_parser()
    results = parser.parse_args()
    create_files(  
+	  results.os,
       results.root, 
       results.codelite_project,
       results.codelite_workspace
@@ -183,7 +189,7 @@ def has_makefile( list ):
          return 1
    return 0   
 
-def codelite_project_file( name, main, files ):
+def codelite_project_file( name, main, files, target ):
    print( files )
    if has_makefile( files ):
       print( "bmptk" )
@@ -191,6 +197,11 @@ def codelite_project_file( name, main, files ):
    else:
       s = codelite_project_template_mingw()      
    s = s.replace( "%%MAIN%%", main ).replace( "%%NAME%%", name )
+   if target == "windows":
+      replacement = 'Command="bmptk-make" CommandArguments="run"'
+   else:		 
+      replacement = 'Command="gnome-terminal" CommandArguments="-- bash -c \'sudo make run\'"'
+   s = s.replace( "%%RUN%%", replacement )   
    for file in files:
       if( add_to_edit_files( file ) ):
          # print( file )
@@ -251,7 +262,7 @@ def codelite_project_template_bmptk():
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="bmptk-make" CommandArguments="run" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" %%RUN%% UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -289,7 +300,7 @@ def codelite_project_template_bmptk():
       </Compiler>
       <Linker Options="-O2" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Release" Command="bmptk-make" CommandArguments="run" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Release" %%RUN%% UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -442,12 +453,10 @@ def codelite_project_template_mingw():
 
 # =========================================================================== 
 
-def codelite_workspace_file( names, file, local ):
+def codelite_workspace_file( names, file, local, target ):
    list = ""
    for name in names:
       p = codelite_workspace_project_template()
-      if local:
-         p = p.replace( "%%NAME%%/", "" )
       list += p.replace( "%%NAME%%", name ).replace( "%%FILE%%", file )
    s = codelite_workspace_template().replace( "%%PROJECTS%%", list )      
    return s.replace( "\n\n", "\n" )

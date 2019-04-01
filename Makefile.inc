@@ -101,6 +101,7 @@ ifeq ($(OS),Windows_NT)
    #PYTHON_LOCATION  := C:\Program Files (x86)\Python
    INCLUDES         += -I$(PYTHON_LOCATION)\include
    PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python36.dll"
+   
 else
 
    # linux
@@ -1059,9 +1060,16 @@ endif
 # 
 #============================================================================
 
+ifneq ("$(wildcard $(Makefile))","")
+   MAKEFILE    := Makefile
+endif
+ifneq ("$(wildcard $(makefile))","")
+   MAKFILE     := makefile
+endif
+
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) $(MAKEFILE)
 $(OBJECTS): $(DEPENDENCIES)
 
 
@@ -1102,7 +1110,7 @@ COMMON        += $(DEFINES)
 AS_FLAGS      := $(COMMON) $(AS_LANGUAGE)
 C_FLAGS       := $(COMMON) $(C_LANGUAGE)
 CPP_FLAGS     := $(COMMON) $(CPP_LANGUAGE)
-LN_FLAGS      := $(COMMON) -lgcc
+LN_FLAGS      := $(COMMON) -lgcc 
 
 # add C++-specific flags
 CPP_FLAGS     += $(CPP_RTTI) 
@@ -1263,7 +1271,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: Makefile
+$(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
@@ -1275,9 +1283,9 @@ $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
 	@echo ' '   
     
 # How to make an .exe executable by linking all objects
-$(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
+$(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
 	@echo 'Linking EXE target: $(EXE)'
-	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
+	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(LINKER_FLAGS)
 	@echo ' '  
       
 # How to make an .dll dynamic link library by linking all objects
@@ -1395,8 +1403,13 @@ notab: $(NOTABFAKES)
 $(sort $(NOTABFAKES)):
 	@$(PYTHON) $(BMPTK)/tools/bmptk-notab.py $(@:notab-%=%)
    
+ifeq ($(OS),Windows_NT)
+   OSNAME ?= windows
+else
+   OSNAME ?= linux
+endif   
 codelite_workspace:
-	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py  
+	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py -os $(OSNAME)
    
 # Cleanup
 CLEAN += -rf doxygen_docs
