@@ -135,6 +135,9 @@ endif
 #============================================================================
 
 # some targets can be build are not C/C++/asm projects
+ifeq ($(MAKECMDGOALS),renumber)
+   NOPROJECT = 1
+endif
 ifeq ($(MAKECMDGOALS),notab)
    NOPROJECT = 1
 endif
@@ -1368,7 +1371,7 @@ $(SREC): $(ELF)
 # 
 #============================================================================
 
-.PHONY: $(PROJECT) all build new fresh run clean doxygen mef notab
+.PHONY: $(PROJECT) all build new fresh run clean doxygen mef renumber notab
 
 .DEFAULT_GOAL := build
 
@@ -1408,8 +1411,12 @@ ifeq ($(OS),Windows_NT)
 else
    OSNAME ?= linux
 endif   
+
 codelite_workspace:
 	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py -os $(OSNAME)
+   
+renumber:
+	$(PYTHON) $(BMPTK)/tools/bmptk-renumber.py
    
 # Cleanup
 CLEAN += -rf doxygen_docs
