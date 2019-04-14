@@ -442,7 +442,7 @@ define Linux
    PREFIX            := 
    RESULTS           += $(EXE)
    RUN               ?= sudo ./$(EXE)
-   RUN_PAUSE         ?= $(PAUSE)
+   RUN_PAUSE         ?= read -n 1 -s -r -p "Press any key to continue"
    DEFINES           += -DHWLIB_TARGET_Linux
 endef   
 
@@ -1394,7 +1394,7 @@ run: $(PROJECT)
 	$(RUN_PRE)   
 	-$(RUN)
 	$(RUN_TERMINAL)
-	$(RUN_PAUSE)
+	@$(RUN_PAUSE)
     
 doxygen: doxyfile
 	Doxygen
