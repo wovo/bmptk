@@ -114,14 +114,14 @@ else
    CHECK_PORT    ?= $(BMPTK)/tools/check_serial_port/check_serial_port
    CHECK_DRIVE   ?= $(BMPTK)/tools/check_drive_name/check_drive_name
    # COPY_TO_DRIVE ?= $(BMPTK)/tools/copy_to_drive/copy_to_drive
-   LPC21ISP      ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
+   LPC21ISP      ?= sudo $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    
    # installed separately
-   AVRDUDE       ?= avrdude
+   AVRDUDE       ?= sudo avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
-   BOSSAC        ?= bossac
+   BOSSAC        ?= sudo bossac
 
-   DUE_BOOTMODE  ?= stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
+   DUE_BOOTMODE  ?= sudo stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
    
 endif
 
