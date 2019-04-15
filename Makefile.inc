@@ -442,7 +442,7 @@ define Linux
    PREFIX            := 
    RESULTS           += $(EXE)
    RUN               ?= sudo ./$(EXE)
-   RUN_PAUSE         ?= read -n 1 -s -r -p "Press any key to continue"
+   RUN_PAUSE         ?= read -p "Press return to continue" x
    DEFINES           += -DHWLIB_TARGET_Linux
 endef   
 
