@@ -37,9 +37,6 @@ ifeq ($(OS),Windows_NT)
    else
       WPF32 := C:/Program Files (x86)
    endif
-   SUDO ?= 
-else
-   SUDO ?= sudo
 endif
 
 ifneq ($(wildcard $(BMPTK)/Makefile.custom),)
@@ -104,7 +101,6 @@ ifeq ($(OS),Windows_NT)
    #PYTHON_LOCATION  := C:\Program Files (x86)\Python
    INCLUDES         += -I$(PYTHON_LOCATION)\include
    PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python36.dll"
-   
 else
 
    # linux
@@ -117,14 +113,14 @@ else
    CHECK_PORT    ?= $(BMPTK)/tools/check_serial_port/check_serial_port
    CHECK_DRIVE   ?= $(BMPTK)/tools/check_drive_name/check_drive_name
    # COPY_TO_DRIVE ?= $(BMPTK)/tools/copy_to_drive/copy_to_drive
-   LPC21ISP      ?= $(SUDO) $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
+   LPC21ISP      ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    
    # installed separately
-   AVRDUDE       ?= $(SUDO) davrdude
+   AVRDUDE       ?= avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
-   BOSSAC        ?= $(SUDO) bossac
+   BOSSAC        ?= bossac
 
-   DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
+   DUE_BOOTMODE  ?= stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
    
 endif
 
@@ -138,10 +134,22 @@ endif
 #============================================================================
 
 # some targets can be build are not C/C++/asm projects
-ifeq ($(MAKECMDGOALS),renumber)
+ifeq ($(MAKECMDGOALS),notab)
    NOPROJECT = 1
 endif
-ifeq ($(MAKECMDGOALS),notab)
+ifeq ($(MAKECMDGOALS),renumber-subdirs)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),build-subdirs)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),clean-subdirs)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),notab-subdirs)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),renumber)
    NOPROJECT = 1
 endif
 ifeq ($(MAKECMDGOALS),clean)
@@ -271,10 +279,6 @@ ifeq ($(TARGET),arduino_uno)
    XTAL        ?= 12000   
 endif
 
-ifeq ($(TARGET),my_first_dev-board)
-   CHIP        ?= atmega328
-   XTAL        ?= 12000   
-endif
 ifeq ($(TARGET),arduino_nano)
    CHIP        ?= atmega328
    XTAL        ?= 12000   
@@ -399,6 +403,9 @@ define Hosted
    HAS_FILESYSTEM    ?= 1
    HEAP              ?= NATIVE
    STACK_SIZE        ?= 1   
+   ifeq ($(OS),Windows_NT)
+#      ALL_LIBRARIES     += -lgdi32
+   endif
 endef
 
 define Embedded 
@@ -440,30 +447,26 @@ define Windows
    export PATH       := $PREFIX:$(PATH)
    RUN               ?= ./$(EXE)
    RUN_PAUSE         ?= $(PAUSE)
-   DEFINES           += -DHWLIB_TARGET_Windows   
 endef
 
-# running native on some Linux
+# assume running native on some Linux
 define Linux      
-   CHIP              := Linux_Native
-   PREFIX            := 
-   RESULTS           += $(EXE)
-   RUN               ?= sudo ./$(EXE)
-   RUN_PAUSE         ?= read -p "Press return to continue" x
-   DEFINES           += -DHWLIB_TARGET_Linux
+   #CHIP              := Linux_Native
+   #PREFIX            := 
+   #RESULTS           += $(EXE)
+   #RUN               ?= sudo ./$(EXE)
+   #RUN_PAUSE         ?= $(PAUSE)
 endef   
 
-ifeq ($(OS),Windows_NT)   
-   define Native
-      $(eval $(Hosted))
+# running native
+define Native
+   $(eval $(Hosted))
+   ifeq ($(OS),Windows_NT)   
       $(eval $(Windows))
-   endef
-else 
-   define Native
-      $(eval $(Hosted))
+   else
       $(eval $(Linux))
-   endef  
-endif 
+   endif  
+endef
 
 ifeq ($(TARGET),native)
    $(eval $(Native)) 
@@ -1042,7 +1045,6 @@ DEFINES   += -DBMPTK_XTAL=$(XTAL)
 DEFINES   += -DBMPTK_BAUDRATE=$(CONSOLE_BAUDRATE) 
 DEFINES   += -DHWLIB_BAUDRATE=$(CONSOLE_BAUDRATE)
 DEFINES   += -DGODAFOSS_BAUDRATE=$(CONSOLE_BAUDRATE)
-DEFINES   += -DGF_BAUDRATE=$(CONSOLE_BAUDRATE)
 DEFINES   += -DBMPTK_VERSION=$(VERSION) 
 
 ifeq ($(HOSTED),1)
@@ -1070,16 +1072,9 @@ endif
 # 
 #============================================================================
 
-ifneq ("$(wildcard $(Makefile))","")
-   MAKEFILE    := Makefile
-endif
-ifneq ("$(wildcard $(makefile))","")
-   MAKFILE     := makefile
-endif
-
 # Assume compilation depends on 
 # all headers, the LN_SOURCE, and the makefile
-DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) $(MAKEFILE)
+DEPENDENCIES    += $(HEADERS) $(LN_SOURCE) Makefile
 $(OBJECTS): $(DEPENDENCIES)
 
 
@@ -1120,7 +1115,7 @@ COMMON        += $(DEFINES)
 AS_FLAGS      := $(COMMON) $(AS_LANGUAGE)
 C_FLAGS       := $(COMMON) $(C_LANGUAGE)
 CPP_FLAGS     := $(COMMON) $(CPP_LANGUAGE)
-LN_FLAGS      := $(COMMON) -lgcc 
+LN_FLAGS      := $(COMMON) -lgcc
 
 # add C++-specific flags
 CPP_FLAGS     += $(CPP_RTTI) 
@@ -1281,7 +1276,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
    #=========================================================================
 
 # How to create a fixed size stack 
-$(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
+$(FIXED_SIZE_STACK_FILE).c: Makefile
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
@@ -1289,13 +1284,13 @@ $(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
 # make .elf by linking all objects
 $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
 	@echo 'Linking ELF target: $(ELF)'
-	$(LINKER) -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS) $(LINKER_FLAGS)
+	$(LINKER) -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS)
 	@echo ' '   
     
 # How to make an .exe executable by linking all objects
-$(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
+$(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
 	@echo 'Linking EXE target: $(EXE)'
-	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(LINKER_FLAGS)
+	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
 	@echo ' '  
       
 # How to make an .dll dynamic link library by linking all objects
@@ -1378,7 +1373,7 @@ $(SREC): $(ELF)
 # 
 #============================================================================
 
-.PHONY: $(PROJECT) all build new fresh run clean doxygen mef renumber notab
+.PHONY: $(PROJECT) all build new fresh run clean doxygen mef notab
 
 .DEFAULT_GOAL := build
 
@@ -1412,18 +1407,39 @@ NOTABFAKES = $(NOTABFILES:%=notab-%)
 notab: $(NOTABFAKES)
 $(sort $(NOTABFAKES)):
 	@$(PYTHON) $(BMPTK)/tools/bmptk-notab.py $(@:notab-%=%)
-   
-ifeq ($(OS),Windows_NT)
-   OSNAME ?= windows
-else
-   OSNAME ?= linux
-endif   
+
+renumber:
+	@$(PYTHON) $(BMPTK)/tools/bmptk-renumber.py 
+
+SUBDIRS   = $(wildcard */makefile)
+SUBDIRS  := $(subst /makefile,,$(SUBDIRS))
+
+build-SUBDIRS = $(SUBDIRS:%=renumber-%)
+.PHONY: renumber-subdirs $(renumber-SUBDIRS)
+renumber-subdirs: $(renumber-SUBDIRS)
+$(renumber-SUBDIRS):
+	$(MAKE) -C $(@:renumber-%=%) renumber
+
+build-SUBDIRS = $(SUBDIRS:%=build-%)
+.PHONY: build-subdirs $(build-SUBDIRS)
+build-subdirs: $(build-SUBDIRS)
+$(build-SUBDIRS):
+	$(MAKE) -C $(@:build-%=%) build
+
+clean-SUBDIRS = $(SUBDIRS:%=clean-%)
+.PHONY: clean-subdirs $(clean-SUBDIRS)
+clean-subdirs: $(clean-SUBDIRS)
+$(clean-SUBDIRS):
+	$(MAKE) -C $(@:clean-%=%) clean
+
+notab-SUBDIRS = $(SUBDIRS:%=notab-%)
+.PHONY: notab-subdirs $(notab-SUBDIRS)
+notab-subdirs: $(notab-SUBDIRS)
+$(notab-SUBDIRS):
+	$(MAKE) -C $(@:notab-%=%) notab
 
 codelite_workspace:
-	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py -os $(OSNAME)
-   
-renumber:
-	$(PYTHON) $(BMPTK)/tools/bmptk-renumber.py
+	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py  
    
 # Cleanup
 CLEAN += -rf doxygen_docs

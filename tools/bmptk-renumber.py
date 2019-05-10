@@ -1,10 +1,14 @@
 import os
 
-def rename( s, n ):
+def denum( a ):
+   s = a[:]
    for char in "0123456789":
-       s = s.replace( char, "" )
-   s = s.replace( "#", ( "##%04d" % ( 10 * n )))
+       s = s.replace( "#" + char, "#" )
+   if a != s: s =denum( s )
    return s
+
+def rename( s, n ):
+   return denum( s ).replace( "#", ( "##%04d" % ( 10 * n )))
    
 def renumber():
    list = os.listdir( "." )
@@ -20,5 +24,6 @@ def renumber():
       if file_name.find( "#" ) > -1:
          new_name = file_name.replace( "##", "#" )
          os.rename( file_name, new_name )
-      
+
+print( "renumbering" )      
 renumber()
