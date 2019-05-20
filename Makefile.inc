@@ -275,6 +275,7 @@ ifeq ($(TARGET),my_first_dev_board)
    CHIP        ?= atmega328
    XTAL        ?= 12000   
 endif
+
 ifeq ($(TARGET),arduino_nano)
    CHIP        ?= atmega328
    XTAL        ?= 12000   
