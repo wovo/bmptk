@@ -120,7 +120,7 @@ else
    LPC21ISP      ?= $(SUDO) $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    
    # installed separately
-   AVRDUDE       ?= $(SUDO) davrdude
+   AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    BOSSAC        ?= $(SUDO) bossac
 
