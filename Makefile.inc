@@ -515,6 +515,7 @@ define Atmega
    # LDFLAGS	       += -T "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\lib\ldscripts\avr5.xn"
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
+   CPP_LANGUAGE    := -std=c++17   
 endef
 
 ifeq ($(CHIP),atmega328)
