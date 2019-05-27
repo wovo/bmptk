@@ -1,3 +1,4 @@
+#include <stddef.h>
 
 namespace std {
 
@@ -11,6 +12,7 @@ struct array {
    constexpr const T * end() const { return _data + N; }
    T & operator[]( size_t i ){ return _data[ i ]; }
    constexpr T operator[]( size_t i ) const { return _data[ i ]; }
+   constexpr size_t size() const { return N; }
 
 };
 
