@@ -120,7 +120,7 @@ else
    LPC21ISP      ?= $(SUDO) $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    
    # installed separately
-   AVRDUDE       ?= $(SUDO) davrdude
+   AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    BOSSAC        ?= $(SUDO) bossac
 
@@ -515,6 +515,7 @@ define Atmega
    # LDFLAGS	       += -T "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\lib\ldscripts\avr5.xn"
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
+   CPP_LANGUAGE    := -std=c++17   
 endef
 
 ifeq ($(CHIP),atmega328)
