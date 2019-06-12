@@ -124,7 +124,7 @@ else
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    BOSSAC        ?= $(SUDO) bossac
 
-   DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
+   DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
    
 endif
 
