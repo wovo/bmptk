@@ -69,6 +69,7 @@ ifeq ($(OS),Windows_NT)
    # distributed with bmptk 
    MAKE          ?= "bmptk-make.exe"
    REMOVE        ?= "$(BMPTK)/tools/bmptk-rm.exe" -f
+   #COPY          ?= "$(BMPTK)/tools/bmptk-cp.exe" -f
    COPY          ?= "$(BMPTK)/tools/bmptk-cp.exe" -f
    IMAGE_SIZES   ?= "$(BMPTK)/tools/image_sizes/image_sizes.exe"
    CHECK_PORT    ?= "$(BMPTK)/tools/check_serial_port/check_serial_port.exe"
@@ -145,6 +146,9 @@ ifeq ($(MAKECMDGOALS),notab)
    NOPROJECT = 1
 endif
 ifeq ($(MAKECMDGOALS),clean)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),uno-bootloader)
    NOPROJECT = 1
 endif
 ifeq ($(MAKECMDGOALS),mef)
@@ -1381,6 +1385,7 @@ $(SREC): $(ELF)
 #============================================================================
 
 .PHONY: $(PROJECT) all build new fresh run clean doxygen mef renumber notab
+.PHONY: uno-bootloader
 
 .DEFAULT_GOAL := build
 
@@ -1391,6 +1396,10 @@ rebuild: clean build
 new:     clean build
 fresh:   clean build
 rerun:   clean build run
+
+uno-bootloader:
+	$(COPY) $(BMPTK)/tools/optiboot_atmega328.hex optiboot_atmega328.hex
+	$(AVRDUDE) -p m328p -C$(AVRDUDEC) -cusbasp -F -e -U flash:w:optiboot_atmega328.hex
 
 # Build the project
 $(PROJECT): $(RESULTS)
