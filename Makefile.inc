@@ -895,6 +895,7 @@ define Atmel_SAM3
    ROM_START      ?= 0x00000000   
    RAM_START      ?= 0x20000000     
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel
+   INCLUDES       += -I$(BMPTK)/targets/cortex/atmel/sam3xa/include
    PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)  
    RUN_PRE        := $(DUE_BOOTMODE)
    # was al gezet?
