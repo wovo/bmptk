@@ -151,6 +151,9 @@ endif
 ifeq ($(MAKECMDGOALS),uno-bootloader)
    NOPROJECT = 1
 endif
+ifeq ($(MAKECMDGOALS),85-bootloader)
+   NOPROJECT = 1
+endif
 ifeq ($(MAKECMDGOALS),mef)
    NOPROJECT = 1
 endif
@@ -520,6 +523,7 @@ define Atmega
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
    CPP_LANGUAGE    := -std=c++17   
+   OBJECTS         += cxa_virtual.o
 endef
 
 ifeq ($(CHIP),atmega328)
@@ -1385,7 +1389,7 @@ $(SREC): $(ELF)
 #============================================================================
 
 .PHONY: $(PROJECT) all build new fresh run clean doxygen mef renumber notab
-.PHONY: uno-bootloader
+.PHONY: uno-bootloader 85-bootloader
 
 .DEFAULT_GOAL := build
 
@@ -1398,8 +1402,12 @@ fresh:   clean build
 rerun:   clean build run
 
 uno-bootloader:
-	$(COPY) $(BMPTK)/tools/optiboot_atmega328.hex optiboot_atmega328.hex
+	$(COPY) $(BMPTK)/tools/bootloaders/optiboot_atmega328.hex optiboot_atmega328.hex
 	$(AVRDUDE) -p m328p -C$(AVRDUDEC) -cusbasp -F -e -U flash:w:optiboot_atmega328.hex
+
+85-bootloader:
+	$(COPY) $(BMPTK)/tools/bootloaders/t85_default.hex t85_default.hex
+	$(AVRDUDE) -p t85 -C$(AVRDUDEC) -cusbasp -F -e -U flash:w:t85_default.hex
 
 # Build the project
 $(PROJECT): $(RESULTS)
