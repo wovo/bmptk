@@ -31,8 +31,8 @@ ifeq ($(OS),Windows_NT)
    # the windows toolchain
    #GCC-WIN         ?= C:/TDM-GCC-64
    #GCC-WIN         ?= $(WPF)/mingw-w64/i686-6.2.0-posix-dwarf-rt_v5-rev1/mingw32
-   GCC-WIN         ?= C:\Program Files\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64
-   #GCC-WIN         ?= C:/MinGW
+   GCC-WIN         ?= C:\Program Files (x86)\mingw-w64\i686-7.3.0-posix-dwarf-rt_v5-rev0\mingw32
+   #GCC-WIN         ?= C:\Program Files\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64
 
    # select the AVR toolchain: Atmel (=default) or Arduino
    GCC-AVR         ?= C:/Program Files/avr-gcc-8.2.0-x64-mingw
