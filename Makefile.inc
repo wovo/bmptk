@@ -407,6 +407,7 @@ define Hosted
    HAS_FILESYSTEM    ?= 1
    HEAP              ?= NATIVE
    STACK_SIZE        ?= 1   
+   CPP_LPTHREAD      ?= -lpthread
 endef
 
 define Embedded 
@@ -522,7 +523,7 @@ define Atmega
    # LDFLAGS	       += -T "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\lib\ldscripts\avr5.xn"
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
-   CPP_LANGUAGE    := -std=c++17   
+   CPP_LANGUAGE    := -std=c++17 -fconcepts  
    OBJECTS         += cxa_virtual.o
 endef
 
@@ -1134,6 +1135,7 @@ CPP_FLAGS     := $(COMMON) $(CPP_LANGUAGE)
 LN_FLAGS      := $(COMMON) -lgcc 
 
 # add C++-specific flags
+CPP_FLAGS     += $(CPP_LPTHREAD) 
 CPP_FLAGS     += $(CPP_RTTI) 
 CPP_FLAGS     += $(CPP_EXCEPTIONS)
 CPP_FLAGS     += $(CPP_THREADSAFE)
