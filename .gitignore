@@ -2,4 +2,5 @@ makefile.custom
 due_bootmode.o
 due_bootmode.o
 Makefile.win
-_pull.bat
+tools/lpc21isp_197/*.o
+tools/lpc21isp_197/lpc21isp_hr_linux.exe
