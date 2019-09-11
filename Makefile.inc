@@ -527,7 +527,11 @@ define Atmega
    # LDFLAGS	       += -T "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\lib\ldscripts\avr5.xn"
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
-   CPP_LANGUAGE    := -std=c++17 -fconcepts  
+   ifeq ($(OS),Windows_NT)   
+      CPP_LANGUAGE    := -std=c++17 -fconcepts  
+   else
+      CPP_LANGUAGE    := -std=c++17  
+   endif
    OBJECTS         += cxa_virtual.o
 endef
 
