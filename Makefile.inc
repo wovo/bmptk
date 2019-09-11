@@ -1422,7 +1422,7 @@ $(PROJECT): $(RESULTS)
 PORT_CHECK :=
 
 # Run (= download and start) the project
-run: $(PROJECT)
+run: $(PROJECT) $(LPC21ISP)
 	$(PORT_CHECK)
 	$(RUN_PRE)   
 	-$(RUN)
