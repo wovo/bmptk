@@ -118,7 +118,8 @@ else
    CHECK_PORT    ?= $(BMPTK)/tools/check_serial_port/check_serial_port
    CHECK_DRIVE   ?= $(BMPTK)/tools/check_drive_name/check_drive_name
    # COPY_TO_DRIVE ?= $(BMPTK)/tools/copy_to_drive/copy_to_drive
-   LPC21ISP      ?= $(SUDO) $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
+   LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
+   LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
    
    # installed separately
    AVRDUDE       ?= $(SUDO) avrdude
@@ -1422,7 +1423,7 @@ $(PROJECT): $(RESULTS)
 PORT_CHECK :=
 
 # Run (= download and start) the project
-run: $(PROJECT) $(LPC21ISP)
+run: $(PROJECT) $(LPC21ISP_EXE)
 	$(PORT_CHECK)
 	$(RUN_PRE)   
 	-$(RUN)
