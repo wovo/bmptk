@@ -129,6 +129,9 @@ else
    
 endif
 
+$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
+	cd $(BMPTK)/tools/lpc21isp_197; make
+
 
 #============================================================================
 #
