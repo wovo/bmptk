@@ -107,8 +107,7 @@ ifeq ($(OS),Windows_NT)
    PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python36.dll"
    
 else
-
-   # linux
+   WSL := $(strip $(shell grep -qE "(Microsoft|WSL)" /proc/version @> /dev/null && printf true))
    MAKE          ?= make
    REMOVE        ?= rm -f
    COPY          ?= cp
@@ -118,16 +117,23 @@ else
    CHECK_PORT    ?= $(BMPTK)/tools/check_serial_port/check_serial_port
    CHECK_DRIVE   ?= $(BMPTK)/tools/check_drive_name/check_drive_name
    # COPY_TO_DRIVE ?= $(BMPTK)/tools/copy_to_drive/copy_to_drive
-   LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
-   LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
    
    # installed separately
    AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
-   BOSSAC        ?= $(SUDO) bossac
 
-   DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
-   
+   # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
+   ifeq ($(WSL),true)
+       BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
+       DUE_BOOTMODE  ?= cmd.exe /c @mode $(SERIAL_PORT):1200
+   	   STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
+       LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
+   else
+       BOSSAC        ?= $(SUDO) bossac
+       DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
+       LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
+       LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
+   endif
 endif
 
 $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
