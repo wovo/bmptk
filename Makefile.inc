@@ -797,10 +797,19 @@ ifeq ($(CHIP),stm32f051r8)
    DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f051x8.h 
 endif
 
-ifeq ($(CHIP),stm32f030k6)
+ifeq ($(CHIP),stm32f030f4)
    $(eval $(Cortex-M0))
    $(eval $(STM32))
    ROM_SIZE       ?= 16k
+   RAM_SIZE       ?= 4k
+   STACK_SIZE     ?= 2048  
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f030x4.h 
+endif
+
+ifeq ($(CHIP),stm32f030k6)
+   $(eval $(Cortex-M0))
+   $(eval $(STM32))
+   ROM_SIZE       ?= 32k
    RAM_SIZE       ?= 4k
    STACK_SIZE     ?= 2048  
    DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f030x6.h 
