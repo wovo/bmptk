@@ -149,6 +149,9 @@ $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 #============================================================================
 
 # some targets can be build are not C/C++/asm projects
+ifeq ($(MAKECMDGOALS),terminal)
+   NOPROJECT = 1
+endif   
 ifeq ($(MAKECMDGOALS),renumber)
    NOPROJECT = 1
 endif
@@ -1235,6 +1238,11 @@ build: version
 version:
 	@echo 'Show toolchain version at $(CC)'
 	@$(CC) --version   
+    
+.PHONY: terminal
+terminal:
+	$(RUN_TERMINAL)
+    
    
    #=========================================================================
    #
