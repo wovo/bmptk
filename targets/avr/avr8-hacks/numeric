@@ -1,0 +1,15 @@
+// AVR has no <numeric>
+
+namespace std {
+
+template <typename Number>
+Number gcd(Number u, Number v) {
+    while (v != 0) {
+        Number r = u % v;
+        u = v;
+        v = r;
+    }
+    return u;
+}
+
+}; // namespace std

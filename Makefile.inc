@@ -7,7 +7,7 @@
 #
 # This file is meant to be included by a project-specific makefile.
 #
-# Copyright (c) 2012 .. 2017 Wouter van Ooijen (wouter@voti.nl)
+# Copyright (c) 2012 .. 2019 Wouter van Ooijen (wouter@voti.nl)
 # 
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at 
@@ -1457,6 +1457,13 @@ run: $(PROJECT) $(LPC21ISP_EXE)
 	$(RUN_TERMINAL)
 	$(RUN_PAUSE)
     
+# Run (= download and start) the project
+flash: $(PROJECT)
+	$(PORT_CHECK)
+	$(RUN_PRE)   
+	-$(RUN)
+	$(RUN_PAUSE)
+   
 doxygen: doxyfile
 	Doxygen
    
