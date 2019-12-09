@@ -558,7 +558,7 @@ ifeq ($(CHIP),atmega328)
    RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
-   LINKERSCRIPT := 
+   LINKERSCRIPT   := 
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000 
 endif
 
