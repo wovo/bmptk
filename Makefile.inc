@@ -15,7 +15,6 @@
 # 
 #############################################################################
 
-
 # This string must contain neither spaces (problems on windows8)
 # nor periods (problems on xtensa)
 VERSION := V04_00_work_in_progress_2017_01_23
@@ -47,7 +46,6 @@ ifneq ($(wildcard $(BMPTK)/Makefile.custom),)
 else   
    include $(BMPTK)/Makefile.local
 endif
-
 
 #============================================================================
 #
@@ -406,10 +404,10 @@ define All_Targets
    ALL_OPTIMIZATION  ?= -Os
    
    # cpp: don't use features that are useless and/or too expensive
-   CPP_RTTI          ?= -fno-rtti 
-   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
-   CPP_THREADSAFE    ?= -fno-threadsafe-statics 
-   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr   
+#   CPP_RTTI          ?= -fno-rtti 
+#   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
+#   CPP_THREADSAFE    ?= -fno-threadsafe-statics 
+#   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr   
    
 endef
 
@@ -537,7 +535,7 @@ define Atmega
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
    ifeq ($(OS),Windows_NT)   
-      CPP_LANGUAGE    := -std=c++17 -fconcepts  
+      CPP_LANGUAGE    := -std=c++17 -fconcepts
    else
       CPP_LANGUAGE    := -std=c++17  
    endif

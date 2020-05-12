@@ -61,6 +61,10 @@ class projectdir:
          os.path.join( self.path, self.subdir, codelite ),
          codelite_project_file( self.name, self.main, self.files, self.target )
       );
+      file_from_text(
+         os.path.join( self.path, self.subdir, "_run.bat" ),
+         "bmptk-make run\n"
+      );
       if 0: file_from_text(
          os.path.join( self.path, self.subdir, workspace ),
          codelite_workspace_file( [ self.name ], codelite, 1, self.target )
@@ -198,7 +202,7 @@ def codelite_project_file( name, main, files, target ):
       s = codelite_project_template_mingw()      
    s = s.replace( "%%MAIN%%", main ).replace( "%%NAME%%", name )
    if target == "windows":
-      replacement = 'Command="bmptk-make" CommandArguments="run"'
+      replacement = 'Command="_run.bat" CommandArguments="run"'
    else:		 
       replacement = 'Command="gnome-terminal" CommandArguments="-- bash -c \'sudo make run\'"'
    s = s.replace( "%%RUN%%", replacement )   
@@ -262,7 +266,7 @@ def codelite_project_template_bmptk():
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" %%RUN%% UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" %%RUN%% UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -300,7 +304,7 @@ def codelite_project_template_bmptk():
       </Compiler>
       <Linker Options="-O2" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Release" %%RUN%% UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Release" %%RUN%% UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
