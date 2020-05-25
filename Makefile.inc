@@ -491,6 +491,8 @@ else
    endef  
 endif 
 
+GPP ?= g++
+
 ifeq ($(TARGET),native)
    $(eval $(Native)) 
 endif
@@ -1244,7 +1246,7 @@ endif
 .PHONY: version
 build: version
 version:
-	@echo 'Show toolchain version at $(CCP)'
+	@echo 'Show toolchain version at $(CPP)'
 	@echo $(CPP_FLAGS) > _cpp_flags	
 	@$(CPP) @_cpp_flags --version   
     
