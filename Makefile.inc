@@ -445,7 +445,9 @@ endef
 
    #=========================================================================
    #
-   # running native
+   # running native$(warning $(GPP-LINUX))
+
+
    # 
    #=========================================================================
    
@@ -461,6 +463,8 @@ define Windows
    RUN               ?= ./$(EXE)
    RUN_PAUSE         ?= $(PAUSE)
    DEFINES           += -DHWLIB_TARGET_Windows   
+   GPP-WINDOWS       ?= g++
+   GPP               ?= $(GPP-WINDOWS)
 endef
 
 # running native on some Linux
@@ -471,6 +475,8 @@ define Linux
    RUN               ?= sudo ./$(EXE)
    RUN_PAUSE         ?= read -p "Press return to continue" x
    DEFINES           += -DHWLIB_TARGET_Linux
+   GPP-LINUX         ?= g++
+   GPP               ?= $(GPP-LINUX)
 endef   
 
 ifeq ($(OS),Windows_NT)   
@@ -633,7 +639,9 @@ define ARM_V7
    LDFLAGS    += -nodefaultlibs
    CORE_FLAGS      += -nostartfiles 
    LDFLAGS         += -nostartfiles   
-   RESULTS         += $(HEX) 
+   RESULTS  $(warning $(GPP-LINUX))
+
+       += $(HEX) 
 endef
 
 define LPC_ARM_V7
@@ -1034,7 +1042,7 @@ INCLUDES  += $(foreach x, $(SEARCH), -I$(x))
 #============================================================================
 
 CC          := "$(PREFIX)gcc"
-CPP       := "$(PREFIX)g++"
+CPP         := "$(PREFIX)$(GPP)"
 AS          := "$(PREFIX)gcc"
 OBJCOPY     := "$(PREFIX)objcopy"
 OBJDUMP     := "$(PREFIX)objdump"
@@ -1045,7 +1053,7 @@ FILT        := "$(PREFIX)c++filt"
 ifeq ($(LANGUAGE),C)
    LINKER    := "$(PREFIX)gcc"
 else
-   LINKER    := "$(PREFIX)g++"
+   LINKER    := "$(PREFIX)$(GPP)"
 endif
 
 
@@ -1186,15 +1194,17 @@ LN_FLAGS      += $(TARGET_LN_FLAGS)  $(PROJECT_LN_FLAGS)
 #============================================================================
 
 ifeq ($(LANGUAGE),C)
-   LINKER  := $(CC)   $(LN_FLAGS)
+   LINKER  := $(CC)   
+# $(LN_FLAGS)
    AS      := $(AS)   $(AS_FLAGS)
    CC      := $(CC)   $(C_FLAGS)
    CPP     := 
 else
-   LINKER  := $(CPP)  $(LN_FLAGS)
+   LINKER  := $(CPP)  
+# $(LN_FLAGS)
    AS      := $(AS)   $(AS_FLAGS)
    CC      := $(CC)   $(C_FLAGS)
-   CPP     := $(CPP)  $(CPP_FLAGS)
+#   CPP     := $(CPP)  $(CPP_FLAGS)
 endif   
 
 
@@ -1234,8 +1244,9 @@ endif
 .PHONY: version
 build: version
 version:
-	@echo 'Show toolchain version at $(CC)'
-	@$(CPP) --version   
+	@echo 'Show toolchain version at $(CCP)'
+	@echo $(CPP_FLAGS) > _cpp_flags	
+	@$(CPP) @_cpp_flags --version   
     
 .PHONY: terminal
 terminal:
@@ -1267,13 +1278,15 @@ terminal:
 # How to make assembler listing from C++ (.cpp) 
 %.lst: %.cpp 
 	@echo 'Compiling C++ file (.cpp) to asm listing: $<'
-	$(CPP) -c -S -o $(patsubst %.o,%.lst,$@) $<
+	@echo $(CPP_FLAGS) > _cpp_flags		
+	$(CPP) @_cpp_flags -c -S -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make assembler listing from C++ (.cc)  
 %.lst: %.cc 
 	@echo 'Compiling C++ file (.cc) to asm listing: $<'
-	$(CPP) -c -S -o $(patsubst %.o,%.lst,$@) $<
+	@echo $(CPP_FLAGS) > _cpp_flags		
+	$(CPP) @_cpp_flags -c -S -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make an object file from an assembler file
@@ -1291,13 +1304,15 @@ terminal:
 # How to make an object file from a C++ file (.cpp)
 %.o: %.cpp 
 	@echo 'Compiling C++ (.cpp) file: $<'
-	$(CPP) -c -o $@ $< 
+	@echo $(CPP_FLAGS) > _cpp_flags
+	$(CPP) @_cpp_flags -c -o $@ $< 
 	@echo ' '
     
 # How to make an object file from a C++ file (.cc)
 %.o: %.cc 
 	@echo 'Compiling C++ (.cc) file: $<'
-	$(CPP) -c -o $@ $< 
+	@echo $(CPP_FLAGS) > _cpp_flags	
+	$(CPP) @_cpp_flags -c -o $@ $< 
 	@echo ' '
     
    #=========================================================================
@@ -1332,25 +1347,30 @@ $(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
 # make .elf by linking all objects
 $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
 	@echo 'Linking ELF target: $(ELF)'
-	$(LINKER) -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS) $(LINKER_FLAGS)
+	@echo $(LN_FLAGS) $(LINKER_FLAGS) > _linker_flags		
+	$(LINKER) @_linker_flags -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS) 
 	@echo ' '   
     
 # How to make an .exe executable by linking all objects
 $(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
 	@echo 'Linking EXE target: $(EXE)'
-	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(LINKER_FLAGS)
+	@echo $(LN_FLAGS) > _linker_flags		
+	@echo $(LINKER_FLAGS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) > _linker_libs		
+	$(LINKER) @_linker_flags -o $@ $(OBJECTS) @_linker_libs 
 	@echo ' '  
       
 # How to make an .dll dynamic link library by linking all objects
 $(DLL): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
 	@echo 'Linking DLL target: $(DLL)'
-	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
+	@echo $(LN_FLAGS) > _linker_flags		
+	$(LINKER) @_linker_flags -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
 	@echo ' '  
       
 # How to make a .pyd python extension by linking all objects
 $(PYD): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
 	@echo 'Linking PYD target: $(PYD)'
-	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(PYTHON_DLLS)
+	@echo $(LN_FLAGS) > _linker_flags		
+	$(LINKER) @_linker_flags -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(PYTHON_DLLS)
 	@echo ' '  
       
    #=========================================================================
@@ -1485,8 +1505,10 @@ renumber:
 	$(PYTHON) $(BMPTK)/tools/bmptk-renumber.py
    
 # Cleanup
-CLEAN += -rf doxygen_docs
-CLEAN += -rf .settings temp .cproject .project
-CLEAN += -rf .clang .codelite __codelite.workspace
+CLEAN += doxygen_docs
+CLEAN += .settings temp .cproject .project
+CLEAN += .clang .codelite __codelite.workspace
+CLEAN += _cpp_flags _linker_flags _linker_libs
 clean:
 	$(REMOVE) $(CLEAN)
+	@echo ' '  	
