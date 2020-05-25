@@ -17,7 +17,7 @@
 
 # This string must contain neither spaces (problems on windows8)
 # nor periods (problems on xtensa)
-VERSION := V04_00_work_in_progress_2017_01_23
+VERSION := V04_00_work_in_progress_2020_05_23
 
 
 #============================================================================
@@ -401,13 +401,7 @@ define All_Targets
    ALL_IGNORE        += -Wno-unused-local-typedefs
    ALL_IGNORE        += -Wno-unused-function
    ALL_IGNORE        += -Wno-attributes
-   ALL_OPTIMIZATION  ?= -Os
-   
-   # cpp: don't use features that are useless and/or too expensive
-#   CPP_RTTI          ?= -fno-rtti 
-#   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
-#   CPP_THREADSAFE    ?= -fno-threadsafe-statics 
-#   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr   
+   ALL_OPTIMIZATION  ?= -Os 
    
 endef
 
@@ -438,6 +432,12 @@ define Embedded
    # RESULTS += $(DMP) $(LSS) $(NMDUMP) 
    # RESULTS += $(MAP)
    # RESULTS += $(LST)
+   
+   # cpp: don't use features that are useless and/or too expensive
+   CPP_RTTI          ?= -fno-rtti 
+   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
+   CPP_THREADSAFE    ?= -fno-threadsafe-statics 
+   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr     
    
    # create a 'fake' iostream in hwcpp
    DEFINES         += -DHWCPP_FAKE_OSTREAM 
@@ -1235,7 +1235,7 @@ endif
 build: version
 version:
 	@echo 'Show toolchain version at $(CC)'
-	@$(CC) --version   
+	@$(CPP) --version   
     
 .PHONY: terminal
 terminal:
