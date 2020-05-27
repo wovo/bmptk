@@ -437,7 +437,7 @@ define Embedded
    CPP_RTTI          ?= -fno-rtti 
    CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
    CPP_THREADSAFE    ?= -fno-threadsafe-statics 
-   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr     
+   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr -fno-use-cxa-atexit   
    
    # create a 'fake' iostream in hwcpp
    DEFINES         += -DHWCPP_FAKE_OSTREAM 
@@ -1175,6 +1175,7 @@ CPP_FLAGS     += $(CPP_RTTI)
 CPP_FLAGS     += $(CPP_EXCEPTIONS)
 CPP_FLAGS     += $(CPP_THREADSAFE)
 CPP_FLAGS     += $(CPP_CXA)
+CPP_FLAGS     += $(COREFLAGS)
 
 # add linker-specific flags
 LN_FLAGS      += $(LN_MAP)
