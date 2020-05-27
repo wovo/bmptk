@@ -69,4 +69,9 @@ int __aeabi_idiv0(){ return 0; }
 // called when a vft entry is not yet filled in
 void __cxa_pure_virtual(){}
 
+// prevent linking in the at-exit handling
+int __aeabi_atexit (void *arg, void (*func) (void *), void *d){
+  return 0;
+}
+
 
