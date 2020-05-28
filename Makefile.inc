@@ -1275,21 +1275,21 @@ terminal:
 # How to make assembler listing from C
 %.lst: %.c 
 	@echo 'Compiling C file (.c) to asm listing: $<'
-	$(CC) -c -S -o $(patsubst %.o,%.lst,$@) $<
+	$(CC) -c -S -fverbose-asm -o $(patsubst %.o,%.lst,$@) $<
 	@echo ' '   
    
 # How to make assembler listing from C++ (.cpp) 
 %.lst: %.cpp 
 	@echo 'Compiling C++ file (.cpp) to asm listing: $<'
 	@echo $(CPP_FLAGS) > _cpp_flags		
-	$(CPP) @_cpp_flags -c -S -o $(patsubst %.o,%.lst,$@) $<
+	$(CPP) @_cpp_flags -c -S -fverbose-asm -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make assembler listing from C++ (.cc)  
 %.lst: %.cc 
 	@echo 'Compiling C++ file (.cc) to asm listing: $<'
 	@echo $(CPP_FLAGS) > _cpp_flags		
-	$(CPP) @_cpp_flags -c -S -o $(patsubst %.o,%.lst,$@) $<
+	$(CPP) @_cpp_flags -c -S -fverbose-asm -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make an object file from an assembler file
