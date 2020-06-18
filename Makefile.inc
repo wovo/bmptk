@@ -140,7 +140,7 @@ endif
 $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 	cd $(BMPTK)/tools/lpc21isp_197; make
 
-$(BMPTK)/tools/BOSSA-arduino/bin/bossac
+$(BMPTK)/tools/BOSSA-arduino/bin/bossac:
 	cd $(BMPTK)/tools/BOSSA-arduino; make bin/bossac
 
 #============================================================================
