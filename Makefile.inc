@@ -47,12 +47,7 @@ else
    include $(BMPTK)/Makefile.local
 endif
 
-<<<<<<< HEAD
-# $(error $(GCC-WIN))
 
-
-=======
->>>>>>> 6446b2eb59cbca8cbf8e67d88d206130eaa2b973
 #============================================================================
 #
 # For windows these executables are distributed with bmptk,
