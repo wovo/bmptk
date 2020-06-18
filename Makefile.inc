@@ -7,7 +7,7 @@
 #
 # This file is meant to be included by a project-specific makefile.
 #
-# Copyright (c) 2012 .. 2017 Wouter van Ooijen (wouter@voti.nl)
+# Copyright (c) 2012 .. 2019 Wouter van Ooijen (wouter@voti.nl)
 # 
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at 
@@ -48,6 +48,8 @@ else
    include $(BMPTK)/Makefile.local
 endif
 
+# $(error $(GCC-WIN))
+
 
 #============================================================================
 #
@@ -86,6 +88,7 @@ ifeq ($(OS),Windows_NT)
    # installed separately
    ATPROGRAM     ?= "$(AtmelToolchain)/../Atmel Studio 6.2/atbackend/atprogram.exe"
    STM32_CLI     ?= "$(STM32LU)/ST-LINK Utility/ST-LINK_CLI.exe"     
+   STM32_FLASH   ?= "$(BMPTK)/tools/stm32flash/stm32flash.exe"
    
    # windows specific
    PAUSE         ?= cmd /c pause     
@@ -129,16 +132,19 @@ else
    	   STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
        LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
    else
-       BOSSAC        ?= $(SUDO) bossac
+       BOSSAC        ?= $(SUDO) $(BMPTK)/tools/BOSSA-arduino/bin/bossac 
        DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
        LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
        LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
+       BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-arduino/bin/bossac
    endif
 endif
 
 $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 	cd $(BMPTK)/tools/lpc21isp_197; make
 
+$(BMPTK)/tools/BOSSA-arduino/bin/bossac
+	cd $(BMPTK)/tools/BOSSA-arduino; make bin/bossac
 
 #============================================================================
 #
@@ -457,7 +463,7 @@ define Windows
    PREFIX            := $(GCC-WIN)/bin/
    TARGET_CPP_FLAGS  += -mno-ms-bitfields   
    TARGET_C_FLAGS    += -mno-ms-bitfields   
-   TARGET_LN_FLAGS   += -lgdi32
+   TARGET_LN_FLAGS   += -lgdi32 -static-libgcc -static-libstdc++ -static
    RESULTS           += $(EXE)
    export PATH       := $PREFIX:$(PATH)
    RUN               ?= ./$(EXE)
@@ -788,6 +794,7 @@ define STM32
    INCLUDES       += -I$(BMPTK)/targets/cortex/stm32
    RESULTS         += $(HEX)
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
+   #RUN            ?= $(STM32_FLASH) -w $(HEX) -v
    RUN_PAUSE      ?= $(PAUSE)
 endef
 
@@ -1450,7 +1457,7 @@ $(PROJECT): $(RESULTS)
 PORT_CHECK :=
 
 # Run (= download and start) the project
-run: $(PROJECT) $(LPC21ISP_EXE)
+run: $(PROJECT) $(LPC21ISP_EXE) $(BOSSAC_EXE)
 	$(PORT_CHECK)
 	$(RUN_PRE)   
 	-$(RUN)

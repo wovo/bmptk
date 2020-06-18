@@ -31,17 +31,21 @@ ifeq ($(OS),Windows_NT)
    # the windows toolchain
    #GCC-WIN         ?= C:/TDM-GCC-64
    #GCC-WIN         ?= $(WPF)/mingw-w64/i686-6.2.0-posix-dwarf-rt_v5-rev1/mingw32
-   GCC-WIN         ?= C:\Program Files (x86)\mingw-w64\i686-7.3.0-posix-dwarf-rt_v5-rev0\mingw32
+   #GCC-WIN         ?= C:\Program Files (x86)\mingw-w64\i686-7.3.0-posix-dwarf-rt_v5-rev0\mingw32
+   #GCC-WIN          ?= C:\Program Files\mingw-w64-v7.0.0\mingw-w64-v7.0.0   
+   GCC-WIN         ?= C:\Program Files (x86)\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32
    #GCC-WIN         ?= C:\Program Files\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64
 
    # select the AVR toolchain: Atmel (=default) or Arduino
-   GCC-AVR         ?= C:/Program Files/avr-gcc-8.2.0-x64-mingw
+   # GCC-AVR         ?= C:/Program Files/avr-gcc-8.2.0-x64-mingw
+   GCC-AVR          ?= C:\Program Files\avr-gcc-9.2.0-x64-mingw
    #GCC-AVR         ?= $(WPF32)/Arduino/hardware/tools/avr
    #GCC-AVR         ?= $(WPF32)/Atmel/Atmel Toolchain/AVR8 GCC/Native/3.4.1061/avr8-gnu-toolchain
 
    # the ARM toolchain
    #GCC-ARM         ?= C:/SysGCC/arm-eabi
-   GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/7 2017-q4-major
+   # GCC-ARM         ?= $(WPF32)/GNU Tools ARM Embedded/7 2017-q4-major
+   GCC-ARM          ?= C:\Program Files (x86)\GNU Tools Arm Embedded\9 2019-q4-major
    #GCC-ARM         ?= C:/gcc-arm-none-eabi-4_9-141220
 
    # no alternatives to choose, but maybe a different directory
