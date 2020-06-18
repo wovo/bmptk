@@ -129,11 +129,11 @@ else
    	   STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
        LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
    else
-       BOSSAC        ?= $(SUDO) $(BMPTK)/tools/BOSSA-arduino/bin/bossac 
+       BOSSAC        ?= $(SUDO) $(BMPTK)/tools/BOSSA-Arduino/bin/bossac 
        DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
        LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
        LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
-       BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-arduino/bin/bossac
+       BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
    endif
 endif
 
