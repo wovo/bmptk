@@ -15,10 +15,9 @@
 # 
 #############################################################################
 
-
 # This string must contain neither spaces (problems on windows8)
 # nor periods (problems on xtensa)
-VERSION := V04_00_work_in_progress_2017_01_23
+VERSION := V04_00_work_in_progress_2020_05_23
 
 
 #============================================================================
@@ -48,9 +47,12 @@ else
    include $(BMPTK)/Makefile.local
 endif
 
+<<<<<<< HEAD
 # $(error $(GCC-WIN))
 
 
+=======
+>>>>>>> 6446b2eb59cbca8cbf8e67d88d206130eaa2b973
 #============================================================================
 #
 # For windows these executables are distributed with bmptk,
@@ -409,13 +411,7 @@ define All_Targets
    ALL_IGNORE        += -Wno-unused-local-typedefs
    ALL_IGNORE        += -Wno-unused-function
    ALL_IGNORE        += -Wno-attributes
-   ALL_OPTIMIZATION  ?= -Os
-   
-   # cpp: don't use features that are useless and/or too expensive
-   CPP_RTTI          ?= -fno-rtti 
-   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
-   CPP_THREADSAFE    ?= -fno-threadsafe-statics 
-   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr   
+   ALL_OPTIMIZATION  ?= -Os 
    
 endef
 
@@ -447,13 +443,21 @@ define Embedded
    # RESULTS += $(MAP)
    # RESULTS += $(LST)
    
+   # cpp: don't use features that are useless and/or too expensive
+   CPP_RTTI          ?= -fno-rtti 
+   CPP_EXCEPTIONS    ?= -fno-exceptions -fno-asynchronous-unwind-tables
+   CPP_THREADSAFE    ?= -fno-threadsafe-statics 
+   CPP_CXA           ?= -fno-use-cxa-get-exception-ptr -fno-use-cxa-atexit   
+   
    # create a 'fake' iostream in hwcpp
    DEFINES         += -DHWCPP_FAKE_OSTREAM 
 endef
 
    #=========================================================================
    #
-   # running native
+   # running native$(warning $(GPP-LINUX))
+
+
    # 
    #=========================================================================
    
@@ -469,6 +473,8 @@ define Windows
    RUN               ?= ./$(EXE)
    RUN_PAUSE         ?= $(PAUSE)
    DEFINES           += -DHWLIB_TARGET_Windows   
+   GPP-WINDOWS       ?= g++
+   GPP               ?= $(GPP-WINDOWS)
 endef
 
 # running native on some Linux
@@ -479,6 +485,8 @@ define Linux
    RUN               ?= sudo ./$(EXE)
    RUN_PAUSE         ?= read -p "Press return to continue" x
    DEFINES           += -DHWLIB_TARGET_Linux
+   GPP-LINUX         ?= g++
+   GPP               ?= $(GPP-LINUX)
 endef   
 
 ifeq ($(OS),Windows_NT)   
@@ -492,6 +500,8 @@ else
       $(eval $(Linux))
    endef  
 endif 
+
+GPP ?= g++
 
 ifeq ($(TARGET),native)
    $(eval $(Native)) 
@@ -543,7 +553,7 @@ define Atmega
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
    ifeq ($(OS),Windows_NT)   
-      CPP_LANGUAGE    := -std=c++17 -fconcepts  
+      CPP_LANGUAGE    := -std=c++17 -fconcepts
    else
       CPP_LANGUAGE    := -std=c++17  
    endif
@@ -564,7 +574,7 @@ ifeq ($(CHIP),atmega328)
    RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
-   LINKERSCRIPT := 
+   LINKERSCRIPT   := 
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000 
 endif
 
@@ -641,7 +651,9 @@ define ARM_V7
    LDFLAGS    += -nodefaultlibs
    CORE_FLAGS      += -nostartfiles 
    LDFLAGS         += -nostartfiles   
-   RESULTS         += $(HEX) 
+   RESULTS  $(warning $(GPP-LINUX))
+
+       += $(HEX) 
 endef
 
 define LPC_ARM_V7
@@ -1043,7 +1055,7 @@ INCLUDES  += $(foreach x, $(SEARCH), -I$(x))
 #============================================================================
 
 CC          := "$(PREFIX)gcc"
-CPP       := "$(PREFIX)g++"
+CPP         := "$(PREFIX)$(GPP)"
 AS          := "$(PREFIX)gcc"
 OBJCOPY     := "$(PREFIX)objcopy"
 OBJDUMP     := "$(PREFIX)objdump"
@@ -1054,7 +1066,7 @@ FILT        := "$(PREFIX)c++filt"
 ifeq ($(LANGUAGE),C)
    LINKER    := "$(PREFIX)gcc"
 else
-   LINKER    := "$(PREFIX)g++"
+   LINKER    := "$(PREFIX)$(GPP)"
 endif
 
 
@@ -1174,6 +1186,7 @@ CPP_FLAGS     += $(CPP_RTTI)
 CPP_FLAGS     += $(CPP_EXCEPTIONS)
 CPP_FLAGS     += $(CPP_THREADSAFE)
 CPP_FLAGS     += $(CPP_CXA)
+CPP_FLAGS     += $(COREFLAGS)
 
 # add linker-specific flags
 LN_FLAGS      += $(LN_MAP)
@@ -1195,15 +1208,17 @@ LN_FLAGS      += $(TARGET_LN_FLAGS)  $(PROJECT_LN_FLAGS)
 #============================================================================
 
 ifeq ($(LANGUAGE),C)
-   LINKER  := $(CC)   $(LN_FLAGS)
+   LINKER  := $(CC)   
+# $(LN_FLAGS)
    AS      := $(AS)   $(AS_FLAGS)
    CC      := $(CC)   $(C_FLAGS)
    CPP     := 
 else
-   LINKER  := $(CPP)  $(LN_FLAGS)
+   LINKER  := $(CPP)  
+# $(LN_FLAGS)
    AS      := $(AS)   $(AS_FLAGS)
    CC      := $(CC)   $(C_FLAGS)
-   CPP     := $(CPP)  $(CPP_FLAGS)
+#   CPP     := $(CPP)  $(CPP_FLAGS)
 endif   
 
 
@@ -1243,8 +1258,9 @@ endif
 .PHONY: version
 build: version
 version:
-	@echo 'Show toolchain version at $(CC)'
-	@$(CC) --version   
+	@echo 'Show toolchain version at $(CPP)'
+	@echo $(CPP_FLAGS) > _cpp_flags	
+	@$(CPP) @_cpp_flags --version   
     
 .PHONY: terminal
 terminal:
@@ -1270,19 +1286,21 @@ terminal:
 # How to make assembler listing from C
 %.lst: %.c 
 	@echo 'Compiling C file (.c) to asm listing: $<'
-	$(CC) -c -S -o $(patsubst %.o,%.lst,$@) $<
+	$(CC) -c -S -fverbose-asm -o $(patsubst %.o,%.lst,$@) $<
 	@echo ' '   
    
 # How to make assembler listing from C++ (.cpp) 
 %.lst: %.cpp 
 	@echo 'Compiling C++ file (.cpp) to asm listing: $<'
-	$(CPP) -c -S -o $(patsubst %.o,%.lst,$@) $<
+	@echo $(CPP_FLAGS) > _cpp_flags		
+	$(CPP) @_cpp_flags -c -S -fverbose-asm -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make assembler listing from C++ (.cc)  
 %.lst: %.cc 
 	@echo 'Compiling C++ file (.cc) to asm listing: $<'
-	$(CPP) -c -S -o $(patsubst %.o,%.lst,$@) $<
+	@echo $(CPP_FLAGS) > _cpp_flags		
+	$(CPP) @_cpp_flags -c -S -fverbose-asm -o $(patsubst %.o,%.lst,$@) $<
 	@echo '  '
 
 # How to make an object file from an assembler file
@@ -1300,13 +1318,15 @@ terminal:
 # How to make an object file from a C++ file (.cpp)
 %.o: %.cpp 
 	@echo 'Compiling C++ (.cpp) file: $<'
-	$(CPP) -c -o $@ $< 
+	@echo $(CPP_FLAGS) > _cpp_flags
+	$(CPP) @_cpp_flags -c -o $@ $< 
 	@echo ' '
     
 # How to make an object file from a C++ file (.cc)
 %.o: %.cc 
 	@echo 'Compiling C++ (.cc) file: $<'
-	$(CPP) -c -o $@ $< 
+	@echo $(CPP_FLAGS) > _cpp_flags	
+	$(CPP) @_cpp_flags -c -o $@ $< 
 	@echo ' '
     
    #=========================================================================
@@ -1341,25 +1361,30 @@ $(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
 # make .elf by linking all objects
 $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
 	@echo 'Linking ELF target: $(ELF)'
-	$(LINKER) -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS) $(LINKER_FLAGS)
+	@echo $(LN_FLAGS) $(LINKER_FLAGS) > _linker_flags		
+	$(LINKER) @_linker_flags -o $@ $(OBJECTS) $(BMPTK_STACK_FILE).o $(LDFLAGS) $(LIBS) 
 	@echo ' '   
     
 # How to make an .exe executable by linking all objects
 $(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
 	@echo 'Linking EXE target: $(EXE)'
-	$(LINKER) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(LINKER_FLAGS)
+	@echo $(LN_FLAGS) > _linker_flags		
+	@echo $(LINKER_FLAGS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) > _linker_libs		
+	$(LINKER) @_linker_flags -o $@ $(OBJECTS) @_linker_libs 
 	@echo ' '  
       
 # How to make an .dll dynamic link library by linking all objects
 $(DLL): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
 	@echo 'Linking DLL target: $(DLL)'
-	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
+	@echo $(LN_FLAGS) > _linker_flags		
+	$(LINKER) @_linker_flags -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES)
 	@echo ' '  
       
 # How to make a .pyd python extension by linking all objects
 $(PYD): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES) 
 	@echo 'Linking PYD target: $(PYD)'
-	$(LINKER) -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(PYTHON_DLLS)
+	@echo $(LN_FLAGS) > _linker_flags		
+	$(LINKER) @_linker_flags -shared -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) $(PYTHON_DLLS)
 	@echo ' '  
       
    #=========================================================================
@@ -1464,6 +1489,13 @@ run: $(PROJECT) $(LPC21ISP_EXE) $(BOSSAC_EXE)
 	$(RUN_TERMINAL)
 	$(RUN_PAUSE)
     
+# Run (= download and start) the project
+flash: $(PROJECT)
+	$(PORT_CHECK)
+	$(RUN_PRE)   
+	-$(RUN)
+	$(RUN_PAUSE)
+   
 doxygen: doxyfile
 	Doxygen
    
@@ -1487,8 +1519,10 @@ renumber:
 	$(PYTHON) $(BMPTK)/tools/bmptk-renumber.py
    
 # Cleanup
-CLEAN += -rf doxygen_docs
-CLEAN += -rf .settings temp .cproject .project
-CLEAN += -rf .clang .codelite __codelite.workspace
+CLEAN += doxygen_docs
+CLEAN += .settings temp .cproject .project
+CLEAN += .clang .codelite __codelite.workspace
+CLEAN += _cpp_flags _linker_flags _linker_libs
 clean:
 	$(REMOVE) $(CLEAN)
+	@echo ' '  	

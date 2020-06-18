@@ -70,3 +70,4 @@ todo:
 * avrdude-usbasp
 * ESP82366
 * use -Wextra?
+* Arduino Uno doesn't barf on ctors!

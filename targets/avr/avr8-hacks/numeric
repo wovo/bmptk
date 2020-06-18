@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 namespace std {
 
 inline int gcd( int a, int b ){ 
@@ -5,3 +6,20 @@ inline int gcd( int a, int b ){
 } 
 
 };
+=======
+// AVR has no <numeric>
+
+namespace std {
+
+template <typename Number>
+Number gcd(Number u, Number v) {
+    while (v != 0) {
+        Number r = u % v;
+        u = v;
+        v = r;
+    }
+    return u;
+}
+
+}; // namespace std
+>>>>>>> 6446b2eb59cbca8cbf8e67d88d206130eaa2b973

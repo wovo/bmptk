@@ -25,6 +25,10 @@ void (* const volatile __vectors[ 8 ])(void)
 		                     __startup
 };
 
+// make sure GCC doen't replace the loops by
+// calls to memcpy and memset
+#pragma GCC optimize ("no-tree-loop-distribute-patterns")
+
 void __attribute__((noreturn)) __startup( void ){
    extern unsigned int __data_init_start;
    //extern unsigned int __stack_start;
@@ -68,5 +72,12 @@ int __aeabi_idiv0(){ return 0; }
 
 // called when a vft entry is not yet filled in
 void __cxa_pure_virtual(){}
+
+/*
+// prevent linking in the at-exit handling
+int __aeabi_atexit (void *arg, void (*func) (void *), void *d){
+  return 0;
+}
+*/
 
 

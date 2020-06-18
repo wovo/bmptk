@@ -17,7 +17,7 @@ int main( int argc, char *argv[] ){
          
        fprintf(stderr, "Opening serial port...");
        hSerial = CreateFile(
-          argv[ 1 ], // "\\\\.\\COM2", 
+          argv[ 1 ], // like "\\\\.\\COM2", 
           GENERIC_READ|GENERIC_WRITE, 0, NULL,
           OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
        if( hSerial == INVALID_HANDLE_VALUE ){
