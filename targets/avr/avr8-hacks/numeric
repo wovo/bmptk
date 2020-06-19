@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-namespace std {
-
-inline int gcd( int a, int b ){ 
-   return ( a == 0 ) ? b : gcd( b % a, a ); 
-} 
-
-};
-=======
-// AVR has no <numeric>
-
 namespace std {
 
 template <typename Number>
@@ -22,4 +11,4 @@ Number gcd(Number u, Number v) {
 }
 
 }; // namespace std
->>>>>>> 6446b2eb59cbca8cbf8e67d88d206130eaa2b973
+

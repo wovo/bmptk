@@ -47,6 +47,20 @@ else
    include $(BMPTK)/Makefile.local
 endif
 
+ifeq ($(OS),Windows_NT)
+   SERIAL_PORT_DUE   ?= COM3
+   SERIAL_PORT_UNO   ?= COM4
+else
+   SERIAL_PORT_DUE   ?= $(shell ls /dev/ttyACM?)
+   SERIAL_PORT_UNO   ?= $(shell ls /dev/ttyUSB?) 
+endif   
+
+ifeq ($(TARGET),arduino_due)
+   SERIAL_PORT          := $(SERIAL_PORT_DUE)
+else
+   SERIAL_PORT          := $(SERIAL_PORT_UNO)
+endif
+
 
 #============================================================================
 #
