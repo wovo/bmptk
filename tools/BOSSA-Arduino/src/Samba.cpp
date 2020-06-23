@@ -90,7 +90,7 @@ Samba::init()
     {
         cid = chipId();
     }
-    catch (SambaError)
+    catch (const SambaError &)
     {
         return false;
     }
@@ -178,7 +178,7 @@ Samba::disconnect()
 void
 Samba::writeByte(uint32_t addr, uint8_t value)
 {
-    uint8_t cmd[13];
+    uint8_t cmd[14];
 
     if (_debug)
         printf("%s(addr=%#x,value=%#x)\n", __FUNCTION__, addr, value);

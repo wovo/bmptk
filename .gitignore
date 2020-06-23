@@ -4,3 +4,5 @@ due_bootmode.o
 Makefile.win
 tools/lpc21isp_197/*.o
 tools/lpc21isp_197/lpc21isp_hr_linux.exe
+tools/BOSSA-Arduino/obj
+tools/BOSSA-Arduino/bin/bossac

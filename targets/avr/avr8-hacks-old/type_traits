@@ -3,7 +3,7 @@
 #include <utility>
 
 namespace std {
-    
+
 template< class... >
 using void_t = void;
 
@@ -18,7 +18,7 @@ using false_type = integral_constant< bool, false >;
 
 template< class T, class U >
 struct is_same : false_type {};
- 
+
 template< class T >
 struct is_same< T, T > : true_type {};
 
@@ -31,7 +31,7 @@ using remove_reference_t = typename remove_reference< T >::type;
 
 template<bool B, class T = void>
 struct enable_if {};
- 
+
 template<class T>
 struct enable_if<true, T> { typedef T type; };
 
@@ -40,7 +40,7 @@ namespace details {
     template <typename Base> std::false_type is_base_of_test_func(const volatile void*);
     template <typename Base, typename Derived>
     using pre_is_base_of = decltype(is_base_of_test_func<Base>(std::declval<Derived*>()));
- 
+
     // with <experimental/type_traits>:
     // template <typename Base, typename Derived>
     // using pre_is_base_of2 = std::experimental::detected_or_t<std::true_type, pre_is_base_of, Base, Derived>;
@@ -54,14 +54,12 @@ namespace details {
 
 template<bool B, class T, class F>
 struct conditional { typedef T type; };
- 
+
 template<class T, class F>
 struct conditional<false, T, F> { typedef F type; };
 
 template< bool B, class T, class F >
 using conditional_t = typename conditional<B,T,F>::type;
-
-
 
 namespace detail {
     template <class T> char test(int T::*);
@@ -71,10 +69,10 @@ namespace detail {
 
 //Not concerned about the is_union<T> implementation right now
 template <class T>
-struct is_class : std::integral_constant<bool, sizeof(detail::test<T>(0))==1 
+struct is_class : std::integral_constant<bool, sizeof(detail::test<T>(0))==1
                                                    //&& !std::is_union<T>::value
                                                    > {};
-                                            
+
 template <typename Base, typename Derived>
 struct is_base_of :
     public std::conditional_t<
@@ -82,5 +80,20 @@ struct is_base_of :
         details::pre_is_base_of2<Base, Derived>,
         std::false_type
     > { };
+
+template<class T>
+struct is_copy_constructible :
+    is_constructible<T, const typename std::add_lvalue_reference<T>::type> {};
+
+template<class T>
+struct is_trivially_copy_constructible :
+    is_trivially_constructible<T, const typename std::add_lvalue_reference<T>::type> {};
+
+template<class T>
+struct is_nothrow_copy_constructible :
+    is_nothrow_constructible<T, const typename std::add_lvalue_reference<T>::type> {};
+
+    bla
+
 
 }; // namespace std

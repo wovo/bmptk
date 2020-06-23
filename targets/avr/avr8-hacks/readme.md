@@ -1,2 +1,3 @@
-These files are hacks to make the AVR8 library usable for HwCpp.
-They are by no means full replacements for the standard header files.
+new : empty, to prevent the one from StandardCplusplus begin used
+array : minimalist array<> implementation by me
+concepts : copied from the arm-none-eabi lib
