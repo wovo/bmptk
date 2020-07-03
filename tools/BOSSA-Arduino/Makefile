@@ -134,7 +134,7 @@ DEPENDS+=$(BOSSASH_SRCS:%.cpp=$(OBJDIR)/%.d)
 # Tools
 #
 #Q=@
-CXX=g++
+CXX=="C:\Program Files (x86)\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++"
 ARM=arm-none-eabi-
 ARMAS=$(ARM)as
 ARMOBJCOPY=$(ARM)objcopy
