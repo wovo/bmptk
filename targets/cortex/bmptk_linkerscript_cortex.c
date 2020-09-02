@@ -90,8 +90,8 @@ SECTIONS
 		*(.eh_frame_hdr);							/* additional information about .ex_frame section */
 		. = ALIGN(4);
 		*(.eh_frame);								/* information used for stack unwinding during exception */
-	
-/*	
+
+/*
 		. = ALIGN(4);
 		KEEP(*(.init));
 		. = ALIGN(4);
@@ -104,8 +104,8 @@ SECTIONS
 		. = ALIGN(4);
 		KEEP(*(.init_array));
 		. = ALIGN(4);
-		__init_array_end = .;	
-*/		
+		__init_array_end = .;
+*/
 
 
 /*
@@ -117,20 +117,20 @@ SECTIONS
 		KEEP(*(SORT(.fini_array.*)));
 		. = ALIGN(4);
 		__fini_array_end = .;
-*/   		
+*/
 		. = ALIGN(4);
 		__text_end = .;
 		PROVIDE(__text_end = __text_end);
 	} > rom AT > rom
-	
-	.IF_YOU_SEE_THIS_YOU_HAVE_ONE_OR_MORE_GLOBAL_OBJECT_CONSTRUCTORS : 	
+
+	.IF_YOU_SEE_THIS_YOU_HAVE_ONE_OR_MORE_GLOBAL_OBJECT_CONSTRUCTORS :
 	{
 		KEEP(*(.init));
 		KEEP(*(.preinit_array));
 		KEEP(*(SORT(.init_array.*)));
-		KEEP(*(.init_array));	
+		KEEP(*(.init_array));
 	} > nul
-	
+
 
 	. = ALIGN(4);
 	__exidx_start = .;
@@ -139,7 +139,7 @@ SECTIONS
 	.ARM.exidx :
 	{
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*);
-	} > rom 
+	} > rom
 
 	. = ALIGN(4);
 	__exidx_end = .;
@@ -147,7 +147,7 @@ SECTIONS
 
 	.bss (NOLOAD) :
 	{
-      
+
 		. = ALIGN(4);
 		__stack_start = .;
 		PROVIDE(__stack_start = __stack_start);
@@ -161,9 +161,9 @@ SECTIONS
 
 		. = ALIGN(4);
 		__stack_end = .;
-      
-		PROVIDE(__stack_end = __stack_end);      
-        
+
+		PROVIDE(__stack_end = __stack_end);
+
 		. = ALIGN(4);
 		__bss_start = .;
 		PROVIDE(__bss_start = __bss_start);
@@ -177,7 +177,7 @@ SECTIONS
 		__bss_end = .;
 		PROVIDE(__bss_end = __bss_end);
 	} > ram
-   
+
 	.data :
 	{
 		. = ALIGN(4);
@@ -192,15 +192,15 @@ SECTIONS
 		. = ALIGN(4);
 		__data_end = .;
 		PROVIDE(__data_end = __data_end);
-      
-      __data_init_end = LOADADDR (.data);      
+
+      __data_init_end = LOADADDR (.data);
       PROVIDE( __data_init_end = __data_init_end );
-      
+
 	} > ram AT > rom
-   
+
 PROVIDE( __data_size = __data_end - __data_start);
-  
-PROVIDE( __data_init_size = __data_size );   
+
+PROVIDE( __data_init_size = __data_size );
 PROVIDE( __data_init_end = __data_init_start + __data_init_size );
 
 

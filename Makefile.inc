@@ -588,7 +588,7 @@ ifeq ($(CHIP),atmega328)
    # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
    LINKERSCRIPT   :=
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
 endif
 
 .PHONY: bootloader
@@ -762,7 +762,7 @@ define LPC_Cortex
    LPCISP_PARAMS   := $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
    # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
    RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
 endef
 
 define LPC81X
@@ -961,7 +961,7 @@ define Atmel_SAM3
    RESULTS        += $(BIN)
    #RUN            := $(BOSSAC) -p $(subst /dev/,,$(SERIAL_PORT)) -U false -e -w -v -b $(BIN) -R
    RUN            := $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false -e -w -v -b $(BIN) -R
-   # RUN += $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false -R
+   RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false --reset
    # RUN            := $(BOSSAC) -e -w -v -b $(BIN)
    DEFINES        += -DDONT_USE_CMSIS_INIT
    DEFINES        += -DBMPTK_INCLUDE_CHIP=sam.h
