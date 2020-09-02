@@ -71,3 +71,4 @@ todo:
 * ESP82366
 * use -Wextra?
 * Arduino Uno doesn't barf on ctors!
+* compile bossac on linux
