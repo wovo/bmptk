@@ -91,6 +91,11 @@ Build bossac:
 - make clean
 - make bin/bossac
 
+Build due_bootmode_osx:
+- cd bmptk/tools/due_bootmode_osx
+- make clean
+- make build
+
 To run: 
 - Plug in the DUE on the programming port
 - Run the `make run` command in a DUE project

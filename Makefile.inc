@@ -148,7 +148,7 @@ else
    else ifeq ($(shell uname), Darwin)
        BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
        BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
-       DUE_BOOTMODE  ?= $(SUDO) stty -f $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
+       DUE_BOOTMODE  ?= $(SUDO) $(BMPTK)/tools/due_bootmode_osx/due_bootmode $(SERIAL_PORT)
        LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
        LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    else
