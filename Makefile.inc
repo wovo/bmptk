@@ -50,6 +50,9 @@ endif
 ifeq ($(OS),Windows_NT)
    SERIAL_PORT_DUE   ?= COM3
    SERIAL_PORT_UNO   ?= COM4
+else ifeq ($(shell uname), Darwin)
+   SERIAL_PORT_DUE   ?= $(shell ls /dev/tty.usb*)
+   SERIAL_PORT_UNO   ?=
 else
    SERIAL_PORT_DUE   ?= $(shell ls /dev/ttyACM?)
    SERIAL_PORT_UNO   ?= $(shell ls /dev/ttyUSB?)
@@ -142,6 +145,12 @@ else
        DUE_BOOTMODE  ?= cmd.exe /c @mode $(SERIAL_PORT):1200
        STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
        LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
+   else ifeq ($(shell uname), Darwin)
+       BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
+       BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
+       DUE_BOOTMODE  ?= $(SUDO) stty -f $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
+       LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
+       LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    else
        BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
        BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
