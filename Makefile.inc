@@ -388,7 +388,11 @@ endif
 ifeq ($(TARGET),xmc_2go_1100)
    CHIP        ?= xmc1100
 endif
-
+#MADE BY OSCAR
+ifeq ($(TARGET),teensy_40)
+   CHIP        ?= mimxrt1062dvl6a
+   $(warning chip is nu $(CHIP))
+endif
 # the target did not match any boards, and no explicit
 # chip was specified, assume the TARGET is the chip
 ifeq ($(CHIP),)
@@ -696,7 +700,6 @@ endif
    # Cortex chips common
    #
    #=========================================================================
-
 define Cortex
    $(eval $(Embedded))
 
@@ -744,6 +747,45 @@ define Cortex-M4F
    ARCH_FLAGS     := -mcpu=cortex-m4 -mthumb -fomit-frame-pointer
    # -march=armv7-m
 endef
+
+# MADE BY OSCAR
+define Cortex-M7
+	$(eval $(Cortex))
+	$(warning cortex-m7 is nu defined)
+	ARCH_FLAGS := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer -march=armv7-m 
+endef
+
+ 		#======================================================================
+      #
+      # NXP : i.MX RT1060 family of Cortex chips
+      #
+      #======================================================================
+#MADE BY OSCAR	
+define IMXRT1060
+	$(eval $(Cortex-M7))
+   ROM_START      ?= 00200000 #ROMCP = 00200000. flash = 0x60000000 could also try that?
+   RAM_START      ?= 0x20200000 #OCRAM2
+   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Include # all the include files from CSMIS for the M7 processor
+	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source
+	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/GCC
+	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/IAR
+	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/ARM
+   RESULTS        += $(HEX)
+   RUN            ?= $(STM32_CLI) -P $(HEX) -Rst # hier nog een ander flash programma inzetten (sudo apt install teensy-loader-cli)
+   RUN_PAUSE      ?= $(PAUSE)
+endef
+
+#MADE BY OSCAR
+ifeq ($(CHIP), mimxrt1062dvl6a)
+   $(eval $(IMXRT1060))
+   ROM_SIZE       ?= 128k 
+   RAM_SIZE       ?= 1024k
+   
+
+endif
+   
+
+
 
       #======================================================================
       #
@@ -806,10 +848,13 @@ ifeq ($(CHIP),lpc11c14fbd48)
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144
 endif
-
-      #======================================================================
-      #
-      # STM Cortex chips
+ROM_START      ?= 0x00000000
+   RAM_START      ?= 0x20000000
+   INCLUDES       += -I$(BMPTK)/targets/cortex/freescale/cmsis
+   RESULTS        += $(BIN)
+   RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
+   RUN_PAUSE      ?= $(PAUSE)
+   COPY_TO_DRIVE  ?= " "
       #
       #======================================================================
 
@@ -879,7 +924,7 @@ endif
 
       #======================================================================
       #
-      # NXP/Freescale Cortex chips
+      # NXP : Freescale Cortex chips
       #
       #======================================================================
 
