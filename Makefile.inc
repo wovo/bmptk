@@ -135,6 +135,8 @@ else
    # installed separately
    AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
+   # MADE BY OSCAR
+   TEENSY_LOADER ?= $(SUDO) teensy_loader_cli
 
    # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
    ifeq ($(WSL),true)
@@ -391,7 +393,6 @@ endif
 #MADE BY OSCAR
 ifeq ($(TARGET),teensy_40)
    CHIP        ?= mimxrt1062dvl6a
-   $(warning chip is nu $(CHIP))
 endif
 # the target did not match any boards, and no explicit
 # chip was specified, assume the TARGET is the chip
@@ -751,8 +752,7 @@ endef
 # MADE BY OSCAR
 define Cortex-M7
 	$(eval $(Cortex))
-	$(warning cortex-m7 is nu defined)
-	ARCH_FLAGS := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer -march=armv7-m 
+	ARCH_FLAGS := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
 endef
 
  		#======================================================================
@@ -760,32 +760,32 @@ endef
       # NXP : i.MX RT1060 family of Cortex chips
       #
       #======================================================================
+      
 #MADE BY OSCAR	
 define IMXRT1060
 	$(eval $(Cortex-M7))
    ROM_START      ?= 00200000 #ROMCP = 00200000. flash = 0x60000000 could also try that?
    RAM_START      ?= 0x20200000 #OCRAM2
-   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Include # all the include files from CSMIS for the M7 processor
+   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Include
 	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source
 	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/GCC
 	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/IAR
 	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/ARM
+   MCU            ?= empty
    RESULTS        += $(HEX)
-   RUN            ?= $(STM32_CLI) -P $(HEX) -Rst # hier nog een ander flash programma inzetten (sudo apt install teensy-loader-cli)
+   RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -w $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
    RUN_PAUSE      ?= $(PAUSE)
 endef
 
 #MADE BY OSCAR
 ifeq ($(CHIP), mimxrt1062dvl6a)
+   MCU            := TEENSY40
    $(eval $(IMXRT1060))
    ROM_SIZE       ?= 128k 
-   RAM_SIZE       ?= 1024k
-   
-
+   RAM_SIZE       ?= 512k # could be 1024 if both ocrams can be used?
+   STACK_SIZE     ?= 262144 # half of the RAM size
+   DEFINES        += -DBMPTK_INCLUDE_CHIP=ARMCM7.h
 endif
-   
-
-
 
       #======================================================================
       #
@@ -855,6 +855,10 @@ ROM_START      ?= 0x00000000
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    RUN_PAUSE      ?= $(PAUSE)
    COPY_TO_DRIVE  ?= " "
+
+      #======================================================================
+      #
+      # STM cortex chips
       #
       #======================================================================
 
