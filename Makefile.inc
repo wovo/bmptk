@@ -773,7 +773,7 @@ define IMXRT1060
 	INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source/ARM
    MCU            ?= empty
    RESULTS        += $(HEX)
-   RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -w $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
+   RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
    RUN_PAUSE      ?= $(PAUSE)
 endef
 
