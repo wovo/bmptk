@@ -18,7 +18,7 @@
 # This string must contain neither spaces (problems on windows8)
 # nor periods (problems on xtensa)
 VERSION := V04_00_work_in_progress_2020_05_23
-
+WSL := $(strip $(shell grep -qE "(microsoft|Microsoft|WSL)" /proc/version @> /dev/null && printf true))
 
 #============================================================================
 #
@@ -48,6 +48,9 @@ else
 endif
 
 ifeq ($(OS),Windows_NT)
+   SERIAL_PORT_DUE   ?= COM3
+   SERIAL_PORT_UNO   ?= COM4
+else ifeq ($(WSL),true)
    SERIAL_PORT_DUE   ?= COM3
    SERIAL_PORT_UNO   ?= COM4
 else
@@ -121,7 +124,6 @@ ifeq ($(OS),Windows_NT)
    PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python36.dll"
 
 else
-   WSL := $(strip $(shell grep -qE "(Microsoft|WSL)" /proc/version @> /dev/null && printf true))
    MAKE          ?= make
    REMOVE        ?= rm -f
    COPY          ?= cp
@@ -139,7 +141,7 @@ else
    # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
    ifeq ($(WSL),true)
        BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
-       DUE_BOOTMODE  ?= cmd.exe /c @mode $(SERIAL_PORT):1200
+       DUE_BOOTMODE  ?= cmd.exe /c @mode $(SERIAL_PORT) baud=1200 data=8 parity=n stop=1 octs=on rts=on
        STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
        LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
    else
