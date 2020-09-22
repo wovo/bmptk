@@ -752,7 +752,7 @@ endef
 # MADE BY OSCAR
 define Cortex-M7
 	$(eval $(Cortex))
-	ARCH_FLAGS := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
+	ARCH_FLAGS  := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
 endef
 
  		#======================================================================
@@ -764,6 +764,7 @@ endef
 #MADE BY OSCAR	
 define IMXRT1060
 	$(eval $(Cortex-M7))
+   #LDFLAGS	       += -T $(LINKERSCRIPT)
    ROM_START      ?= 00200000 #ROMCP = 00200000. flash = 0x60000000 could also try that?
    RAM_START      ?= 0x20200000 #OCRAM2
    INCLUDES       += -I$(BMPTK)/targets/cortex/
@@ -773,6 +774,8 @@ define IMXRT1060
    INCLUDES       += -I$(BMPTK)/targets/cortex/teensy/M7/ARM
    INCLUDES       += -I$(BMPTK)/targets/cortex/teensy/M7/GCC
    INCLUDES       += -I$(BMPTK)/targets/cortex/teensy/M7/IAR
+   SEARCH         += $(BMPTK)/targets/cortex/teensy/
+   LN_TEMPLATE    := mimxrt1062.c
    MCU            ?= empty
    RESULTS        += $(HEX)
    RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
