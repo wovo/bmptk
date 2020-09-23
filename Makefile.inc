@@ -713,7 +713,7 @@ define Cortex
    endif
 
    SEARCH          += $(BMPTK)/targets/cortex $(BMPTK)/targets/cortex/cmsis
-   SOURCES         += bmptk_cortex.c
+   #SOURCES         += bmptk_cortex.c
    COREFLAGS    += -nostdlib
    COREFLAGS    += -nodefaultlibs
    LDFLAGS    += -nostdlib
@@ -731,21 +731,25 @@ endef
 define Cortex-M0
    $(eval $(Cortex))
    ARCH_FLAGS      := -mcpu=cortex-m0 -mthumb -fomit-frame-pointer -march=armv6-m
+   SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M0+
    $(eval $(Cortex))
    ARCH_FLAGS     = -mcpu=cortex-m0 -mthumb -fomit-frame-pointer -march=armv6-m
+   SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M3
    $(eval $(Cortex))
    ARCH_FLAGS     := -mcpu=cortex-m3 -mthumb -fomit-frame-pointer -march=armv7-m
+   SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M4F
    $(eval $(Cortex))
    ARCH_FLAGS     := -mcpu=cortex-m4 -mthumb -fomit-frame-pointer
+   SOURCES         += bmptk_cortex.c
    # -march=armv7-m
 endef
 
@@ -753,6 +757,7 @@ endef
 define Cortex-M7
 	$(eval $(Cortex))
 	ARCH_FLAGS  := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
+   SOURCES     += bmptk_cortex.c
 endef
 
    #======================================================================
@@ -764,19 +769,17 @@ endef
 #MADE BY OSCAR	
 define IMXRT1060
 	$(eval $(Cortex-M7))
-   #LDFLAGS	       += -T $(LINKERSCRIPT)
-   ROM_START      ?= 00200000 #ROMCP = 00200000. flash = 0x60000000 could also try that?
+   ROM_START      ?= 0x00000000 #ROMCP = 00200000? flash = 0x60000000?
    RAM_START      ?= 0x20200000 #OCRAM2
-   INCLUDES       += -I$(BMPTK)/targets/cortex/
-   INCLUDES       += -I$(BMPTK)/targets/cortex/teensy
-   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Include
-   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/Source
-   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/ARM
-   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/GCC
-   INCLUDES       += -I$(BMPTK)/targets/cortex/M7/IAR
+   SEARCH         += $(BMPTK)/targets/cortex/
+   SEARCH         += $(BMPTK)/targets/cortex/teensy
+   SEARCH         += $(BMPTK)/targets/cortex/M7/Include
+   SEARCH         += $(BMPTK)/targets/cortex/M7/Source
+   SEARCH         += $(BMPTK)/targets/cortex/M7/ARM
+   SEARCH         += $(BMPTK)/targets/cortex/M7/GCC
    SEARCH         += $(BMPTK)/targets/cortex/teensy/
-   LN_TEMPLATE    := mimxrt1062.c
-   MCU            ?= empty
+   #LN_TEMPLATE    := mimxrt1062.c
+   MCU            := 
    RESULTS        += $(HEX)
    RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
    RUN_PAUSE      ?= $(PAUSE)
@@ -789,7 +792,7 @@ ifeq ($(CHIP), mimxrt1062dvl6a)
    ROM_SIZE       ?= 128k 
    RAM_SIZE       ?= 512k # could be 1024 if both ocrams can be used?
    STACK_SIZE     ?= 262144 # half of the RAM size
-   DEFINES        += -DBMPTK_INCLUDE_CHIP=mimxrt106.h
+   #DEFINES        += -DBMPTK_INCLUDE_CHIP=mimxrt106.h
 endif
 
    #======================================================================
