@@ -769,8 +769,8 @@ endef
 #MADE BY OSCAR	
 define IMXRT1060
 	$(eval $(Cortex-M7))
-   ROM_START      ?= 0x00000000 #ROMCP = 00200000? flash = 0x60000000?
-   RAM_START      ?= 0x20200000 #OCRAM2
+   ROM_START      ?= 0x00000000 # 0x00000000
+   RAM_START      ?= 0x20200000 #OCRAM 2
    SEARCH         += $(BMPTK)/targets/cortex/
    SEARCH         += $(BMPTK)/targets/cortex/teensy
    SEARCH         += $(BMPTK)/targets/cortex/M7/Include
@@ -778,7 +778,7 @@ define IMXRT1060
    SEARCH         += $(BMPTK)/targets/cortex/M7/ARM
    SEARCH         += $(BMPTK)/targets/cortex/M7/GCC
    SEARCH         += $(BMPTK)/targets/cortex/teensy/
-   #LN_TEMPLATE    := mimxrt1062.c
+   LN_TEMPLATE    := imxrt1062_linkerscript.c # doesn't work yet
    MCU            := 
    RESULTS        += $(HEX)
    RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
@@ -789,7 +789,7 @@ endef
 ifeq ($(CHIP), mimxrt1062dvl6a)
    MCU            := TEENSY40
    $(eval $(IMXRT1060))
-   ROM_SIZE       ?= 128k 
+   ROM_SIZE       ?= 512k 
    RAM_SIZE       ?= 512k # could be 1024 if both ocrams can be used?
    STACK_SIZE     ?= 262144 # half of the RAM size
    #DEFINES        += -DBMPTK_INCLUDE_CHIP=mimxrt106.h

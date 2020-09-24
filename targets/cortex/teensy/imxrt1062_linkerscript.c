@@ -6,7 +6,7 @@ MEMORY
 	FLASH (rwx): ORIGIN = 0x60000000, LENGTH = 1984K
 }
 
-ENTRY(ImageVectorTable)
+ENTRY(__startup)
 
 SECTIONS
 {
@@ -66,23 +66,23 @@ SECTIONS
 		. = ALIGN(32);
 	} > RAM
 
-	_stext = ADDR(.text.itcm);
-	_etext = ADDR(.text.itcm) + SIZEOF(.text.itcm) + SIZEOF(.ARM.exidx);
-	_stextload = LOADADDR(.text.itcm);
+	__text_start = ADDR(.text.itcm);
+	__text_end = ADDR(.text.itcm) + SIZEOF(.text.itcm) + SIZEOF(.ARM.exidx);
+	__text_init_start = LOADADDR(.text.itcm);
 
-	_sdata = ADDR(.data);
-	_edata = ADDR(.data) + SIZEOF(.data);
-	_sdataload = LOADADDR(.data);
+	__data_start = ADDR(.data);
+	__data_end = ADDR(.data) + SIZEOF(.data);
+	__data_init_start = LOADADDR(.data);
 
-	_sbss = ADDR(.bss);
-	_ebss = ADDR(.bss) + SIZEOF(.bss);
+	__bss_start = ADDR(.bss);
+	__bss_end = ADDR(.bss) + SIZEOF(.bss);
 
 	_heap_start = ADDR(.bss.dma) + SIZEOF(.bss.dma);
 	_heap_end = ORIGIN(RAM) + LENGTH(RAM);
 
 	_itcm_block_count = (SIZEOF(.text.itcm) + SIZEOF(.ARM.exidx) + 0x7FFF) >> 15;
 	_flexram_bank_config = 0xAAAAAAAA | ((1 << (_itcm_block_count * 2)) - 1);
-	_estack = ORIGIN(DTCM) + ((16 - _itcm_block_count) << 15);
+	__stack_end = ORIGIN(DTCM) + ((16 - _itcm_block_count) << 15);
 
 	_flashimagelen = SIZEOF(.text.progmem) + SIZEOF(.text.itcm) + SIZEOF(.ARM.exidx) + SIZEOF(.data);
 	_teensy_model_identifier = 0x24;
