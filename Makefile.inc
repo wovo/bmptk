@@ -778,7 +778,7 @@ define IMXRT1060
    SEARCH         += $(BMPTK)/targets/cortex/M7/ARM
    SEARCH         += $(BMPTK)/targets/cortex/M7/GCC
    SEARCH         += $(BMPTK)/targets/cortex/teensy/
-   LN_TEMPLATE    := imxrt1062_linkerscript.c # doesn't work yet
+   LN_TEMPLATE    := imxrt1062_linkerscript.c 
    MCU            := 
    RESULTS        += $(HEX)
    RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
