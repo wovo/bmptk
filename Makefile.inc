@@ -723,7 +723,7 @@ define Cortex
    LN_TEMPLATE    ?= bmptk_linkerscript_cortex.c
    # should be $(LINKERSCRIPT)
    LDFLAGS	       += -T $(LINKERSCRIPT)
-   OBJ         += bmptk_startup_cortex.o
+   #OBJ         += bmptk_startup_cortex.o
    CPU         ?= cortex
    ROOT        ?= __startup
 endef
@@ -731,33 +731,38 @@ endef
 define Cortex-M0
    $(eval $(Cortex))
    ARCH_FLAGS      := -mcpu=cortex-m0 -mthumb -fomit-frame-pointer -march=armv6-m
+   OBJ         += bmptk_startup_cortex.o
    SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M0+
    $(eval $(Cortex))
    ARCH_FLAGS     = -mcpu=cortex-m0 -mthumb -fomit-frame-pointer -march=armv6-m
+   OBJ         += bmptk_startup_cortex.o
    SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M3
    $(eval $(Cortex))
    ARCH_FLAGS     := -mcpu=cortex-m3 -mthumb -fomit-frame-pointer -march=armv7-m
+   OBJ         += bmptk_startup_cortex.o
    SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M4F
    $(eval $(Cortex))
    ARCH_FLAGS     := -mcpu=cortex-m4 -mthumb -fomit-frame-pointer
-   SOURCES         += bmptk_cortex.c
+   OBJ            += bmptk_startup_cortex.o
+   SOURCES        += bmptk_cortex.c
    # -march=armv7-m
 endef
 
 # MADE BY OSCAR
 define Cortex-M7
 	$(eval $(Cortex))
-	ARCH_FLAGS  := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
-   SOURCES     += bmptk_cortex.c
+	ARCH_FLAGS     := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
+   SOURCES        += startup.cpp
+   #OBJ            += startup.o
 endef
 
    #======================================================================
@@ -769,8 +774,6 @@ endef
 #MADE BY OSCAR	
 define IMXRT1060
 	$(eval $(Cortex-M7))
-   ROM_START      ?= 0x00000000 # 0x00000000
-   RAM_START      ?= 0x20200000 #OCRAM 2
    SEARCH         += $(BMPTK)/targets/cortex/
    SEARCH         += $(BMPTK)/targets/cortex/teensy
    SEARCH         += $(BMPTK)/targets/cortex/M7/Include
@@ -778,8 +781,6 @@ define IMXRT1060
    SEARCH         += $(BMPTK)/targets/cortex/M7/ARM
    SEARCH         += $(BMPTK)/targets/cortex/M7/GCC
    SEARCH         += $(BMPTK)/targets/cortex/teensy/
-   LN_TEMPLATE    := imxrt1062_linkerscript.c 
-   MCU            := 
    RESULTS        += $(HEX)
    RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
    RUN_PAUSE      ?= $(PAUSE)
@@ -787,12 +788,14 @@ endef
 
 #MADE BY OSCAR
 ifeq ($(CHIP), mimxrt1062dvl6a)
+   #ROM_START      ?= 0x00200000 # p. 209
+   #RAM_START      ?= 0x20200000 # p.209
+   # ROM_SIZE       ?= 128k
+   # RAM_SIZE       ?= 512k
    MCU            := TEENSY40
+   STACK_SIZE     ?= 1024
+   LN_TEMPLATE    := imxrt1062_new_linkerscript.c
    $(eval $(IMXRT1060))
-   ROM_SIZE       ?= 512k 
-   RAM_SIZE       ?= 512k # could be 1024 if both ocrams can be used?
-   STACK_SIZE     ?= 262144 # half of the RAM size
-   #DEFINES        += -DBMPTK_INCLUDE_CHIP=mimxrt106.h
 endif
 
    #======================================================================
@@ -1301,15 +1304,20 @@ endif
 
 CALCULATED_SIZE_STACK_FILE  := bmptk_calculated_size_stack
 FIXED_SIZE_STACK_FILE       := bmptk_fixed_size_stack
+DUMMY_SIZE_STACK_FILE       := bmptk_dummy_size_stack
 
 CLEAN         += $(CALCULATED_SIZE_STACK_FILE).c
 CLEAN         += $(CALCULATED_SIZE_STACK_FILE).o
 CLEAN         += $(FIXED_SIZE_STACK_FILE).c
 CLEAN         += $(FIXED_SIZE_STACK_FILE).o
+CLEAN         += $(DUMMY_SIZE_STACK_FILE).c
+CLEAN         += $(DUMMY_SIZE_STACK_FILE).o
 
-# choose between a calculated size stack and a fixed size stack
+# choose between a calculated size stack and a fixed size stack, altered by OSCAR
 ifeq ($(STACK_SIZE),AUTOMATIC)
    BMPTK_STACK_FILE  := $(CALCULATED_SIZE_STACK_FILE)
+else ifeq ($(STACK_SIZE),NONE)
+   BMPTK_STACK_FILE := $(DUMMY_SIZE_STACK_FILE)
 else
    BMPTK_STACK_FILE  := $(FIXED_SIZE_STACK_FILE)
 endif
@@ -1421,7 +1429,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
 
    #=========================================================================
    #
-   # fixed size stack, link
+   # fixed size stack, link 
    #
    #=========================================================================
 
@@ -1430,6 +1438,19 @@ $(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
+
+   #=========================================================================
+   #
+   # dummy size stack, link CREATED BY OSCAR
+   #
+   #=========================================================================
+
+# How to create a fixed size stack
+$(DUMMY_SIZE_STACK_FILE).c: $(MAKEFILE)
+	@echo 'create the (dummy) stack file $(DUMMY_SIZE_STACK_FILE).o'
+	$(CC) -E -P -C $(BMPTK)/targets/bmptk_dummy_stack.c -o $@
+	@echo ' '
+
 
 # make .elf by linking all objects
 $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
