@@ -136,7 +136,7 @@ else
    AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    # MADE BY OSCAR
-   TEENSY_LOADER ?= $(SUDO) teensy_loader_cli
+   TEENSY_LOADER ?= $(SUDO) teensy_loader_cli # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
 
    # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
    ifeq ($(WSL),true)
@@ -772,7 +772,7 @@ endef
    #======================================================================
       
 #MADE BY OSCAR	
-define IMXRT1060
+define IMXRT106x
 	$(eval $(Cortex-M7))
    SEARCH         += $(BMPTK)/targets/cortex/
    SEARCH         += $(BMPTK)/targets/cortex/teensy
@@ -788,6 +788,7 @@ endef
 
 #MADE BY OSCAR
 ifeq ($(CHIP), mimxrt1062dvl6a)
+   $(eval $(IMXRT106x))
    #ROM_START      ?= 0x00200000 # p. 209
    #RAM_START      ?= 0x20200000 # p.209
    # ROM_SIZE       ?= 128k
@@ -795,7 +796,6 @@ ifeq ($(CHIP), mimxrt1062dvl6a)
    MCU            := TEENSY40
    STACK_SIZE     ?= 1024
    LN_TEMPLATE    := imxrt1062_new_linkerscript.c
-   $(eval $(IMXRT1060))
 endif
 
    #======================================================================

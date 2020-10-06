@@ -38,7 +38,7 @@ SECTIONS
                 KEEP(*(.init_array))
                 __init_array_end = .;
 		. = ALIGN(16);
-    } > FLASH
+    } > FLASH /* place this in the flash memory section */
 
     /* This section was taken (and altered) from Paul Stoffregens linkerscript.*/
     .itcm : {
@@ -70,8 +70,8 @@ SECTIONS
 		*(COMMON)
 		. = ALIGN(32);
 		. = . + 32; /* MPU to trap stack overflow */
-	} > DTCM 
-}
+	} > DTCM /* place this in the DTCM memory section */
+	
 PROVIDE(size_of_image = SIZEOF(.text) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx) + SIZEOF(.data)); /*Set the size of the image in this variable, this is used by the startup.cpp script*/
 PROVIDE(start_adress_of_bss = ADDR(.bss)); /*Get the start adress of the bss, is used by the init_bss_zero function in startup.cpp */
 PROVIDE(end_adress_of_bss = ADDR(.bss) + SIZEOF(.bss)); /*Get the end adress of the bss, is used by the init_bss_zero function in startup.cpp */
@@ -83,3 +83,4 @@ PROVIDE(end_adress_of_data = ADDR(.data) + SIZEOF(.data)); /*get the end adress 
 PROVIDE(load_adress_of_data = LOADADDR(.data)); /*get the load adress (because of the at keyword) from the data block*/
 PROVIDE(stack_start_adress = ADDR(.bmptk_stack)); /* get the stack start adress */
 PROVIDE(stack_end_adress = ADDR(.bmptk_stack) + SIZEOF(.bmptk_stack)); /* get the stack end adress */
+}
