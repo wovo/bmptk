@@ -18,7 +18,7 @@ MEMORY /*This is the "map" of the memory allocation*/
 }
 
 ENTRY(image_vector_table) /* the place where the image starts */
-
+/*TRY FROM SCRATCH*/
 SECTIONS
 {
 
