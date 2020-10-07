@@ -24,6 +24,7 @@ SECTIONS
 
     .text : {
     KEEP(*(.flashconfig)) /* all the flash memory configuration data from startup.cpp */
+	FILL(0xFF)
     . = ORIGIN(FLASH) + 0x1000; /* Jump to where we are going to store the vector table and such */
    	KEEP(*(.IVT)) /* The image vector table from startup.cpp */
     KEEP(*(.boot_data)) /* the boot data array from startup.cpp */

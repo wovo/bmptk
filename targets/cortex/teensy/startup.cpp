@@ -311,10 +311,11 @@ void start()
 	// copy the data memory to dtcm
 	copy_memory(&start_adress_of_data, &load_adress_of_data, &end_adress_of_data);
 
-	//set_something_in_stack();
+	set_something_in_stack();
 
 	//stuff to turn the light on
-	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] |= 5;
+ 	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] |= 5;
+    IOMUXC->SW_PAD_CTL_PAD[kIOMUXC_SW_PAD_CTL_PAD_GPIO_B0_03] |= ((uint32_t)(((7) & 0x07) << 3)); //this comes from paulstoffregen
     IOMUXC_GPR->GPR27 |= 0xFFFFFFFF;
     GPIO7->GDIR |= (1 << 3);
     GPIO7->DR_SET |= (1 << 3);
