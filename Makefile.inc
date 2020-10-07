@@ -711,9 +711,7 @@ define Cortex
       # use absolute paths to find the tools
       PREFIX := $(GCC-ARM)/bin/$(ARM-EABI)-
    endif
-
    SEARCH          += $(BMPTK)/targets/cortex $(BMPTK)/targets/cortex/cmsis
-   #SOURCES         += bmptk_cortex.c
    COREFLAGS    += -nostdlib
    COREFLAGS    += -nodefaultlibs
    LDFLAGS    += -nostdlib
@@ -723,7 +721,6 @@ define Cortex
    LN_TEMPLATE    ?= bmptk_linkerscript_cortex.c
    # should be $(LINKERSCRIPT)
    LDFLAGS	       += -T $(LINKERSCRIPT)
-   #OBJ         += bmptk_startup_cortex.o
    CPU         ?= cortex
    ROOT        ?= __startup
 endef
@@ -762,7 +759,7 @@ define Cortex-M7
 	$(eval $(Cortex))
 	ARCH_FLAGS     := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
    SOURCES        += startup.cpp
-   #OBJ            += startup.o
+   OBJ            += startup.o
 endef
 
    #======================================================================
@@ -788,14 +785,14 @@ endef
 
 #MADE BY OSCAR
 ifeq ($(CHIP), mimxrt1062dvl6a)
+   MCU            := TEENSY40
+   STACK_SIZE     ?= 1024#524288 # 512 kb
+   LN_TEMPLATE    := imxrt1062_new_linkerscript.c
    $(eval $(IMXRT106x))
    #ROM_START      ?= 0x00200000 # p. 209
    #RAM_START      ?= 0x20200000 # p.209
    # ROM_SIZE       ?= 128k
    # RAM_SIZE       ?= 512k
-   MCU            := TEENSY40
-   STACK_SIZE     ?= 1024
-   LN_TEMPLATE    := imxrt1062_new_linkerscript.c
 endif
 
    #======================================================================

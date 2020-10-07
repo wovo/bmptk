@@ -253,8 +253,7 @@ __attribute__ ((section(".start_utility"), used))
  * @brief Function to initialize the complete bss with zero
  * 
  */
-void
-init_bss_zero()
+void init_bss_zero()
 {
 	uint32_t *d, *e;
 
@@ -275,8 +274,7 @@ __attribute__ ((section(".start_utility"), used))
  * @param destination the destination to copy to (first memory adress)
  * @param end_destination the end adress of the memory block (last memory adress +1 )
  */
-void
-copy_memory(uint32_t *source, uint32_t *destination, uint32_t *end_destination)
+void copy_memory(uint32_t *source, uint32_t *destination, uint32_t *end_destination)
 {
 	if (destination == source)
 		return;
@@ -286,14 +284,25 @@ copy_memory(uint32_t *source, uint32_t *destination, uint32_t *end_destination)
 	}
 }
 
+__attribute__ ((section(".start_of_code"),used))
+void set_something_in_stack()
+{
+  	// clear .stack section
+	uint32_t *d, *e;
+	d = &stack_start_adress;
+	e = &stack_end_adress;
+	while (d != e)
+	{
+		*d++ = 5;
+	}
+}
 
 __attribute__ ((section(".start_of_code"), used))
 /**
  * @brief This function is the entry point for the linkerscript
  * 
  */
-void
-start()
+void start()
 {
 	// set the bss to zero
 	init_bss_zero();
@@ -301,6 +310,8 @@ start()
 	copy_memory(&start_adress_of_text, &load_adress_of_text, &end_adress_of_text);
 	// copy the data memory to dtcm
 	copy_memory(&start_adress_of_data, &load_adress_of_data, &end_adress_of_data);
+
+	//set_something_in_stack();
 
 	//stuff to turn the light on
 	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] |= 5;

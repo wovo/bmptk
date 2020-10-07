@@ -21,6 +21,7 @@ ENTRY(image_vector_table) /* the place where the image starts */
 
 SECTIONS
 {
+
     .text : {
     KEEP(*(.flashconfig)) /* all the flash memory configuration data from startup.cpp */
     . = ORIGIN(FLASH) + 0x1000; /* Jump to where we are going to store the vector table and such */
@@ -64,23 +65,27 @@ SECTIONS
 
     /* This section was taken (and  altered) from Paul Stoffregens linkerscript. This section holds all the uninitialized variables*/
 	.bss ALIGN(4) : {
-		. = ALIGN(4); /* align on four bytes, got this from the standard bmpk_linkerscript_cortex */
-		KEEP(*(.bmptk_stack)) /* bmptk_stack to be placed here */
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(32);
-		. = . + 32; /* MPU to trap stack overflow */
+		. = . + 32; /*MPU to trap stack overflow*/
 	} > DTCM /* place this in the DTCM memory section */
+
+	.BMPTKSTACK : {
+		KEEP(*(.bmptk_stack))
+	}
+
+
 	
 PROVIDE(size_of_image = SIZEOF(.text) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx) + SIZEOF(.data)); /*Set the size of the image in this variable, this is used by the startup.cpp script*/
-PROVIDE(start_adress_of_bss = ADDR(.bss)); /*Get the start adress of the bss, is used by the init_bss_zero function in startup.cpp */
-PROVIDE(end_adress_of_bss = ADDR(.bss) + SIZEOF(.bss)); /*Get the end adress of the bss, is used by the init_bss_zero function in startup.cpp */
 PROVIDE(start_adress_of_text = ADDR(.itcm)); /* get the start adress of the text block */
 PROVIDE(end_adress_of_text = ADDR(.itcm) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx)); /* get the end of the text block */
+PROVIDE(start_adress_of_bss = ADDR(.bss)); /* start adress of the bss section */
+PROVIDE(end_adress_of_bss = ADDR(.bss) + SIZEOF(.bss)); /* end adress of the bss section */
+PROVIDE(stack_start_adress = ADDR(.BMPTKSTACK));
+PROVIDE(stack_end_adress = ADDR(.BMPTKSTACK) + SIZEOF(.BMPTKSTACK));
 PROVIDE(load_adress_of_text = LOADADDR(.itcm)); /* get the load adress (because of the at keyword) from the text block */
 PROVIDE(start_adress_of_data = ADDR(.data)); /* get the start adress of the data section*/
 PROVIDE(end_adress_of_data = ADDR(.data) + SIZEOF(.data)); /*get the end adress of the data section*/
 PROVIDE(load_adress_of_data = LOADADDR(.data)); /*get the load adress (because of the at keyword) from the data block*/
-PROVIDE(stack_start_adress = ADDR(.bmptk_stack)); /* get the stack start adress */
-PROVIDE(stack_end_adress = ADDR(.bmptk_stack) + SIZEOF(.bmptk_stack)); /* get the stack end adress */
 }
