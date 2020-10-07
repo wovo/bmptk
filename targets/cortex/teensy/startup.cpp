@@ -10,6 +10,8 @@
  */
 #include <stdint.h>
 #include "mimxrt1062.h"
+#define STARTUTIL __attribute__ ((section(".start_utility"), used))
+#define STARTCODE __attribute__ ((section(".start_of_code"),used))
 
 // forward declaration for a main
 int main(void);
@@ -33,8 +35,6 @@ extern uint32_t start_adress_of_data;
 extern uint32_t end_adress_of_data;
 // forward declaration of the load adress of the data block
 extern uint32_t load_adress_of_data;
-// forward declaration of the stack start adress
-extern uint32_t stack_start_adress;
 // forward declaration of the stack end adress
 extern uint32_t stack_end_adress;
 
@@ -248,12 +248,11 @@ uint32_t FlexSPI_NOR_Config[128] = {
 	0  // reserved
 };
 
-__attribute__ ((section(".start_utility"), used))
 /**
  * @brief Function to initialize the complete bss with zero
  * 
  */
-void init_bss_zero()
+STARTUTIL void init_bss_zero()
 {
 	uint32_t *d, *e;
 
@@ -266,7 +265,6 @@ void init_bss_zero()
 	}
 }
 
-__attribute__ ((section(".start_utility"), used))
 /**
  * @brief Function to copy memory 
  * 
@@ -274,7 +272,7 @@ __attribute__ ((section(".start_utility"), used))
  * @param destination the destination to copy to (first memory adress)
  * @param end_destination the end adress of the memory block (last memory adress +1 )
  */
-void copy_memory(uint32_t *source, uint32_t *destination, uint32_t *end_destination)
+STARTUTIL void copy_memory(uint32_t *source, uint32_t *destination, uint32_t *end_destination)
 {
 	if (destination == source)
 		return;
@@ -284,25 +282,11 @@ void copy_memory(uint32_t *source, uint32_t *destination, uint32_t *end_destinat
 	}
 }
 
-__attribute__ ((section(".start_of_code"),used))
-void set_something_in_stack()
-{
-  	// clear .stack section
-	uint32_t *d, *e;
-	d = &stack_start_adress;
-	e = &stack_end_adress;
-	while (d != e)
-	{
-		*d++ = 5;
-	}
-}
-
-__attribute__ ((section(".start_of_code"), used))
 /**
- * @brief This function is the entry point for the linkerscript
+ * @brief This function is the entry point for the image. It starts the main after some memory initialization
  * 
  */
-void start()
+STARTCODE void start()
 {
 	// set the bss to zero
 	init_bss_zero();
@@ -310,8 +294,6 @@ void start()
 	copy_memory(&start_adress_of_text, &load_adress_of_text, &end_adress_of_text);
 	// copy the data memory to dtcm
 	copy_memory(&start_adress_of_data, &load_adress_of_data, &end_adress_of_data);
-
-	set_something_in_stack();
 
 	//stuff to turn the light on
  	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] |= 5;
