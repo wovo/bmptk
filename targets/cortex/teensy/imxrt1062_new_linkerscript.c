@@ -89,6 +89,7 @@ PROVIDE(end_adress_of_text = ADDR(.itcm) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx)); 
 PROVIDE(start_adress_of_bss = ADDR(.bss)); /* start adress of the bss section */
 PROVIDE(end_adress_of_bss = ADDR(.bss) + SIZEOF(.bss)); /* end adress of the bss section */
 PROVIDE(stack_end_adress = _estack); /* get the end adress of the stack */
+PROVIDE(flexram_config = _flexram_bank_config); /* get value to be placed in the flexram config file */
 PROVIDE(load_adress_of_text = LOADADDR(.itcm)); /* get the load adress (because of the at keyword) from the text block */
 PROVIDE(start_adress_of_data = ADDR(.data)); /* get the start adress of the data section*/
 PROVIDE(end_adress_of_data = ADDR(.data) + SIZEOF(.data)); /*get the end adress of the data section*/

@@ -16,7 +16,7 @@
 // forward declaration for a main
 int main(void);
 // forward declaration for a start
-void start();
+void startup();
 // forward declaration of the size of our image, used in the boot_data array
 extern uint32_t size_of_image;
 // forward declaration of the adress of the start of the text block (From the linker script)
@@ -37,6 +37,8 @@ extern uint32_t end_adress_of_data;
 extern uint32_t load_adress_of_data;
 // forward declaration of the stack end adress
 extern uint32_t stack_end_adress;
+// forward declaration of the adress to be placed in the gpr17
+extern uint32_t flexram_config;
 
 __attribute__ ((section(".vector_table"), used)) // compiler tag .vector_table
 /**
@@ -45,8 +47,8 @@ __attribute__ ((section(".vector_table"), used)) // compiler tag .vector_table
  */
 uint32_t vector_table[2] =
 	{
-		(uint32_t)stack_end_adress,
-		(unsigned int)&start // adress to the start up function. First image adress (pc)
+		0x20010000, // 64K DTCM for boot, start configures stack after ITCM/DTCM setup
+		(uint32_t)&startup // adress to the start up function. First image adress (pc)
 };
 
 __attribute__ ((section(".boot_data"), used)) // compiler tag .boot_data
@@ -80,7 +82,7 @@ uint32_t image_vector_table[8] =
 
 __attribute__ ((section(".flashconfig"), used)) // compiler tag .flashconfig
 /**
- * @brief This array was used from Paul Stoffregen's bootdata.c. It contains all the boot information for the chip and is placed on adress 0.
+ * @brief This array was used from Paul Stoffregen's bootdata.c. It contains all the boot information for the chip and is placed on adress 0x6000000000, at the start of flash.
  * 
  */
 uint32_t FlexSPI_NOR_Config[128] = {
@@ -286,8 +288,14 @@ STARTUTIL void copy_memory(uint32_t *source, uint32_t *destination, uint32_t *en
  * @brief This function is the entry point for the image. It starts the main after some memory initialization
  * 
  */
-STARTCODE void start()
+STARTCODE void startup()
 {
+	// Setting the flexram config stuff
+	IOMUXC_GPR->GPR17 = (uint32_t) &flexram_config; // Set the flexram adress in this register (the init vector table)
+	IOMUXC_GPR->GPR16 = 0x00200007; // Magic number from Paul Stoffregen?
+	IOMUXC_GPR->GPR14 = 0x00AA0000; // Magic number from Paul Stoffregen?
+	__asm__ volatile("mov sp, %0" : : "r" ((uint32_t)&stack_end_adress) : ); // set the stack pointer to the end of the stack
+
 	// set the bss to zero
 	init_bss_zero();
 	// copy the text memory to itcm
@@ -296,7 +304,7 @@ STARTCODE void start()
 	copy_memory(&start_adress_of_data, &load_adress_of_data, &end_adress_of_data);
 
 	//stuff to turn the light on
- 	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] |= 5;
+ 	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] = 5;
     IOMUXC->SW_PAD_CTL_PAD[kIOMUXC_SW_PAD_CTL_PAD_GPIO_B0_03] |= ((uint32_t)(((7) & 0x07) << 3)); //this comes from paulstoffregen
     IOMUXC_GPR->GPR27 |= 0xFFFFFFFF;
     GPIO7->GDIR |= (1 << 3);
