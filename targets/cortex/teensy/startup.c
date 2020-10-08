@@ -46,7 +46,7 @@ void ResetHandler(void)
 	memory_copy(&_sdata, &_sdataload, &_edata); // copy the memory from the load adress (flash, data) to the DTCM
 	memory_clear(&_sbss, &_ebss); // clear the bss (initialize with all zeros)
 	main(); // call the main from the user
-	
+	// TODO: FLOATING POINT UNIT ON!
 	// when returned from the main, loop till hell freezes over, but do something to eliminate unidentified behaviour
 	volatile int a = 0;
 	while (1)
