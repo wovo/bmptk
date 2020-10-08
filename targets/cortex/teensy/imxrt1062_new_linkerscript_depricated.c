@@ -83,15 +83,18 @@ SECTIONS
 	/* End of magic */
 	
 	
-PROVIDE(size_of_image = SIZEOF(.text) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx) + SIZEOF(.data)); /*Set the size of the image in this variable, this is used by the startup.cpp script*/
 PROVIDE(start_adress_of_text = ADDR(.itcm)); /* get the start adress of the text block */
 PROVIDE(end_adress_of_text = ADDR(.itcm) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx)); /* get the end of the text block */
-PROVIDE(start_adress_of_bss = ADDR(.bss)); /* start adress of the bss section */
-PROVIDE(end_adress_of_bss = ADDR(.bss) + SIZEOF(.bss)); /* end adress of the bss section */
+PROVIDE(load_adress_of_text = LOADADDR(.itcm)); /* get the load adress (because of the at keyword) from the text block */
+
+PROVIDE(size_of_image = SIZEOF(.text) + SIZEOF(.itcm) + SIZEOF(.ARM.exidx) + SIZEOF(.data)); /*Set the size of the image in this variable, this is used by the startup.cpp script*/
 PROVIDE(stack_end_adress = _estack); /* get the end adress of the stack */
 PROVIDE(flexram_config = _flexram_bank_config); /* get value to be placed in the flexram config file */
-PROVIDE(load_adress_of_text = LOADADDR(.itcm)); /* get the load adress (because of the at keyword) from the text block */
+
+PROVIDE(start_adress_of_bss = ADDR(.bss)); /* start adress of the bss section */
+PROVIDE(end_adress_of_bss = ADDR(.bss) + SIZEOF(.bss)); /* end adress of the bss section */
+
 PROVIDE(start_adress_of_data = ADDR(.data)); /* get the start adress of the data section*/
 PROVIDE(end_adress_of_data = ADDR(.data) + SIZEOF(.data)); /*get the end adress of the data section*/
-PROVIDE(load_adress_of_data = LOADADDR(.data)); /*get the load adress (because of the at keyword) from the data block*/
+PROVIDE(load_adress_of_data = LOADADDR(.data)); /* get the load adress (because of the at keyword) from the data block */
 }

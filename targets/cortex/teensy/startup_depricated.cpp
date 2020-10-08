@@ -9,9 +9,10 @@
  * 
  */
 #include <stdint.h>
-#include "mimxrt1062.h"
+#include "imxrt.h"
 #define STARTUTIL __attribute__ ((section(".start_utility"), used))
-#define STARTCODE __attribute__ ((section(".start_of_code"),used))
+#define STARTCODE __attribute__((section(".start_of_code"), optimize("no-tree-loop-distribute-patterns"), naked))
+
 
 // forward declaration for a main
 int main(void);
@@ -290,25 +291,26 @@ STARTUTIL void copy_memory(uint32_t *source, uint32_t *destination, uint32_t *en
  */
 STARTCODE void startup()
 {
-	// Setting the flexram config stuff
-	IOMUXC_GPR->GPR17 = (uint32_t) &flexram_config; // Set the flexram adress in this register (the init vector table)
-	IOMUXC_GPR->GPR16 = 0x00200007; // Magic number from Paul Stoffregen?
-	IOMUXC_GPR->GPR14 = 0x00AA0000; // Magic number from Paul Stoffregen?
-	__asm__ volatile("mov sp, %0" : : "r" ((uint32_t)&stack_end_adress) : ); // set the stack pointer to the end of the stack
+	//debug stuff to turn the light on
+ 	//IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] = 5;
+    //IOMUXC->SW_PAD_CTL_PAD[kIOMUXC_SW_PAD_CTL_PAD_GPIO_B0_03] = ((uint32_t)(((7) & 0x07) << 3)); //this comes from paulstoffregen
+    // IOMUXC_GPR->GPR27 = 0xFFFFFFFF;
+    // GPIO7->GDIR |= (1 << 3);
+    // GPIO7->DR_SET |= (1 << 3);
+	IOMUXC_GPR_GPR27 = 0xFFFFFFFF;
+	GPIO7_GDIR |= (1<<3);
+	GPIO7_DR_SET = (1<<3); // digitalWrite(13, HIGH);
 
+	// copy the text memory to itcm
+	copy_memory(&load_adress_of_text, &start_adress_of_text, &end_adress_of_text);
+	// copy the data memory to dtcm
+	copy_memory(&load_adress_of_data, &start_adress_of_data, &end_adress_of_data);
 	// set the bss to zero
 	init_bss_zero();
-	// copy the text memory to itcm
-	copy_memory(&start_adress_of_text, &load_adress_of_text, &end_adress_of_text);
-	// copy the data memory to dtcm
-	copy_memory(&start_adress_of_data, &load_adress_of_data, &end_adress_of_data);
 
-	//stuff to turn the light on
- 	IOMUXC->SW_MUX_CTL_PAD[kIOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03] = 5;
-    IOMUXC->SW_PAD_CTL_PAD[kIOMUXC_SW_PAD_CTL_PAD_GPIO_B0_03] |= ((uint32_t)(((7) & 0x07) << 3)); //this comes from paulstoffregen
-    IOMUXC_GPR->GPR27 |= 0xFFFFFFFF;
-    GPIO7->GDIR |= (1 << 3);
-    GPIO7->DR_SET |= (1 << 3);
+	// enable FPU
+	//SCB->CPACR = 0x00F00000;
+
 
 	(void)main(); // call to main from hwlib
 

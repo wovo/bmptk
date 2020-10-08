@@ -758,7 +758,7 @@ endef
 define Cortex-M7
 	$(eval $(Cortex))
 	ARCH_FLAGS     := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
-   SOURCES        += startup.cpp
+   SOURCES        += startup.c
    OBJ            += startup.o
 endef
 
@@ -786,13 +786,10 @@ endef
 #MADE BY OSCAR
 ifeq ($(CHIP), mimxrt1062dvl6a)
    MCU            := TEENSY40
-   STACK_SIZE     ?= 1024#524288 # 512 kb
-   LN_TEMPLATE    := imxrt1062_new_linkerscript.c
+   STACK_SIZE     ?= NONE
+   LN_TEMPLATE    := imxrt1062_ld.c
+   SOURCES        += bootdata.c
    $(eval $(IMXRT106x))
-   #ROM_START      ?= 0x00200000 # p. 209
-   #RAM_START      ?= 0x20200000 # p.209
-   # ROM_SIZE       ?= 128k
-   # RAM_SIZE       ?= 512k
 endif
 
    #======================================================================
