@@ -15,13 +15,20 @@ extern void ResetHandler(void);
 extern unsigned long _estack;
 extern unsigned long _flashimagelen;
 
+/**
+ * @brief Vector table containing SP & PC
+ * 
+ */
 __attribute__ ((section(".vectors"), used))
 const uint32_t vector_table[2] = {
 	0x20010000, // 64K DTCM for boot, ResetHandler configures stack after ITCM/DTCM setup
 	(uint32_t)&ResetHandler
 };
 
-
+/**
+ * @brief Boot data required according to reference manual p.261
+ * 
+ */
 __attribute__ ((section(".bootdata"), used))
 const uint32_t BootData[3] = {
 	0x60000000,
@@ -29,7 +36,10 @@ const uint32_t BootData[3] = {
 	0
 };
 
-
+/**
+ * @brief Image vector table, required according to reference manual p. 260
+ * 
+ */
 __attribute__ ((section(".ivt"), used))
 const uint32_t ImageVectorTable[8] = {
 	0x402000D1,		// header
@@ -42,6 +52,10 @@ const uint32_t ImageVectorTable[8] = {
 	0			// reserved
 };
 
+/**
+ * @brief Data for configuring the flash memory and letting the chip understand where the code is
+ * 
+ */
 __attribute__ ((section(".flashconfig"), used))
 uint32_t FlexSPI_NOR_Config[128] = {
 	// 448 byte common FlexSPI configuration block, 8.6.3.1 page 223 (RT1060 rev 0)

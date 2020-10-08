@@ -42,12 +42,21 @@ void ResetHandler(void)
 
 
 	// Initialize memory
-	memory_copy(&_stext, &_stextload, &_etext);
-	memory_copy(&_sdata, &_sdataload, &_edata);
-	memory_clear(&_sbss, &_ebss);
-	main();
+	memory_copy(&_stext, &_stextload, &_etext); // copy the memory from the load adress (flash) of text, to the itcm
+	memory_copy(&_sdata, &_sdataload, &_edata); // copy the memory from the load adress (flash, data) to the DTCM
+	memory_clear(&_sbss, &_ebss); // clear the bss (initialize with all zeros)
+	main(); // call the main from the user
 	
-	while (1) ;
+	// when returned from the main, loop till hell freezes over, but do something to eliminate unidentified behaviour
+	volatile int a = 0;
+	while (1)
+	{
+		if (a == 100000)
+		{
+			a = 0;
+		}
+		a++;
+	}
 }
 
 __attribute__((section(".startup"), optimize("no-tree-loop-distribute-patterns")))
