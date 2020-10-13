@@ -45,8 +45,16 @@ void ResetHandler(void)
 	memory_copy(&_stext, &_stextload, &_etext); // copy the memory from the load adress (flash) of text, to the itcm
 	memory_copy(&_sdata, &_sdataload, &_edata); // copy the memory from the load adress (flash, data) to the DTCM
 	memory_clear(&_sbss, &_ebss); // clear the bss (initialize with all zeros)
+
+	// Turn on the fast GPIO ports ( gpio 1-5 are standard speed, 6-9 are high speed, 1 & 6 share the same pad, 2 & 7 too, etc)
+	IOMUXC_GPR->GPR26 = 0xFFFFFFFF;
+	IOMUXC_GPR->GPR27 = 0xFFFFFFFF;
+	IOMUXC_GPR->GPR28 = 0xFFFFFFFF;
+	IOMUXC_GPR->GPR29 = 0xFFFFFFFF;
+
 	main(); // call the main from the user
 	// TODO: FLOATING POINT UNIT ON!
+	
 	// when returned from the main, loop till hell freezes over, but do something to eliminate unidentified behaviour
 	volatile int a = 0;
 	while (1)
