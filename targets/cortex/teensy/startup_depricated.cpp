@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2020
  * 
  */
+// DEPRICATED FILE!
 #include <stdint.h>
 #include "imxrt.h"
 #define STARTUTIL __attribute__ ((section(".start_utility"), used))

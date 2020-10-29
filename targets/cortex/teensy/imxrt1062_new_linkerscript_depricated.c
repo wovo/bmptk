@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2020
  * 
  */
-
+/*DEPRICATED FILE!*/
 MEMORY /*This is the "map" of the memory allocation. ITCM & DTCM together are RAM block 1, RAM = RAM block 2, FLASH is the flashmemory that makes use of flexSPI*/
 {
 	ITCM (rwx):  ORIGIN = 0x00000000, LENGTH = 512K
