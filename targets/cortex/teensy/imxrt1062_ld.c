@@ -24,7 +24,7 @@ SECTIONS
 	.text.progmem : {
 		KEEP(*(.flashconfig)) /*place flash config at the beginning of the flash, and keep it there, even if there is no code with this attribute */
 		FILL(0xFF) /* fill everything with 0xFF untill the next instruction */
-		. = ORIGIN(FLASH) + 0x1000; /* jump to the origin of flash (0x60000000) + 1000 bytes */
+		. = ORIGIN(FLASH) + 0x1000; /* place/jump to the adress of the origin of flash (0x60000000) + 1000 bytes */
 		KEEP(*(.ivt)) /* place the required image vector table there (p.260)*/
 		KEEP(*(.bootdata)) /* place the required bootdata array here*/
 		KEEP(*(.vectors)) /* place the vector table containing the SP & PC here */
@@ -32,7 +32,7 @@ SECTIONS
 		*(.flashmem*) /* place everything with the attribute .flashmem here */
 		*(.progmem*) /* place everything with the attribute .progmem here */
                 . = ALIGN(4); /* jump to the first adress that can be divided by four. So essentially aligning on four bytes */
-                KEEP(*(.init)) /* this whole part is stuff that comes standard from the compiler */
+                KEEP(*(.init)) /* this whole part is stuff that comes standard from the compiler, in other words, the compiler gives flags/attributes to certain parts of code that are placed here. */
                 __preinit_array_start = .;
                 KEEP (*(.preinit_array)) /* This section holds an array of function pointers that contributes to a single pre-initialization array for the executable or shared object containing the section.*/
                 __preinit_array_end = .;
@@ -45,9 +45,9 @@ SECTIONS
 	.text.itcm : {
 		. = . + 32; /* MPU to trap NULL pointer deref */
 		*(.fastrun) /* place all the code that have the attribute .fastrun here */
-		*(.text*) /* place all the "normal" .text code here */
+		*(.text*) /* place all the "normal" .text code here. */
 		. = ALIGN(16); /* align on an adress divdiable by 16 */
-	} > ITCM  AT> FLASH /* let the virtual memory adress (ITCM), point to the load memory adress (FLASH), this code is later copied from flash to the itcm at startup.  */
+	} > ITCM  AT> FLASH /* let the virtual memory adress (ITCM), point to the load memory adress (FLASH), this code is later copied from flash to the itcm at startup, by startup.c.  */
 
 	/* this is standard arm stuff made by the compiler */
 	.ARM.exidx : {
@@ -79,7 +79,7 @@ SECTIONS
 		. = ALIGN(32);
 	} > RAM /* place all the code attributed with .dma buffers at RAM */
 
-	/* All code below are "provides" for the startup.c. So here _stext for example gets the value of the adress of the .text.itcm section. _stext (start text) is than
+	/* All code below are "provides" for the startup.c. So here _stext for example gets the value of the adress of the .text.itcm section. _stext (start text) is then
 	later used in the startup.c by some other functions. */
 	_stext = ADDR(.text.itcm);
 	_etext = ADDR(.text.itcm) + SIZEOF(.text.itcm) + SIZEOF(.ARM.exidx);
