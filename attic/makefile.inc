@@ -68,7 +68,7 @@ ifeq ($(OS),Windows_NT)
    REMOVE        ?= "$(BMPTK)/tools/bmptk-rm.exe" -f
    COPY          ?= "$(BMPTK)/tools/bmptk-cp.exe" -f
    IMAGE_SIZES   ?= "$(BMPTK)/tools/image_sizes/image_sizes.exe"
-   CHECK_PORT    ?= "$(BMPTK)/tools/check_serial_port/check_serial_port.exe"
+   CHECK_PORT    ?= "$(BMPTK)/tools/check_uart_port/check_uart_port.exe"
    CHECK_DRIVE   ?= "$(BMPTK)/tools/check_drive_name/check_drive_name.exe"
    COPY_TO_DRIVE ?= "$(BMPTK)/tools/copy_to_drive/copy_to_drive.exe"
    LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe" 
@@ -77,7 +77,7 @@ ifeq ($(OS),Windows_NT)
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    TERMINAL      ?= "$(BMPTK)/tools/Terminal.exe"
    BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
-   DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(SERIAL_PORT) 
+   DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(uart_port) 
    
    # installed separately
    ATPROGRAM     ?= "$(AtmelToolchain)/../Atmel Studio 6.2/atbackend/atprogram.exe"
@@ -110,7 +110,7 @@ else
    
    # distributed with bmptk
    IMAGE_SIZES   ?= $(BMPTK)/tools/image_sizes/image_sizes
-   CHECK_PORT    ?= $(BMPTK)/tools/check_serial_port/check_serial_port
+   CHECK_PORT    ?= $(BMPTK)/tools/check_uart_port/check_uart_port
    CHECK_DRIVE   ?= $(BMPTK)/tools/check_drive_name/check_drive_name
    # COPY_TO_DRIVE ?= $(BMPTK)/tools/copy_to_drive/copy_to_drive
    LPC21ISP      ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
@@ -120,7 +120,7 @@ else
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    BOSSAC        ?= bossac
 
-   DUE_BOOTMODE  ?= stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb
+   DUE_BOOTMODE  ?= stty -F $(uart_port) speed 1200 cs8 -cstopb -parenb
    
 endif
 
@@ -529,19 +529,19 @@ ifeq ($(CHIP),atmega328)
    XTAL           ?= 20000   
    DEFINES        += -D__AVR_ATmega328P__ 
    ARCH_FLAGS     += -mmcu=atmega328p
-   # PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)  
-   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
-   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   # PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)  
+   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(uart_port) -b115200 -Uflash:w:$(HEX)
+   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(uart_port) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
    LINKERSCRIPT := 
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000 
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000 
 endif
 
 .PHONY: bootloader
 bootloader:
 	@echo 'download the arduino bootloader'
 	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p -b 19200 -v -e -U efuse:w:0x05:m -U hfuse:w:0xD6:m -U lfuse:w:0xFF:m
-	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
+	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(uart_port) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
 	@echo ' '   
 
 
@@ -622,8 +622,8 @@ define LPC_ARM_V7
    RAM_START      ?= 0x40000000
    INCLUDES       += -I$(BMPTK)/targets/armv7/include
    XTAL           ?= 12000   
-   PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)  
-   RUN            ?= $(LPC21ISP) -control -verify -term $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)  
+   RUN            ?= $(LPC21ISP) -control -verify -term $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
 endef
 
 ifeq ($(CHIP),lpc2148fbd64)
@@ -702,11 +702,11 @@ define LPC_Cortex
    INCLUDES        += -I$(BMPTK)/targets/cortex/lpc/cmsis   
    XTAL            ?= 12000   
    RESULTS         += $(HEX)
-   PORT_CHECK      ?= $(CHECK_PORT) $(SERIAL_PORT)
-   LPCISP_PARAMS   := $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000      
+   PORT_CHECK      ?= $(CHECK_PORT) $(uart_port)
+   LPCISP_PARAMS   := $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000      
 endef
 
 define LPC81X
@@ -888,16 +888,16 @@ define Atmel_SAM3
    ROM_START      ?= 0x00000000   
    RAM_START      ?= 0x20000000     
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel
-   PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)  
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)  
    RUN_PRE        := $(DUE_BOOTMODE)
    # was al gezet?
    RESULTS        += $(BIN)
-   RUN            := $(BOSSAC) -p $(subst /dev/,,$(SERIAL_PORT)) -U false -e -w -v -b $(BIN) -R
+   RUN            := $(BOSSAC) -p $(subst /dev/,,$(uart_port)) -U false -e -w -v -b $(BIN) -R
    # RUN            := $(BOSSAC) -e -w -v -b $(BIN)   
    DEFINES        += -DDONT_USE_CMSIS_INIT 
    DEFINES        += -DBMPTK_INCLUDE_CHIP=sam.h 
    LDFLAGS        += -I$(BMPTK)/targets/cortex/atmel/sam3xa/source/as_gcc
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000   
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000   
    
 endef     
 
@@ -957,8 +957,8 @@ ifeq ($(CHIP),esp8266)
    
    RESULTS        += $(ELF) $(BIN1) $(BIN2)
    
-   PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)    
-   RUN            = $(ESP-LOADER) -p $(SERIAL_PORT) -b $(SERIAL_BAUDRATE) write_flash 0x00000 $(BIN1) 0x40000 $(BIN2)
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)    
+   RUN            = $(ESP-LOADER) -p $(uart_port) -b $(SERIAL_BAUDRATE) write_flash 0x00000 $(BIN1) 0x40000 $(BIN2)
    RUN_PAUSE      ?= $(PAUSE)
       
    $(BIN1): $(ELF)

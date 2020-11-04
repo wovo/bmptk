@@ -34,14 +34,14 @@ static uint32_t CPUCLock = 600;
 static void memory_copy(uint32_t *dest, const uint32_t *src, uint32_t *dest_end);
 static void memory_clear(uint32_t *dest, uint32_t *dest_end);
 /**
- * @brief Function to initialize/configurate the necessery PLL's and their respective PFD's
+ * @brief Function to initialize/configurate the necessery PLL for the CPU and set the CPU to a frequency.
  * @details The CPU_Mhz parameter needs to be between 324 and 768 Mhz.
  * If this value is above or below those Mhz, the chip will go to the standard ARM M-7 480 Mhz .
  * The cpu is manufactured for only 480 Mhz, use overclocking at own risk. 
  * 
  * @param CPU_Mhz, The megahertz that the CPU clock needs to be in
  */
-static void init_clocks(unsigned int CPU_Mhz);
+static void init_cpu_clock(unsigned int CPU_Mhz);
 /**
  * @brief Function to initialize the systick and set it to the processor clock.
  * 
@@ -68,8 +68,9 @@ void ResetHandler(void)
 	memory_copy(&_stext, &_stextload, &_etext); // copy the memory from the load adress (flash) of text, to the itcm
 	memory_copy(&_sdata, &_sdataload, &_edata); // copy the memory from the load adress (flash, data) to the DTCM
 	memory_clear(&_sbss, &_ebss);				// clear the bss (initialize with all zeros)
-	init_clocks(CPUCLock);
+	//initialize cpu clock and systemtick
 	init_systick();
+	init_cpu_clock(CPUCLock);
 	// TODO: FLOATING POINT UNIT ON!
 
 	// Turn on the fast GPIO ports ( gpio 1-5 are standard speed, 6-9 are high speed, 1 & 6 share the same chip pad, 2 & 7 too, etc)
@@ -110,7 +111,7 @@ __attribute__((section(".startup"), optimize("no-tree-loop-distribute-patterns")
 	}
 }
 
-__attribute__((section(".startup"), optimize("no-tree-loop-distribute-patterns"))) static void init_clocks(unsigned int  CPU_Mhz)
+__attribute__((section(".startup"), optimize("no-tree-loop-distribute-patterns"))) static void init_cpu_clock(unsigned int  CPU_Mhz)
 {
 	//calculate the right setting for the arm clock. Fout = Fin * div_sel / 2. So: 650 Mhz (the PLL minimum) = 24 * ? / 2 = 54.
 	//Because there is a divider in between the pll and arm cpu and we want 480 mhz * 2 (the max of the cpu),
@@ -118,7 +119,7 @@ __attribute__((section(".startup"), optimize("no-tree-loop-distribute-patterns")
 	uint32_t div_sel = (CPU_Mhz*4)/24; 
 	if (div_sel > 128 || div_sel < 54)
 	{
-		div_sel = 0b1010000; 		 // set it to 480 mhz, the max according to ARM for the M-7
+		div_sel = 0b1010000; 		 // set it to 480 mhz, the max (and default) according to ARM for the M-7
 	}
 
 	CCM_ANALOG->PLL_ARM |= (0b1 << 16);	 //bypass the pll to the oscillator

@@ -1,6 +1,6 @@
 [Project]
-FileName=check_serial_port.dev
-Name=check_serial_port
+FileName=check_uart_port.dev
+Name=check_uart_port
 Type=1
 Ver=2
 ObjFiles=
@@ -51,7 +51,7 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=check_serial_port.c
+FileName=check_uart_port.c
 CompileCpp=0
 Folder=
 Compile=1
