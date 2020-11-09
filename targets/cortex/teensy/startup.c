@@ -68,10 +68,13 @@ void ResetHandler(void)
 	memory_copy(&_stext, &_stextload, &_etext); // copy the memory from the load adress (flash) of text, to the itcm
 	memory_copy(&_sdata, &_sdataload, &_edata); // copy the memory from the load adress (flash, data) to the DTCM
 	memory_clear(&_sbss, &_ebss);				// clear the bss (initialize with all zeros)
+
 	//initialize cpu clock and systemtick
 	init_systick();
 	init_cpu_clock(CPUCLock);
-	// TODO: FLOATING POINT UNIT ON!
+
+	// enable CPU Floating Point Unit
+	SCB->CPACR = 0x00F00000;
 
 	// Turn on the fast GPIO ports ( gpio 1-5 are standard speed, 6-9 are high speed, 1 & 6 share the same chip pad, 2 & 7 too, etc)
 	IOMUXC_GPR->GPR26 = 0xFFFFFFFF;
