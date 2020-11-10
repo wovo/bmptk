@@ -764,13 +764,15 @@ endef
 
    #======================================================================
    #
-   # NXP : i.MX RT1060 family of Cortex chips
+   # NXP : i.MX RT1060 family of Cortex chips (Teensy 4.0)
    #
    #======================================================================
       
 #MADE BY OSCAR	
 define IMXRT106x
 	$(eval $(Cortex-M7))
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
    SEARCH         += $(BMPTK)/targets/cortex/
    SEARCH         += $(BMPTK)/targets/cortex/teensy
    SEARCH         += $(BMPTK)/targets/cortex/M7/Include
@@ -1439,7 +1441,7 @@ $(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
    #
    #=========================================================================
 
-# How to create a fixed size stack
+# How to create a dummy size stack
 $(DUMMY_SIZE_STACK_FILE).c: $(MAKEFILE)
 	@echo 'create the (dummy) stack file $(DUMMY_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C $(BMPTK)/targets/bmptk_dummy_stack.c -o $@
