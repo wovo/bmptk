@@ -96,6 +96,24 @@ void ResetHandler(void)
 	}
 }
 
+// junk that is not needed in an embedded context, but
+// is still required to satisfy the C++ compiler
+void * __dso_handle;
+
+// handle a divide-by-zero error
+// the standard library invokes abort
+int __aeabi_idiv0(){ return 0; }
+
+// called when a vft entry is not yet filled in
+void __cxa_pure_virtual(){}
+
+/*
+// prevent linking in the at-exit handling
+int __aeabi_atexit (void *arg, void (*func) (void *), void *d){
+  return 0;
+}
+*/
+
 __attribute__((section(".startup"), optimize("no-tree-loop-distribute-patterns"))) static void memory_copy(uint32_t *dest, const uint32_t *src, uint32_t *dest_end)
 {
 	if (dest == src)
