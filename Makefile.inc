@@ -308,6 +308,11 @@ ifeq ($(TARGET),arduino_uno)
    XTAL        ?= 12000
 endif
 
+ifeq ($(TARGET),arduino_leonardo)
+   CHIP        ?= atmega32u4
+   XTAL        ?= 12000
+endif
+
 ifeq ($(TARGET),my_first_dev_board)
    CHIP        ?= atmega328
    XTAL        ?= 12000
@@ -554,8 +559,8 @@ define Atmega
    endif
    SEARCH          += $(BMPTK)/targets/avr $(BMPTK)/targets/avr/include
 #   SEARCH          += $(BMPTK)/targets/avr $(BMPTK)/targets/avr/avr8-hacks
-   SEARCH          += $(BMPTK)/targets/avr/avr8-hacks
-   SEARCH          += $(BMPTK)/targets/avr/StandardCplusplus
+#   SEARCH          += $(BMPTK)/targets/avr/avr8-hacks
+#   SEARCH          += $(BMPTK)/targets/avr/StandardCplusplus
    DEFINES         += -DBMPTK_INCLUDE_CHIP=io.h
    RESULTS         += $(ELF) $(BIN) $(HEX)
    CPU             ?= avr
@@ -566,7 +571,7 @@ define Atmega
    # LDFLAGS         += -T bmptk_linkerscript_avr5_xn.ld
    #LDFLAGS	       += -v
    ifeq ($(OS),Windows_NT)
-      CPP_LANGUAGE    := -std=c++17 -fconcepts
+      CPP_LANGUAGE    := -std=c++20
    else
    endif
       CPP_LANGUAGE    := -std=c++2a
@@ -590,6 +595,26 @@ ifeq ($(CHIP),atmega328)
    LINKERSCRIPT   :=
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
 endif
+
+ifeq ($(CHIP),atmega32u4)
+   $(eval $(Atmega))
+   ROM_START      ?= 0x0000
+   RAM_START      ?= 0x0100
+   ROM_SIZE       ?= 32k
+   RAM_SIZE       ?= 2k
+   STACK_SIZE     ?= 1536
+   XTAL           ?= 20000
+   DEFINES        += -D__AVR_ATmega32u4__
+   ARCH_FLAGS     += -mmcu=atmega32u4
+   # PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)
+   # RUN_PRE        := $(DUE_BOOTMODE)   
+   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp-clone -p m32u4 -Uflash:w:$(HEX)
+   # RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -patmega32u4 -cavr109 -P$(SERIAL_PORT) -b75600 -D -Uflash:w:$(HEX)
+   # avrdude -patmega32u4 -cavr109 -P$(PORT) -b57600 -D -Uflash:w:./Blink.cpp.hex:i
+   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega32u4  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega32u4 erase program -f $(HEX)
+   LINKERSCRIPT   :=
+ endif
 
 .PHONY: bootloader
 bootloader:
@@ -961,7 +986,7 @@ define Atmel_SAM3
    RESULTS        += $(BIN)
    #RUN            := $(BOSSAC) -p $(subst /dev/,,$(SERIAL_PORT)) -U false -e -w -v -b $(BIN) -R
    RUN            := $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false -e -w -v -b $(BIN) -R
-   RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false --reset
+   #RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false --reset
    # RUN            := $(BOSSAC) -e -w -v -b $(BIN)
    DEFINES        += -DDONT_USE_CMSIS_INIT
    DEFINES        += -DBMPTK_INCLUDE_CHIP=sam.h
@@ -1386,7 +1411,7 @@ $(EXE): $(OBJECTS) $(LIBS) $(ALL_LIBRARIES)
 	@echo 'Linking EXE target: $(EXE)'
 	@echo $(LN_FLAGS) > _linker_flags
 	@echo $(LINKER_FLAGS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) > _linker_libs
-	$(LINKER) @_linker_flags -o $@ $(OBJECTS) @_linker_libs
+	$(LINKER) @_linker_flags -o $@ $(OBJECTS) $(LINKER_FLAGS) $(LDFLAGS) $(LIBS) $(ALL_LIBRARIES) @_linker_libs
 	@echo ' '
 
 # How to make an .dll dynamic link library by linking all objects
