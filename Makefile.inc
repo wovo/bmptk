@@ -615,6 +615,7 @@ ifeq ($(CHIP),atmega32u4)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega32u4 erase program -f $(HEX)
    LINKERSCRIPT   :=
  endif
+ 
 
 .PHONY: bootloader
 bootloader:
