@@ -575,7 +575,7 @@ define Atmega
    else
    endif
       CPP_LANGUAGE    := -std=c++2a
-   OBJECTS         += cxa_virtual.o
+   #OBJECTS         += cxa_virtual.o
 endef
 
 ifeq ($(CHIP),atmega328)
@@ -608,7 +608,7 @@ ifeq ($(CHIP),atmega32u4)
    ARCH_FLAGS     += -mmcu=atmega32u4
    # PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)
    # RUN_PRE        := $(DUE_BOOTMODE)   
-   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp-clone -p m32u4 -Uflash:w:$(HEX)
+   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p m32u4 -Uflash:w:$(HEX)
    # RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -patmega32u4 -cavr109 -P$(SERIAL_PORT) -b75600 -D -Uflash:w:$(HEX)
    # avrdude -patmega32u4 -cavr109 -P$(PORT) -b57600 -D -Uflash:w:./Blink.cpp.hex:i
    # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega32u4  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
