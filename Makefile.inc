@@ -38,7 +38,8 @@ ifeq ($(OS),Windows_NT)
    endif
    SUDO ?=
 else
-   SUDO ?= sudo
+   # should no longer be needed
+   SUDO ?= 
 endif
 
 ifneq ($(wildcard $(BMPTK)/Makefile.custom),)
@@ -496,7 +497,7 @@ define Linux
    CHIP              := Linux_Native
    PREFIX            :=
    RESULTS           += $(EXE)
-   RUN               ?= sudo ./$(EXE)
+   RUN               ?= $(SUDO) ./$(EXE)
    RUN_PAUSE         ?= read -p "Press return to continue" x
    DEFINES           += -DHWLIB_TARGET_Linux
    GPP-LINUX         ?= g++
@@ -939,7 +940,7 @@ ifeq ($(CHIP),mkl27z64vlh4)
    STACK_SIZE     ?= 8096
    DOWNLOAD_DRIVE ?= FRDM-KL27Z
    DEFINES        += -DBMPTK_INCLUDE_CHIP=MKL28Z644.h
-   RUN            = sudo mount -vo uid=$$(id -u),gid=$$(id -u) /dev/disk/by-label/FRDM-KL27* /mnt/tmp && cp -v $(BIN) /mnt/tmp && sync && sudo umount -v /mnt/tmp
+   RUN            = $(SUDO) mount -vo uid=$$(id -u),gid=$$(id -u) /dev/disk/by-label/FRDM-KL27* /mnt/tmp && cp -v $(BIN) /mnt/tmp && sync && $(SUDO) umount -v /mnt/tmp
    #RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
 
