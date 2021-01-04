@@ -203,7 +203,7 @@ def codelite_project_file( name, main, files, target ):
    print( files )
    if has_makefile( files ):
       print( "bmptk" )
-      s = codelite_project_template_bmptk()
+      s = codelite_project_template_bmptk( target )
    else:
       s = codelite_project_template_mingw()      
    s = s.replace( "%%MAIN%%", main ).replace( "%%NAME%%", name )
@@ -221,7 +221,7 @@ def codelite_project_file( name, main, files, target ):
    s = s.replace( "%%FILES%%", "" )
    return s.replace( "\n\n", "\n" )
 
-def codelite_project_template_bmptk():
+def codelite_project_template_bmptk( target ):
    s = """<?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="%%NAME%%" InternalType="">
   <Plugins>
