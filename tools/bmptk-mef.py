@@ -70,7 +70,7 @@ class projectdir:
          
       );
       if target != "windows":
-         system( "chmod +x " + f )
+         os.system( "chmod +x " + f )
       if 0: file_from_text(
          os.path.join( self.path, self.subdir, workspace ),
          codelite_workspace_file( [ self.name ], codelite, 1, self.target )
