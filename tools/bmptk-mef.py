@@ -66,7 +66,7 @@ class projectdir:
          f,
             "bmptk-make run\n" 
          if target == "windows" 
-            else "make run\n"
+            else "gnome-terminal -- make run\n"
          
       );
       if target != "windows":
@@ -207,10 +207,7 @@ def codelite_project_file( name, main, files, target ):
    else:
       s = codelite_project_template_mingw()      
    s = s.replace( "%%MAIN%%", main ).replace( "%%NAME%%", name )
-   if target == "windows":
-      replacement = 'Command="_run.bat" CommandArguments="run"'
-   else:		 
-      replacement = 'Command="gnome-terminal" CommandArguments="-- _run.bat"'
+   replacement = 'Command="_run.bat" CommandArguments="run"'
    s = s.replace( "%%RUN%%", replacement )   
    for file in files:
       if( add_to_edit_files( file ) ):
