@@ -1,11 +1,11 @@
 # ===========================================================================
 # 
 # BMPTK's Make Editor Files:
-# create the Codelite files for a set of projects,
+# create the CodeLite files for a set of projects,
 # which can be native or bmptk
 #
-# (c) Wouter van Ooijen (wouter@voti.nl)
-# 2016-04-15 version 1.0 work-in-progress
+# (c) Wouter van Ooijen (wouter@voti.nl) 2016-2021
+#
 # license: Boost Software License - Version 1.0
 #
 # ===========================================================================
@@ -61,13 +61,16 @@ class projectdir:
          os.path.join( self.path, self.subdir, codelite ),
          codelite_project_file( self.name, self.main, self.files, self.target )
       );
+      f = os.path.join( self.path, self.subdir, "_run.bat" )
       file_from_text(
-         os.path.join( self.path, self.subdir, "_run.bat" ),
-         "bmptk-make run\n" 
+         f,
+            "bmptk-make run\n" 
          if target == "windows" 
-         else "sudo make run\n"
+            else "make run\n"
          
       );
+      if target != "windows":
+         system( "chmod +x " + f )
       if 0: file_from_text(
          os.path.join( self.path, self.subdir, workspace ),
          codelite_workspace_file( [ self.name ], codelite, 1, self.target )
@@ -219,7 +222,7 @@ def codelite_project_file( name, main, files, target ):
    return s.replace( "\n\n", "\n" )
 
 def codelite_project_template_bmptk():
-   return """<?xml version="1.0" encoding="UTF-8"?>
+   s = """<?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="%%NAME%%" InternalType="">
   <Plugins>
     <Plugin Name="qmake">
@@ -342,6 +345,9 @@ def codelite_project_template_bmptk():
   </Settings>
 </CodeLite_Project>   
 """   
+   if target == "windows":
+      s = s.replace( "bmptk-make", "make" )
+   return s   
 
 def codelite_project_template_mingw():
    return """<?xml version="1.0" encoding="UTF-8"?>
