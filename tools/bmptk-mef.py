@@ -345,7 +345,7 @@ def codelite_project_template_bmptk( target ):
   </Settings>
 </CodeLite_Project>   
 """   
-   if target == "windows":
+   if target != "windows":
       s = s.replace( "bmptk-make", "make" )
    return s   
 
