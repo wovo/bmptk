@@ -61,7 +61,7 @@ ifeq ($(OS),Windows_NT)
    ESP-LOADER      ?= $(ESPRESSIF)/utils/esptool.exe
    
    # serial port defaults
-   SERIAL_PORT     ?= COM4
+   uart_port     ?= COM4
    SERIAL_BAUDRATE ?= 38400 
    CONSOLE_BAUDRATE ?= 38400 
    
