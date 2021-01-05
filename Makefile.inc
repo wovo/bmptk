@@ -49,17 +49,17 @@ else
 endif
 
 ifeq ($(OS),Windows_NT)
-   SERIAL_PORT_DUE   ?= COM3
-   SERIAL_PORT_UNO   ?= COM4
+   uart_port_DUE   ?= COM3
+   uart_port_UNO   ?= COM4
 else
-   SERIAL_PORT_DUE   ?= $(shell ls /dev/ttyACM?)
-   SERIAL_PORT_UNO   ?= $(shell ls /dev/ttyUSB?)
+   uart_port_DUE   ?= $(shell ls /dev/ttyACM?)
+   uart_port_UNO   ?= $(shell ls /dev/ttyUSB?)
 endif
 
 ifeq ($(TARGET),arduino_due)
-   SERIAL_PORT          := $(SERIAL_PORT_DUE)
+   uart_port          := $(uart_port_DUE)
 else
-   SERIAL_PORT          := $(SERIAL_PORT_UNO)
+   uart_port          := $(uart_port_UNO)
 endif
 
 
@@ -86,7 +86,7 @@ ifeq ($(OS),Windows_NT)
    #COPY          ?= "$(BMPTK)/tools/bmptk-cp.exe" -f
    COPY          ?= "$(BMPTK)/tools/bmptk-cp.exe" -f
    IMAGE_SIZES   ?= "$(BMPTK)/tools/image_sizes/image_sizes.exe"
-   CHECK_PORT    ?= "$(BMPTK)/tools/check_serial_port/check_serial_port.exe"
+   CHECK_PORT    ?= "$(BMPTK)/tools/check_uart_port/check_uart_port.exe"
    CHECK_DRIVE   ?= "$(BMPTK)/tools/check_drive_name/check_drive_name.exe"
    COPY_TO_DRIVE ?= "$(BMPTK)/tools/copy_to_drive/copy_to_drive.exe"
    LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
@@ -95,7 +95,7 @@ ifeq ($(OS),Windows_NT)
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    TERMINAL      ?= "$(BMPTK)/tools/Terminal.exe"
    BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
-   DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(SERIAL_PORT)
+   DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(uart_port)
 
    # installed separately
    ATPROGRAM     ?= "$(AtmelToolchain)/../Atmel Studio 6.2/atbackend/atprogram.exe"
@@ -129,24 +129,26 @@ else
 
    # distributed with bmptk
    IMAGE_SIZES   ?= $(BMPTK)/tools/image_sizes/image_sizes
-   CHECK_PORT    ?= $(BMPTK)/tools/check_serial_port/check_serial_port
+   CHECK_PORT    ?= $(BMPTK)/tools/check_uart_port/check_uart_port
    CHECK_DRIVE   ?= $(BMPTK)/tools/check_drive_name/check_drive_name
    # COPY_TO_DRIVE ?= $(BMPTK)/tools/copy_to_drive/copy_to_drive
 
    # installed separately
    AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
+   # MADE BY OSCAR
+   TEENSY_LOADER ?= $(SUDO) teensy_loader_cli # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
 
    # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
    ifeq ($(WSL),true)
        BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
-       DUE_BOOTMODE  ?= cmd.exe /c @mode $(SERIAL_PORT):1200
+       DUE_BOOTMODE  ?= cmd.exe /c @mode $(uart_port):1200
        STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
        LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
    else
        BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
        BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
-       DUE_BOOTMODE  ?= $(SUDO) stty -F $(SERIAL_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
+       DUE_BOOTMODE  ?= $(SUDO) stty -F $(uart_port) speed 1200 cs8 -cstopb -parenb; sleep 1.0
        LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
        LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    endif
@@ -394,7 +396,10 @@ endif
 ifeq ($(TARGET),xmc_2go_1100)
    CHIP        ?= xmc1100
 endif
-
+#MADE BY OSCAR
+ifeq ($(TARGET),teensy_40)
+   CHIP        ?= mimxrt1062dvl6a
+endif
 # the target did not match any boards, and no explicit
 # chip was specified, assume the TARGET is the chip
 ifeq ($(CHIP),)
@@ -542,11 +547,11 @@ ifeq ($(TARGET),pyd)
    endif
 endif
 
-   #=========================================================================
-   #
-   # 8-bit AVR chips
-   #
-   #=========================================================================
+#=========================================================================
+#
+# 8-bit AVR chips
+#
+#=========================================================================
 
 define Atmega
    $(eval $(Embedded))
@@ -589,12 +594,12 @@ ifeq ($(CHIP),atmega328)
    XTAL           ?= 20000
    DEFINES        += -D__AVR_ATmega328P__
    ARCH_FLAGS     += -mmcu=atmega328p
-   # PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)
-   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
-   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   # PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
+   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(uart_port) -b115200 -Uflash:w:$(HEX)
+   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(uart_port) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
    LINKERSCRIPT   :=
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000
 endif
 
 ifeq ($(CHIP),atmega32u4)
@@ -622,15 +627,15 @@ ifeq ($(CHIP),atmega32u4)
 bootloader:
 	@echo 'download the arduino bootloader'
 	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p -b 19200 -v -e -U efuse:w:0x05:m -U hfuse:w:0xD6:m -U lfuse:w:0xFF:m
-	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
+	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(uart_port) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
 	@echo ' '
 
 
-   #=========================================================================
-   #
-   # 16-bit MSP430 chips
-   #
-   #=========================================================================
+#=========================================================================
+#
+# 16-bit MSP430 chips
+#
+#=========================================================================
 
 define MSP430
    $(eval $(Embedded))
@@ -673,11 +678,11 @@ ifeq ($(CHIP),msp430fr4133)
    RUN_PAUSE      := $(PAUSE)
 endif
 
-   #=========================================================================
-   #
-   # ARM v7 chips
-   #
-   #=========================================================================
+#=========================================================================
+#
+# ARM v7 chips
+#
+#=========================================================================
 
 define ARM_V7
    $(eval $(Embedded))
@@ -705,8 +710,8 @@ define LPC_ARM_V7
    RAM_START      ?= 0x40000000
    INCLUDES       += -I$(BMPTK)/targets/armv7/include
    XTAL           ?= 12000
-   PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)
-   RUN            ?= $(LPC21ISP) -control -verify -term $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
+   RUN            ?= $(LPC21ISP) -control -verify -term $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
 endef
 
 ifeq ($(CHIP),lpc2148fbd64)
@@ -718,12 +723,11 @@ ifeq ($(CHIP),lpc2148fbd64)
 endif
 
 
-   #=========================================================================
-   #
-   # Cortex chips common
-   #
-   #=========================================================================
-
+#=========================================================================
+#
+# Cortex chips common
+#
+#=========================================================================
 define Cortex
    $(eval $(Embedded))
 
@@ -734,9 +738,7 @@ define Cortex
       # use absolute paths to find the tools
       PREFIX := $(GCC-ARM)/bin/$(ARM-EABI)-
    endif
-
    SEARCH          += $(BMPTK)/targets/cortex $(BMPTK)/targets/cortex/cmsis
-   SOURCES         += bmptk_cortex.c
    COREFLAGS    += -nostdlib
    COREFLAGS    += -nodefaultlibs
    LDFLAGS    += -nostdlib
@@ -746,7 +748,6 @@ define Cortex
    LN_TEMPLATE    ?= bmptk_linkerscript_cortex.c
    # should be $(LINKERSCRIPT)
    LDFLAGS	       += -T $(LINKERSCRIPT)
-   OBJ         += bmptk_startup_cortex.o
    CPU         ?= cortex
    ROOT        ?= __startup
 endef
@@ -754,29 +755,77 @@ endef
 define Cortex-M0
    $(eval $(Cortex))
    ARCH_FLAGS      := -mcpu=cortex-m0 -mthumb -fomit-frame-pointer -march=armv6-m
+   OBJ         += bmptk_startup_cortex.o
+   SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M0+
    $(eval $(Cortex))
    ARCH_FLAGS     = -mcpu=cortex-m0 -mthumb -fomit-frame-pointer -march=armv6-m
+   OBJ         += bmptk_startup_cortex.o
+   SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M3
    $(eval $(Cortex))
    ARCH_FLAGS     := -mcpu=cortex-m3 -mthumb -fomit-frame-pointer -march=armv7-m
+   OBJ         += bmptk_startup_cortex.o
+   SOURCES         += bmptk_cortex.c
 endef
 
 define Cortex-M4F
    $(eval $(Cortex))
    ARCH_FLAGS     := -mcpu=cortex-m4 -mthumb -fomit-frame-pointer
+   OBJ            += bmptk_startup_cortex.o
+   SOURCES        += bmptk_cortex.c
    # -march=armv7-m
 endef
 
-      #======================================================================
-      #
-      # NXP : LPC Cortex chips
-      #
-      #======================================================================
+# MADE BY OSCAR
+define Cortex-M7
+	$(eval $(Cortex))
+	ARCH_FLAGS     := -mcpu=cortex-m7 -mtune=cortex-m7 -mthumb -fomit-frame-pointer #-march=armv7-m 
+   SOURCES        += startup.c
+   OBJ            += startup.o
+endef
+
+   #======================================================================
+   #
+   # NXP : i.MX RT1060 family of Cortex chips (Teensy 4.0)
+   #
+   #======================================================================
+      
+#MADE BY OSCAR	
+define IMXRT106x
+	$(eval $(Cortex-M7))
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
+   SEARCH         += $(BMPTK)/targets/cortex/
+   SEARCH         += $(BMPTK)/targets/cortex/teensy
+   SEARCH         += $(BMPTK)/targets/cortex/M7/Include
+   SEARCH         += $(BMPTK)/targets/cortex/M7/Source
+   SEARCH         += $(BMPTK)/targets/cortex/M7/ARM
+   SEARCH         += $(BMPTK)/targets/cortex/M7/GCC
+   SEARCH         += $(BMPTK)/targets/cortex/teensy/
+   RESULTS        += $(HEX)
+   RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
+   RUN_PAUSE      ?= $(PAUSE)
+endef
+
+#MADE BY OSCAR
+ifeq ($(CHIP), mimxrt1062dvl6a)
+   MCU            := TEENSY40
+   STACK_SIZE     ?= NONE
+   LN_TEMPLATE    := imxrt1062_ld.c
+   SOURCES        += bootdata.c
+   $(eval $(IMXRT106x))
+endif
+
+   #======================================================================
+   #
+   # NXP : LPC Cortex chips
+   #
+   #======================================================================
 
 define LPC_Cortex
    $(eval $(LPC))
@@ -785,11 +834,11 @@ define LPC_Cortex
    INCLUDES        += -I$(BMPTK)/targets/cortex/lpc/cmsis
    XTAL            ?= 12000
    RESULTS         += $(HEX)
-   PORT_CHECK      ?= $(CHECK_PORT) $(SERIAL_PORT)
-   LPCISP_PARAMS   := $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(SERIAL_PORT) $(SERIAL_BAUDRATE) 12000
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
+   PORT_CHECK      ?= $(CHECK_PORT) $(uart_port)
+   LPCISP_PARAMS   := $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000
 endef
 
 define LPC81X
@@ -833,12 +882,19 @@ ifeq ($(CHIP),lpc11c14fbd48)
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144
 endif
+ROM_START      ?= 0x00000000
+   RAM_START      ?= 0x20000000
+   INCLUDES       += -I$(BMPTK)/targets/cortex/freescale/cmsis
+   RESULTS        += $(BIN)
+   RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
+   RUN_PAUSE      ?= $(PAUSE)
+   COPY_TO_DRIVE  ?= " "
 
-      #======================================================================
-      #
-      # STM Cortex chips
-      #
-      #======================================================================
+   #======================================================================
+   #
+   # STM cortex chips
+   #
+   #======================================================================
 
 define STM32
    ROM_START      ?= 0x08000000
@@ -904,11 +960,11 @@ ifeq ($(CHIP),stm32f411re)
    DEFINES        += -DBMPTK_INCLUDE_CHIP=stm32f411xe.h
 endif
 
-      #======================================================================
-      #
-      # NXP/Freescale Cortex chips
-      #
-      #======================================================================
+   #======================================================================
+   #
+   # NXP : Freescale Cortex chips
+   #
+   #======================================================================
 
 define Freescale
    ROM_START      ?= 0x00000000
@@ -944,11 +1000,11 @@ ifeq ($(CHIP),mkl27z64vlh4)
    #RUN            = $(COPY_TO_DRIVE) $(BIN) $(DOWNLOAD_DRIVE) application.bin
 endif
 
-      #======================================================================
-      #
-      # Infineon Cortex chips
-      #
-      #======================================================================
+   #======================================================================
+   #
+   # Infineon Cortex chips
+   #
+   #======================================================================
 
 define Infineon
    ROM_START      ?= 0x00000000
@@ -970,11 +1026,11 @@ ifeq ($(CHIP),xmc1100)
 endif
 
 
-      #======================================================================
-      #
-      # Atmel Cortex chips
-      #
-      #======================================================================
+   #======================================================================
+   #
+   # Atmel Cortex chips
+   #
+   #======================================================================
 
 define Atmel_SAM3
    $(eval $(Cortex-M3))
@@ -982,18 +1038,18 @@ define Atmel_SAM3
    RAM_START      ?= 0x20000000
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel/sam3xa/include
-   PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
    RUN_PRE        := $(DUE_BOOTMODE)
    # was al gezet?
    RESULTS        += $(BIN)
-   #RUN            := $(BOSSAC) -p $(subst /dev/,,$(SERIAL_PORT)) -U false -e -w -v -b $(BIN) -R
-   RUN            := $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false -e -w -v -b $(BIN) -R
-   #RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false --reset
+   #RUN            := $(BOSSAC) -p $(subst /dev/,,$(uart_port)) -U false -e -w -v -b $(BIN) -R
+   RUN            := $(BOSSAC) --port=$(subst /dev/,,$(uart_port)) --force_usb_port=false -e -w -v -b $(BIN) -R
+   RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(uart_port)) --force_usb_port=false --reset
    # RUN            := $(BOSSAC) -e -w -v -b $(BIN)
    DEFINES        += -DDONT_USE_CMSIS_INIT
    DEFINES        += -DBMPTK_INCLUDE_CHIP=sam.h
    LDFLAGS        += -I$(BMPTK)/targets/cortex/atmel/sam3xa/source/as_gcc
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000
 
 endef
 
@@ -1012,13 +1068,13 @@ ifeq ($(CHIP),sam3x8e)
    DEFINES        += -D__SAM3X8E__
 endif
 
-      #======================================================================
-      #
-      # Tensilica xtensa chips:
-      #
-      # Tensilica Xtensa LX3
-      #
-      #======================================================================
+   #======================================================================
+   #
+   # Tensilica xtensa chips:
+   #
+   # Tensilica Xtensa LX3
+   #
+   #======================================================================
 
 define Xtensa-106
    $(eval $(Embedded))
@@ -1053,8 +1109,8 @@ ifeq ($(CHIP),esp8266)
 
    RESULTS        += $(ELF) $(BIN1) $(BIN2)
 
-   PORT_CHECK     ?= $(CHECK_PORT) $(SERIAL_PORT)
-   RUN            = $(ESP-LOADER) -p $(SERIAL_PORT) -b $(SERIAL_BAUDRATE) write_flash 0x00000 $(BIN1) 0x40000 $(BIN2)
+   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
+   RUN            = $(ESP-LOADER) -p $(uart_port) -b $(SERIAL_BAUDRATE) write_flash 0x00000 $(BIN1) 0x40000 $(BIN2)
    RUN_PAUSE      ?= $(PAUSE)
 
    $(BIN1): $(ELF)
@@ -1271,15 +1327,20 @@ endif
 
 CALCULATED_SIZE_STACK_FILE  := bmptk_calculated_size_stack
 FIXED_SIZE_STACK_FILE       := bmptk_fixed_size_stack
+DUMMY_SIZE_STACK_FILE       := bmptk_dummy_size_stack
 
 CLEAN         += $(CALCULATED_SIZE_STACK_FILE).c
 CLEAN         += $(CALCULATED_SIZE_STACK_FILE).o
 CLEAN         += $(FIXED_SIZE_STACK_FILE).c
 CLEAN         += $(FIXED_SIZE_STACK_FILE).o
+CLEAN         += $(DUMMY_SIZE_STACK_FILE).c
+CLEAN         += $(DUMMY_SIZE_STACK_FILE).o
 
-# choose between a calculated size stack and a fixed size stack
+# choose between a calculated size stack and a fixed size stack, altered by OSCAR
 ifeq ($(STACK_SIZE),AUTOMATIC)
    BMPTK_STACK_FILE  := $(CALCULATED_SIZE_STACK_FILE)
+else ifeq ($(STACK_SIZE),NONE)
+   BMPTK_STACK_FILE := $(DUMMY_SIZE_STACK_FILE)
 else
    BMPTK_STACK_FILE  := $(FIXED_SIZE_STACK_FILE)
 endif
@@ -1391,7 +1452,7 @@ $(LINKERSCRIPT): $(LN_TEMPLATE)
 
    #=========================================================================
    #
-   # fixed size stack, link
+   # fixed size stack, link 
    #
    #=========================================================================
 
@@ -1400,6 +1461,19 @@ $(FIXED_SIZE_STACK_FILE).c: $(MAKEFILE)
 	@echo 'create the (fixed size) stack file $(FIXED_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C -DSTACK_SIZE=$(STACK_SIZE) $(BMPTK)/targets/bmptk_stack.c -o $@
 	@echo ' '
+
+   #=========================================================================
+   #
+   # dummy size stack, link CREATED BY OSCAR
+   #
+   #=========================================================================
+
+# How to create a dummy size stack
+$(DUMMY_SIZE_STACK_FILE).c: $(MAKEFILE)
+	@echo 'create the (dummy) stack file $(DUMMY_SIZE_STACK_FILE).o'
+	$(CC) -E -P -C $(BMPTK)/targets/bmptk_dummy_stack.c -o $@
+	@echo ' '
+
 
 # make .elf by linking all objects
 $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
