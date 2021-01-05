@@ -437,7 +437,7 @@ define All_Targets
    SEARCH            += $(BMPTK)/targets
 
    # the language dialects to use
-   CPP_LANGUAGE      ?= -std=c++17 -fconcepts
+   CPP_LANGUAGE      ?= -std=c++17
    C_LANGUAGE        ?= -std=c11
    AS_LANGUAGE       ?= -x assembler-with-cpp
 
@@ -446,7 +446,6 @@ define All_Targets
    ALL_IGNORE        += -Wno-maybe-uninitialized
    ALL_IGNORE        += -Wno-unused-local-typedefs
    ALL_IGNORE        += -Wno-unused-but-set-variable
-   ALL_IGNORE        += -Wno-unused-local-typedefs
    ALL_IGNORE        += -Wno-unused-function
    ALL_IGNORE        += -Wno-attributes
    ALL_OPTIMIZATION  ?= -Os
@@ -493,9 +492,7 @@ endef
 
    #=========================================================================
    #
-   # running native$(warning $(GPP-LINUX))
-
-
+   # running native
    #
    #=========================================================================
 
@@ -564,6 +561,7 @@ ifeq ($(TARGET),pyd)
       # untested
    endif
 endif
+
 
 #=========================================================================
 #
@@ -714,9 +712,7 @@ define ARM_V7
    LDFLAGS    += -nodefaultlibs
    CORE_FLAGS      += -nostartfiles
    LDFLAGS         += -nostartfiles
-   RESULTS  $(warning $(GPP-LINUX))
-
-       += $(HEX)
+   RESULTS  += $(HEX)
 endef
 
 define LPC_ARM_V7
@@ -899,14 +895,14 @@ ifeq ($(CHIP),lpc11c14fbd48)
    ROM_SIZE       ?= 32k
    RAM_SIZE       ?= 8k
    STACK_SIZE     ?= 6144
-endif
-ROM_START      ?= 0x00000000
+   ROM_START      ?= 0x00000000
    RAM_START      ?= 0x20000000
    INCLUDES       += -I$(BMPTK)/targets/cortex/freescale/cmsis
    RESULTS        += $(BIN)
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    RUN_PAUSE      ?= $(PAUSE)
    COPY_TO_DRIVE  ?= " "
+endif
 
    #======================================================================
    #
@@ -1491,7 +1487,6 @@ $(DUMMY_SIZE_STACK_FILE).c: $(MAKEFILE)
 	@echo 'create the (dummy) stack file $(DUMMY_SIZE_STACK_FILE).o'
 	$(CC) -E -P -C $(BMPTK)/targets/bmptk_dummy_stack.c -o $@
 	@echo ' '
-
 
 # make .elf by linking all objects
 $(ELF): $(addprefix ./,$(OBJECTS)) $(BMPTK_STACK_FILE).o $(LIBS) $(LINKERSCRIPT)
