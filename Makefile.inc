@@ -19,7 +19,7 @@
 # nor periods (problems on xtensa)
 
 VERSION := V05_00_work_in_progress_2021_01_04
-
+WSL := $(strip $(shell grep -qE "(microsoft|Microsoft|WSL)" /proc/version @> /dev/null && printf true))
 
 #============================================================================
 #
@@ -50,8 +50,14 @@ else
 endif
 
 ifeq ($(OS),Windows_NT)
-   uart_port_DUE   ?= COM3
-   uart_port_UNO   ?= COM4
+   SERIAL_PORT_DUE   ?= COM3
+   SERIAL_PORT_UNO   ?= COM4
+else ifeq ($(WSL),true)
+   SERIAL_PORT_DUE   ?= COM3
+   SERIAL_PORT_UNO   ?= COM4
+else ifeq ($(shell uname), Darwin)
+   SERIAL_PORT_DUE   ?= $(shell ls /dev/tty.usb*)
+   SERIAL_PORT_UNO   ?=
 else
    uart_port_DUE   ?= $(shell ls /dev/ttyACM?)
    uart_port_UNO   ?= $(shell ls /dev/ttyUSB?)
@@ -123,7 +129,6 @@ ifeq ($(OS),Windows_NT)
    PYTHON_DLLS      += "$(PYTHON_LOCATION)\Python3.dll" "$(PYTHON_LOCATION)\Python36.dll"
 
 else
-   WSL := $(strip $(shell grep -qE "(Microsoft|WSL)" /proc/version @> /dev/null && printf true))
    MAKE          ?= make
    REMOVE        ?= rm -f
    COPY          ?= cp
@@ -143,9 +148,15 @@ else
    # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
    ifeq ($(WSL),true)
        BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
-       DUE_BOOTMODE  ?= cmd.exe /c @mode $(uart_port):1200
+       DUE_BOOTMODE  ?= cmd.exe /c @mode $(SERIAL_PORT) baud=1200 data=8 parity=n stop=1 octs=on rts=on
        STM32_CLI     ?= "/mnt/c/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe"
        LPC21ISP      ?= "$(BMPTK)/tools/lpc21isp_197/lpc21isp_hr.exe"
+   else ifeq ($(shell uname), Darwin)
+       BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
+       BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
+       DUE_BOOTMODE  ?= $(SUDO) $(BMPTK)/tools/due_bootmode_osx/due_bootmode $(SERIAL_PORT)
+       LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
+       LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    else
        BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
        BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)

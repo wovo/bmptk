@@ -79,8 +79,8 @@ endif
 #
 ifeq ($(OS),Darwin)
 COMMON_SRCS+=PosixSerialPort.cpp OSXPortFactory.cpp
-COMMON_CXXFLAGS=-arch i386
-COMMON_LDFLAGS=-arch i386
+COMMON_CXXFLAGS=-arch x86_64
+COMMON_LDFLAGS=-arch x86_64
 APP=BOSSA.app
 DMG=bossa-$(VERSION).dmg
 VOLUME=BOSSA
@@ -134,7 +134,9 @@ DEPENDS+=$(BOSSASH_SRCS:%.cpp=$(OBJDIR)/%.d)
 # Tools
 #
 #Q=@
-CXX=="C:\Program Files (x86)\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++"
+ifeq ($(OS),MINGW32)
+	CXX=="C:\Program Files (x86)\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++"
+endif
 ARM=arm-none-eabi-
 ARMAS=$(ARM)as
 ARMOBJCOPY=$(ARM)objcopy
