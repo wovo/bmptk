@@ -7,7 +7,7 @@
 #
 # This file is meant to be included by a project-specific makefile.
 #
-# Copyright (c) 2012 .. 2019 Wouter van Ooijen (wouter@voti.nl)
+# Copyright (c) 2012 .. 2021 Wouter van Ooijen (wouter@voti.nl)
 #
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,7 +17,8 @@
 
 # This string must contain neither spaces (problems on windows8)
 # nor periods (problems on xtensa)
-VERSION := V04_00_work_in_progress_2020_05_23
+
+VERSION := V05_00_work_in_progress_2021_01_04
 
 
 #============================================================================
@@ -185,13 +186,19 @@ endif
 ifeq ($(MAKECMDGOALS),85-bootloader)
    NOPROJECT = 1
 endif
-ifeq ($(MAKECMDGOALS),mef)
-   NOPROJECT = 1
-endif
 ifeq ($(MAKECMDGOALS),doxygen)
    NOPROJECT = 1
 endif
 ifeq ($(MAKECMDGOALS),codelite_workspace)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),clean-subdirs)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),build-subdirs)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),notab-subdirs)
    NOPROJECT = 1
 endif
 
@@ -1500,8 +1507,27 @@ $(SREC): $(ELF)
 
 .PHONY: $(PROJECT) all build new fresh run clean doxygen mef renumber notab
 .PHONY: uno-bootloader 85-bootloader
+.PHONY: build-subdirs clean-subdirs notab-subdirs
 
 .DEFAULT_GOAL := build
+
+ifeq ($(OS),Windows_NT)
+   MAKE := bmptk-make
+else
+   MAKE := make
+endif
+
+makefile-subdirs := $(wildcard */makefile)
+.PHONY: $(makefile-subdirs)
+
+build-subdirs: $(makefile-subdirs)
+
+clean-subdirs: $(makefile-subdirs)
+
+notab-subdirs: $(makefile-subdirs)
+
+$(makefile-subdirs):
+	$(MAKE) -C $(firstword $(subst /, ,$@)) $(subst -subdirs, ,$(MAKECMDGOALS))
 
 # aliases
 all:     $(PROJECT)
