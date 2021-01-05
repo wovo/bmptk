@@ -452,15 +452,15 @@ static void OpenSerialPort(ISP_ENVIRONMENT *IspEnvironment)
     (void)timeBeginPeriod(1UL);
 #endif // _MSC_VER
 
-    IspEnvironment->hCom = CreateFile(IspEnvironment->serial_port, GENERIC_READ | GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+    IspEnvironment->hCom = CreateFile(IspEnvironment->uart_port, GENERIC_READ | GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 
     if (IspEnvironment->hCom == INVALID_HANDLE_VALUE)
     {
-        DebugPrintf(1, "Can't open COM-Port %s ! - Error: %ld\n", IspEnvironment->serial_port, GetLastError());
+        DebugPrintf(1, "Can't open COM-Port %s ! - Error: %ld\n", IspEnvironment->uart_port, GetLastError());
         exit(2);
     }
 
-    DebugPrintf(3, "COM-Port %s opened...\n", IspEnvironment->serial_port);
+    DebugPrintf(3, "COM-Port %s opened...\n", IspEnvironment->uart_port);
 
     GetCommState(IspEnvironment->hCom, &dcb);
     dcb.BaudRate    = atol(IspEnvironment->baud_rate);
@@ -515,16 +515,16 @@ static void OpenSerialPort(ISP_ENVIRONMENT *IspEnvironment)
 #if defined COMPILE_FOR_LINUX
 static void OpenSerialPort(ISP_ENVIRONMENT *IspEnvironment)
 {
-    IspEnvironment->fdCom = open(IspEnvironment->serial_port, O_RDWR | O_NOCTTY | O_NONBLOCK);
+    IspEnvironment->fdCom = open(IspEnvironment->uart_port, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
     if (IspEnvironment->fdCom < 0)
     {
         int err = errno;
-        DebugPrintf(1, "Can't open COM-Port %s ! (Error: %dd (0x%X))\n", IspEnvironment->serial_port, err, err);
+        DebugPrintf(1, "Can't open COM-Port %s ! (Error: %dd (0x%X))\n", IspEnvironment->uart_port, err, err);
         exit(2);
     }
 
-    DebugPrintf(3, "COM-Port %s opened...\n", IspEnvironment->serial_port);
+    DebugPrintf(3, "COM-Port %s opened...\n", IspEnvironment->uart_port);
 
     /* clear input & output buffers, then switch to "blocking mode" */
     tcflush(IspEnvironment->fdCom, TCOFLUSH);
@@ -1541,7 +1541,7 @@ static void ReadArguments(ISP_ENVIRONMENT *IspEnvironment, unsigned int argc, ch
         }
         IspEnvironment->StringOscillator[i] = 0;
 
-        IspEnvironment->serial_port = argv[argc - 3];
+        IspEnvironment->uart_port = argv[argc - 3];
         IspEnvironment->baud_rate = argv[argc - 2];
     }
 

@@ -1,2 +1,0 @@
-// AVR has no <cstdint>
-#include <stdint.h>
