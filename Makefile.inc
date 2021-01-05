@@ -1042,7 +1042,7 @@ endif
 define Atmel_SAM3
    $(eval $(Cortex-M3))
    ROM_START      ?= 0x00000000
-   RAM_START      ?= 0x20000000
+   RAM_START      ?= 0x20070000
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel/sam3xa/include
    PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
