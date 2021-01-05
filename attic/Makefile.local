@@ -59,7 +59,7 @@ ifeq ($(OS),Windows_NT)
    ESP-LOADER      ?= $(ESPRESSIF)/utils/esptool.exe
    
    # serial port defaults
-   SERIAL_PORT     ?= COM4
+   uart_port     ?= COM4
    SERIAL_BAUDRATE ?= 38400 
    CONSOLE_BAUDRATE ?= 38400 
    
@@ -82,10 +82,10 @@ else
    GCC-MSP430      ?= 
    
    # serial port defaults
-   SERIAL_PORT_DUE      := /dev/ttyACM0
-   SERIAL_PORT_UNO      := /dev/ttyUSB0
+   uart_port_DUE      := /dev/ttyACM0
+   uart_port_UNO      := /dev/ttyUSB0
 
-   SERIAL_PORT          := $(SERIAL_PORT_UNO)
+   uart_port          := $(uart_port_UNO)
    SERIAL_BAUDRATE      ?= 38400
    CONSOLE_BAUDRATE     ?= 38400 
 
