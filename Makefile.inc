@@ -915,7 +915,7 @@ define STM32
    ROM_START      ?= 0x08000000
    RAM_START      ?= 0x20000000
    INCLUDES       += -I$(BMPTK)/targets/cortex/stm32
-   RESULTS         += $(HEX)
+   RESULTS         += $(HEX) $(BIN)
    RUN            ?= $(STM32_CLI) -P $(HEX) -Rst
    #RUN            ?= $(STM32_FLASH) -w $(HEX) -v
    RUN_PAUSE      ?= $(PAUSE)
