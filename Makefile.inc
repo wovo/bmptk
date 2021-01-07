@@ -380,6 +380,10 @@ ifeq ($(TARGET),scouting_lock)
    CHIP        ?= stm32f030k6
 endif
 
+ifeq ($(TARGET),termite)
+   CHIP        ?= stm32f103c8
+endif
+
 ifeq ($(TARGET),blue_pill)
    CHIP        ?= stm32f103c8
 endif
