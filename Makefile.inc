@@ -160,6 +160,7 @@ else
    else
        BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
        BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
+       STM32_CLI     ?= st-flash
        DUE_BOOTMODE  ?= $(SUDO) stty -F $(uart_port) speed 1200 cs8 -cstopb -parenb; sleep 1.0
        LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
        LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
