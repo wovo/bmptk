@@ -63,7 +63,7 @@ Actively supported targets chips and boards are:
 - stm32f103c8: Blue Pill, termite
 - mimxrt1062dvl6a: Teensy 4.0
 
-## use
+## akefile 
 
 The development environment uses make and makescipt(s) to do the work.
 The main makescipt is Makescript.inc. 
@@ -83,6 +83,7 @@ Valid targets are either bare chips:
 - sam3x8e
 - stm32f103c8
 - mimxrt1062dvl6a
+
 or boards: 
 - arduino_uno
 - arduino_nano
