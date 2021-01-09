@@ -93,25 +93,23 @@ If not set, the default is main.
 The project name determines the base name of the various 
 files tat are build like .exe, .bin or .hex.
 
-    ````
+    ```
     PROJECT := main
-    ````
+    ```
     
 A project contains at least on source file.
 The base name of this file must match the PROJECT name, 
 and its extension must be .asm, .c, or .cpp.    
 Additional source files can be specified by setting SOURCES:
-
-    ````
+    ```
     SOURCES := interface.cpp
-    ````
+    ```
     
 The header files can be specified by setting HEADERS:
 Additional source files can be specified by setting SOURCES:
-
-    ````
+    ```
     HEADERS := interface.hpp
-    ````
+    ```
     
 The bmptk makefile uses a very simple rebuild principle: 
 it assumes all SOURCES depend on all HEADERS.
@@ -122,29 +120,26 @@ By default, bmptk assumes that all sources and headers are in
 the project directory (where the make command is run).   
 Additional locations where the sources and headers can reside
 can be specified by setting SEARCH:
-
-    ````
+    ```
     SOURCES := local_library ../shared_library
-    ````
+    ```
     
 By default, the files that are needed will be produced.    
 You can specify extra results to be produced,
 like .lst files for a source file, or the .lss file
 for the project. 
-
-    ````
+    ```
     RESULTS := main.lst main.lss
-    ````
+    ```
     
 Some programmers use a serial-over-USB port for downloading.
 On linux, the serial port to use can generally be deduced
 automatically. 
 On windows, or when you must specify the serial port, you
 can set the SERIAL_PORT:
-
-    ````
+    ```
     SERIAL_PORT := COM4
-    ````
+    ```
     
 For most targets, after the 
     
