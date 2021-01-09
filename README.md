@@ -92,7 +92,8 @@ or boards:
 - arduino_due
 - blue_pill, termite
 - teensy_40
-Additionally, the target native can be used to produce a native executable.
+
+Additionally, the target *native* can be used to produce a native executable.
 
 The name of the project can be set.
 If not set, the default is main.
