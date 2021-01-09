@@ -73,10 +73,9 @@ The makefile for a project must set a few variables, and then include
 
 As a minimum, a project makefile must set the target the project has
 to be built for. 
-
-    ````
-    TARGET := arduino_uno
-    ````
+```make
+TARGET := arduino_uno
+```
     
 Valid targets are either bare chips: 
 atmega328, lpc1114fn28, sam3x8e, stm32f103c8, mimxrt1062dvl6a,
