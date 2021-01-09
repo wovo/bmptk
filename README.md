@@ -78,37 +78,42 @@ TARGET := arduino_uno
 ```
     
 Valid targets are either bare chips: 
-atmega328, lpc1114fn28, sam3x8e, stm32f103c8, mimxrt1062dvl6a,
+- atmega328
+- lpc1114fn28
+- sam3x8e
+- stm32f103c8
+- mimxrt1062dvl6a
 or boards: 
-arduino_uno, arduino_nano, my_first_dev_board, 
-db103, 
-arduino_due, 
-blue_pill, termite,
-teensy_40.
+- arduino_uno
+- arduino_nano
+- my_first_dev_board
+- db103
+- arduino_due
+- blue_pill, termite
+- teensy_40
 Additionally, the target native can be used to produce a native executable.
 
 The name of the project can be set.
 If not set, the default is main.
 The project name determines the base name of the various 
 files tat are build like .exe, .bin or .hex.
-
-    ```
-    PROJECT := main
-    ```
+```make
+PROJECT := main
+```
     
 A project contains at least on source file.
 The base name of this file must match the PROJECT name, 
 and its extension must be .asm, .c, or .cpp.    
 Additional source files can be specified by setting SOURCES:
-    ```
-    SOURCES := interface.cpp
-    ```
+```make
+SOURCES := interface.cpp
+```
     
 The header files can be specified by setting HEADERS:
 Additional source files can be specified by setting SOURCES:
-    ```
-    HEADERS := interface.hpp
-    ```
+```make
+HEADERS := interface.hpp
+```
     
 The bmptk makefile uses a very simple rebuild principle: 
 it assumes all SOURCES depend on all HEADERS.
@@ -119,26 +124,34 @@ By default, bmptk assumes that all sources and headers are in
 the project directory (where the make command is run).   
 Additional locations where the sources and headers can reside
 can be specified by setting SEARCH:
-    ```
-    SOURCES := local_library ../shared_library
-    ```
+```make
+SOURCES := local_library ../shared_library
+```
     
 By default, the files that are needed will be produced.    
 You can specify extra results to be produced,
 like .lst files for a source file, or the .lss file
 for the project. 
-    ```
-    RESULTS := main.lst main.lss
-    ```
+```make
+RESULTS := main.lst main.lss
+```
     
 Some programmers use a serial-over-USB port for downloading.
 On linux, the serial port to use can generally be deduced
 automatically. 
 On windows, or when you must specify the serial port, you
 can set the SERIAL_PORT:
-    ```
-    SERIAL_PORT := COM4
-    ```
+```make
+SERIAL_PORT := COM4
+```
     
-For most targets, after the 
-    
+For most targets, after the the project has been build,
+downloaded and started, a terminal window
+is started with a serial connection to the target. 
+This connection uses the SERIAL_PORT at the SERIAL_BAUDRATE,
+which (if not set) defaults to 38400 baud.
+You can prevent the terminal window from being started by 
+setting RUN_TERMINAL to empty:
+```make
+RUN_TERMINAL :=
+```    
