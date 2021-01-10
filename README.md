@@ -46,7 +46,8 @@ The heap is by default disabled: using heap functions will generate an
 exaplanatory linker error.
 
 For C++, global constructor calls (ctors) are also disabled, and
-will generate an exaplanatory linker error.
+will generate an exaplanatory linker error. 
+By default, exceptions and RTTI are disabled by compiler options.
 
 Most tools (toolchain, downloaders) are not part of bmptk
 and must be installed separately. 
@@ -63,7 +64,7 @@ Actively supported targets chips and boards are:
 - stm32f103c8: Blue Pill, termite
 - mimxrt1062dvl6a: Teensy 4.0
 
-## akefile 
+## makefile 
 
 The development environment uses make and makescipt(s) to do the work.
 The main makescipt is Makescript.inc. 
@@ -156,4 +157,12 @@ You can prevent the terminal window from being started by
 setting RUN_TERMINAL to empty:
 ```make
 RUN_TERMINAL :=
+```    
+
+At the end, a project makefile must set BMPTK to
+the location of the bmptk directory, and include
+the bmptk/Makefile.inc file.
+```make
+BMPTK := ~/bmptk 
+include $(BMPTK)/Makefile.inc
 ```    
