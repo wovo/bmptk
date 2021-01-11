@@ -172,6 +172,11 @@ $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 
 $(BMPTK)/tools/BOSSA-Arduino/bin/bossac:
 	cd $(BMPTK)/tools/BOSSA-Arduino; make bin/bossac
+   
+AVR-EABI    ?= avr   
+ARM-EABI    ?= arm-none-eabi
+RISCV-EABI  ?= riscv32-unknown-elf
+
 
 #============================================================================
 #
@@ -759,6 +764,7 @@ endif
    
 define RISC_V
    $(eval $(Embedded))
+   PREFIX         := $(RISCV-EABI)-
    LDFLAGS        += -T linkerscript.ld
    LN_TEMPLATE    ?= linkerscript.ld
    ROM_START      ?= 0x00000000
