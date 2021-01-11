@@ -380,6 +380,15 @@ ifeq ($(TARGET),scouting_lock)
    CHIP        ?= stm32f030k6
 endif
 
+ifeq ($(TARGET),gd32v103c8)
+   CHIP        ?= gd32v103c8
+endif
+
+ifeq ($(TARGET),longan_nano)
+   CHIP        ?= gd32v103c8
+   XTAL        ?= 8000
+endif
+
 ifeq ($(TARGET),termite)
    CHIP        ?= stm32f103c8
 endif
@@ -744,9 +753,40 @@ endif
 
 #=========================================================================
 #
+# RISC V chips
+#
+#=========================================================================
+   
+define RISC_V
+   $(eval $(Embedded))
+   LDFLAGS        += -T linkerscript.ld
+   LN_TEMPLATE    ?= linkerscript.ld
+   ROM_START      ?= 0x00000000
+   RAM_START      ?= 0x40000000
+   INCLUDES       += -I$(BMPTK)/targets/armv7/include
+   RUN            ?= dfu_tool $(HEX)
+endef
+
+ifeq ($(CHIP), gd32v103c8)
+   $(eval $(Embedded))
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
+   SEARCH         += $(BMPTK)/targets/riscv
+   SEARCH         += $(BMPTK)/targets/riscv/gd32v103
+   RESULTS        += $(HEX)
+   RUN_PAUSE      ?= $(PAUSE)
+   MCU            := TEENSY40
+   STACK_SIZE     ?= NONE
+   LN_TEMPLATE    := gd32v103_ld.c
+   SOURCES        += gd32v103_startup.c
+endif
+
+
+#=========================================================================
+#
 # Cortex chips common
 #
 #=========================================================================
+
 define Cortex
    $(eval $(Embedded))
 
