@@ -781,8 +781,8 @@ ifeq ($(CHIP), gd32v103c8)
    RUN_PAUSE      ?= $(PAUSE)
    MCU            := TEENSY40
    STACK_SIZE     ?= NONE
-   LN_TEMPLATE    := gd32v103_ld.c
-   SOURCES        += gd32v103_startup.c
+   LN_TEMPLATE    := bmptk_linkerscript_riscv.c
+   SOURCES        += bmptk_riscv.c
 endif
 
 
