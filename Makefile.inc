@@ -770,6 +770,10 @@ define RISC_V
    RAM_START      ?= 0x40000000
    SEARCH         += $(BMPTK)/targets/riscv
    RUN            ?= dfu_tool $(HEX)
+   COREFLAGS    += -nostdlib
+   COREFLAGS    += -nodefaultlibs
+   LDFLAGS      += -nostdlib
+   LDFLAGS      += -nodefaultlibs   
 endef
 
 ifeq ($(CHIP), gd32v103c8)
