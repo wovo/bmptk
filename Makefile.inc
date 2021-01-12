@@ -172,6 +172,11 @@ $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 
 $(BMPTK)/tools/BOSSA-Arduino/bin/bossac:
 	cd $(BMPTK)/tools/BOSSA-Arduino; make bin/bossac
+   
+AVR-EABI    ?= avr   
+ARM-EABI    ?= arm-none-eabi
+RISCV-EABI  ?= riscv32-unknown-elf
+
 
 #============================================================================
 #
@@ -759,25 +764,25 @@ endif
    
 define RISC_V
    $(eval $(Embedded))
+   PREFIX         := $(RISCV-EABI)-
    LDFLAGS        += -T linkerscript.ld
    LN_TEMPLATE    ?= linkerscript.ld
    ROM_START      ?= 0x00000000
    RAM_START      ?= 0x40000000
-   INCLUDES       += -I$(BMPTK)/targets/armv7/include
+   SEARCH         += $(BMPTK)/targets/riscv
    RUN            ?= dfu_tool $(HEX)
 endef
 
 ifeq ($(CHIP), gd32v103c8)
-   $(eval $(Embedded))
+   $(eval $(RISC_V))
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
-   SEARCH         += $(BMPTK)/targets/riscv
-   SEARCH         += $(BMPTK)/targets/riscv/gd32v103
+   INCLUDES       += -I$(BMPTK)/targets/riscv/include/gd32v103
    RESULTS        += $(HEX)
    RUN_PAUSE      ?= $(PAUSE)
    MCU            := TEENSY40
    STACK_SIZE     ?= NONE
-   LN_TEMPLATE    := gd32v103_ld.c
-   SOURCES        += gd32v103_startup.c
+   LN_TEMPLATE    := bmptk_linkerscript_riscv.c
+   SOURCES        += bmptk_riscv.c
 endif
 
 
