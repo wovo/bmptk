@@ -776,7 +776,7 @@ endef
 ifeq ($(CHIP), gd32v103c8)
    $(eval $(RISC_V))
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
-   INCLUDES       += -I$(BMPTK)/targets/riscv/include/gd32v103
+   INCLUDES       += -I$(BMPTK)/targets/riscv/gd32v103
    RESULTS        += $(HEX)
    RUN_PAUSE      ?= $(PAUSE)
    MCU            := TEENSY40
