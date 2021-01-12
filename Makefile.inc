@@ -778,9 +778,10 @@ endef
 
 ifeq ($(CHIP), gd32v103c8)
    $(eval $(RISC_V))
+   RUN            ?= dfu-util -d 28e9:0189 -a 0 --dfuse-address 0x08000000:leave -D $(BIN)
    RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
    INCLUDES       += -I$(BMPTK)/targets/riscv/gd32v103
-   RESULTS        += $(HEX)
+   RESULTS        += $(BIN)
    RUN_PAUSE      ?= $(PAUSE)
    MCU            := TEENSY40
    STACK_SIZE     ?= NONE
