@@ -769,7 +769,6 @@ define RISC_V
    ROM_START      ?= 0x00000000
    RAM_START      ?= 0x40000000
    SEARCH         += $(BMPTK)/targets/riscv
-   RUN            ?= dfu_tool $(HEX)
 #   COREFLAGS    += -nostdlib
 #   COREFLAGS    += -nodefaultlibs
 #   LDFLAGS      += -nostdlib
