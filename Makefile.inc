@@ -765,8 +765,7 @@ endif
 define RISC_V
    $(eval $(Embedded))
    PREFIX         := $(RISCV-EABI)-
-   LDFLAGS        += -T linkerscript.ld
-   LN_TEMPLATE    ?= linkerscript.ld
+   LDFLAGS        += -T $(LINKERSCRIPT)
    ROM_START      ?= 0x00000000
    RAM_START      ?= 0x40000000
    SEARCH         += $(BMPTK)/targets/riscv
