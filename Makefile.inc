@@ -781,7 +781,8 @@ ifeq ($(CHIP), gd32v103c8)
    MCU            := TEENSY40
    STACK_SIZE     ?= NONE
    LN_TEMPLATE    := bmptk_linkerscript_riscv.c
-   SOURCES        += bmptk_riscv.c
+#   SOURCES        += bmptk_riscv.c
+   SOURCES        += entry.asm handlers.c init.c start.asm
 endif
 
 
