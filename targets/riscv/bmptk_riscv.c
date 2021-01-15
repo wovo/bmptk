@@ -13,6 +13,7 @@
 //
 //***************************************************************************
 
+/*
 int main( void );
 void fatal_error_detected( const char * );
 void __startup( void );  
@@ -61,6 +62,8 @@ void __attribute__((noreturn)) __startup( void ){
    // when main returns: loop till hell freezes down
    while(1){}	
 }
+
+*/s
 
 // junk that is not needed in an embedded context, but
 // is still required to satisfy the C++ compiler
