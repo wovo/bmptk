@@ -769,10 +769,10 @@ define RISC_V
    ROM_START      ?= 0x00000000
    RAM_START      ?= 0x40000000
    SEARCH         += $(BMPTK)/targets/riscv
-#   COREFLAGS    += -nostdlib
-#   COREFLAGS    += -nodefaultlibs
-#   LDFLAGS      += -nostdlib
-#   LDFLAGS      += -nodefaultlibs   
+   COREFLAGS    += -nostdlib -ffreestanding
+   COREFLAGS    += -nodefaultlibs
+   LDFLAGS      += -nostdlib
+   LDFLAGS      += -nodefaultlibs   
 endef
 
 ifeq ($(CHIP), gd32v103c8)
@@ -786,10 +786,10 @@ ifeq ($(CHIP), gd32v103c8)
    STACK_SIZE     ?= NONE
    LN_TEMPLATE    := bmptk_linkerscript_riscv.c
 #   SOURCES        += bmptk_riscv.c
-   SOURCES        += entry.asm 
-   SOURCES        += handlers.c 
+#   SOURCES        += entry.asm 
+#   SOURCES        += handlers.c 
 #   SOURCES        += init.c 
-#   SOURCES        += start.asm
+   SOURCES        += start.asm
 endif
 
 
