@@ -385,12 +385,12 @@ ifeq ($(TARGET),scouting_lock)
    CHIP        ?= stm32f030k6
 endif
 
-ifeq ($(TARGET),gd32v103c8)
-   CHIP        ?= gd32v103c8
+ifeq ($(TARGET),gd32vf103c8)
+   CHIP        ?= gd32vf103c8
 endif
 
 ifeq ($(TARGET),longan_nano)
-   CHIP        ?= gd32v103c8
+   CHIP        ?= gd32vf103c8
    XTAL        ?= 8000
 endif
 
