@@ -1,3 +1,5 @@
+![](logo.jpg)
+
 # bmptk
 
 file: bmptk/README.md

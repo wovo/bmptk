@@ -59,16 +59,18 @@ else ifeq ($(shell uname), Darwin)
    SERIAL_PORT_DUE   ?= $(shell ls /dev/tty.usb*)
    SERIAL_PORT_UNO   ?=
 else
-   uart_port_DUE   ?= $(shell ls /dev/ttyACM?)
-   uart_port_UNO   ?= $(shell ls /dev/ttyUSB?)
+   UART_PORT_DUE   ?= $(shell ls /dev/ttyACM?)
+   UART_PORT_UNO   ?= $(shell ls /dev/ttyUSB?)
 endif
 
 ifeq ($(TARGET),arduino_due)
-   uart_port          := $(uart_port_DUE)
+   SERIAL_PORT          ?= $(UART_PORT_DUE)
 else
-   uart_port          := $(uart_port_UNO)
+   SERIAL_PORT          ?= $(UART_PORT_UNO)
 endif
 
+SERIAL_PORT ?= UART_PORT
+UART_PORT ?= SERIAL_PORT
 
 #============================================================================
 #
@@ -102,7 +104,7 @@ ifeq ($(OS),Windows_NT)
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
    TERMINAL      ?= "$(BMPTK)/tools/Terminal.exe"
    BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
-   DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(uart_port)
+   DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(SERIAL_PORT)
 
    # installed separately
    ATPROGRAM     ?= "$(AtmelToolchain)/../Atmel Studio 6.2/atbackend/atprogram.exe"
@@ -161,7 +163,7 @@ else
        BOSSAC_EXE    ?= $(BMPTK)/tools/BOSSA-Arduino/bin/bossac
        BOSSAC        ?= $(SUDO) $(BOSSAC_EXE)
        STM32_CLI     ?= st-flash
-       DUE_BOOTMODE  ?= $(SUDO) stty -F $(uart_port) speed 1200 cs8 -cstopb -parenb; sleep 1.0
+       DUE_BOOTMODE  ?= $(SUDO) stty -F $(UART_PORT) speed 1200 cs8 -cstopb -parenb; sleep 1.0
        LPC21ISP      ?= $(SUDO) $(LPC21ISP_EXE)
        LPC21ISP_EXE  ?= $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe
    endif
@@ -206,6 +208,9 @@ ifeq ($(MAKECMDGOALS),85-bootloader)
    NOPROJECT = 1
 endif
 ifeq ($(MAKECMDGOALS),doxygen)
+   NOPROJECT = 1
+endif
+ifeq ($(MAKECMDGOALS),codelite)
    NOPROJECT = 1
 endif
 ifeq ($(MAKECMDGOALS),codelite_workspace)
@@ -327,27 +332,27 @@ endif
 
 ifeq ($(TARGET),tiny_11c14)
    CHIP        ?= lpc11c14fbd48
-   XTAL        ?= 12000
+   XTAL        ?= 16000
 endif
 
 ifeq ($(TARGET),arduino_uno)
    CHIP        ?= atmega328
-   XTAL        ?= 12000
+   XTAL        ?= 16000
 endif
 
 ifeq ($(TARGET),arduino_leonardo)
    CHIP        ?= atmega32u4
-   XTAL        ?= 12000
+   XTAL        ?= 16000
 endif
 
 ifeq ($(TARGET),my_first_dev_board)
    CHIP        ?= atmega328
-   XTAL        ?= 12000
+   XTAL        ?= 16000
 endif
 
 ifeq ($(TARGET),arduino_nano)
    CHIP        ?= atmega328
-   XTAL        ?= 12000
+   XTAL        ?= 16000
 endif
 
 ifeq ($(TARGET),arduino_atmega328)
@@ -385,12 +390,13 @@ ifeq ($(TARGET),scouting_lock)
    CHIP        ?= stm32f030k6
 endif
 
-ifeq ($(TARGET),gd32vf103c8)
-   CHIP        ?= gd32vf103c8
-endif
-
 ifeq ($(TARGET),longan_nano)
    CHIP        ?= gd32vf103c8
+   XTAL        ?= 8000
+endif
+
+ifeq ($(TARGET),micro_bit)
+   CHIP        ?= nRF52833
    XTAL        ?= 8000
 endif
 
@@ -433,10 +439,12 @@ endif
 ifeq ($(TARGET),xmc_2go_1100)
    CHIP        ?= xmc1100
 endif
+
 #MADE BY OSCAR
 ifeq ($(TARGET),teensy_40)
    CHIP        ?= mimxrt1062dvl6a
 endif
+
 # the target did not match any boards, and no explicit
 # chip was specified, assume the TARGET is the chip
 ifeq ($(CHIP),)
@@ -629,12 +637,12 @@ ifeq ($(CHIP),atmega328)
    XTAL           ?= 20000
    DEFINES        += -D__AVR_ATmega328P__
    ARCH_FLAGS     += -mmcu=atmega328p
-   # PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
-   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(uart_port) -b115200 -Uflash:w:$(HEX)
-   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(uart_port) -b115200 -Uflash:w:$(HEX)
+   # PORT_CHECK     ?= $(CHECK_PORT) $(UART_PORT)
+   RUN            ?= $(AVRDUDE) -C$(AVRDUDEC) -carduino -patmega328p  -P$(SERIAL_PORT) -b115200 -Uflash:w:$(HEX)
+   # RUN              ?= $(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(UART_PORT) -b115200 -Uflash:w:$(HEX)
    # RUN            ?= $(ATPROGRAM) -t avrispmk2 -d atmega328p erase program -f $(HEX)
    LINKERSCRIPT   :=
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
 endif
 
 ifeq ($(CHIP),atmega32u4)
@@ -662,7 +670,7 @@ ifeq ($(CHIP),atmega32u4)
 bootloader:
 	@echo 'download the arduino bootloader'
 	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p -b 19200 -v -e -U efuse:w:0x05:m -U hfuse:w:0xD6:m -U lfuse:w:0xFF:m
-	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(uart_port) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
+	$(AVRDUDE) -C$(AVRDUDEC) -c usbasp -p atmega328p  -P$(UART_PORT) -b115200 -Uflash:w:$(BMPTK)/tools/optiboot_atmega328.hex
 	@echo ' '
 
 
@@ -743,8 +751,8 @@ define LPC_ARM_V7
    RAM_START      ?= 0x40000000
    INCLUDES       += -I$(BMPTK)/targets/armv7/include
    XTAL           ?= 12000
-   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
-   RUN            ?= $(LPC21ISP) -control -verify -term $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
+   PORT_CHECK     ?= $(CHECK_PORT) $(UART_PORT)
+   RUN            ?= $(LPC21ISP) -control -verify -term $(HEX) $(UART_PORT) $(SERIAL_BAUDRATE) 12000
 endef
 
 ifeq ($(CHIP),lpc2148fbd64)
@@ -778,7 +786,7 @@ endef
 ifeq ($(CHIP), gd32vf103c8)
    $(eval $(RISC_V))
    RUN            ?= dfu-util -d 28e9:0189 -a 0 --dfuse-address 0x08000000:leave -D $(BIN)
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(UART_PORT) 38400 12000
    INCLUDES       += -I$(BMPTK)/targets/riscv/gd32vf103
    RESULTS        += $(BIN)
    RUN_PAUSE      ?= $(PAUSE)
@@ -860,6 +868,21 @@ define Cortex-M7
    OBJ            += startup.o
 endef
 
+define nRF52833
+	$(eval $(Cortex-M4))
+   ROM_START      ?= 0x00000000
+   RAM_START      ?= 0x10000000   
+   ROM_SIZE       ?= 512k
+   RAM_SIZE       ?= 128k
+   STACK_SIZE     ?= 256k  
+   PORT_CHECK     ?= $(CHECK_PORT) $(UART_PORT)
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(UART_PORT) 38400 12000
+   SEARCH         += $(BMPTK)/targets/cortex/
+   RESULTS        += $(HEX)
+   RUN            ?= 
+   RUN_PAUSE      ?= $(PAUSE)
+endef
+
    #======================================================================
    #
    # NXP : i.MX RT1060 family of Cortex chips (Teensy 4.0)
@@ -869,10 +892,9 @@ endef
 #MADE BY OSCAR	
 define IMXRT106x
 	$(eval $(Cortex-M7))
-   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) 38400 12000
+   PORT_CHECK     ?= $(CHECK_PORT) $(UART_PORT)
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(UART_PORT) 38400 12000
    SEARCH         += $(BMPTK)/targets/cortex/
-   SEARCH         += $(BMPTK)/targets/cortex/teensy
    SEARCH         += $(BMPTK)/targets/cortex/M7/Include
    SEARCH         += $(BMPTK)/targets/cortex/M7/Source
    SEARCH         += $(BMPTK)/targets/cortex/M7/ARM
@@ -905,11 +927,11 @@ define LPC_Cortex
    INCLUDES        += -I$(BMPTK)/targets/cortex/lpc/cmsis
    XTAL            ?= 12000
    RESULTS         += $(HEX)
-   PORT_CHECK      ?= $(CHECK_PORT) $(uart_port)
-   LPCISP_PARAMS   := $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
-   # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
-   RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(uart_port) $(SERIAL_BAUDRATE) 12000
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000
+   PORT_CHECK      ?= $(CHECK_PORT) $(UART_PORT)
+   LPCISP_PARAMS   := $(HEX) $(UART_PORT) $(SERIAL_BAUDRATE) 12000
+   # RUN             ?= $(LPC21ISP) -control -verify -term $(HEX) $(UART_PORT) $(SERIAL_BAUDRATE) 12000
+   RUN             ?= $(LPC21ISP) -control -verify $(HEX) $(UART_PORT) $(SERIAL_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -control -term $(HEX) $(UART_PORT) $(CONSOLE_BAUDRATE) 12000
 endef
 
 define LPC81X
@@ -1109,18 +1131,18 @@ define Atmel_SAM3
    RAM_START      ?= 0x20070000
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel
    INCLUDES       += -I$(BMPTK)/targets/cortex/atmel/sam3xa/include
-   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
+   PORT_CHECK     ?= $(CHECK_PORT) $(UART_PORT)
    RUN_PRE        := $(DUE_BOOTMODE)
    # was al gezet?
    RESULTS        += $(BIN)
-   #RUN            := $(BOSSAC) -p $(subst /dev/,,$(uart_port)) -U false -e -w -v -b $(BIN) -R
-   RUN            := $(BOSSAC) --port=$(subst /dev/,,$(uart_port)) --force_usb_port=false -e -w -v -b $(BIN) -R
-   RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(uart_port)) --force_usb_port=false --reset
+   #RUN            := $(BOSSAC) -p $(subst /dev/,,$(UART_PORT)) -U false -e -w -v -b $(BIN) -R
+   RUN            := $(BOSSAC) --port=$(subst /dev/,,$(SERIAL_PORT)) --force_usb_port=false -e -w -v -b $(BIN) -R
+   #RUN += ; sleep 1; $(BOSSAC) --port=$(subst /dev/,,$(UART_PORT)) --force_usb_port=false --reset
    # RUN            := $(BOSSAC) -e -w -v -b $(BIN)
    DEFINES        += -DDONT_USE_CMSIS_INIT
    DEFINES        += -DBMPTK_INCLUDE_CHIP=sam.h
    LDFLAGS        += -I$(BMPTK)/targets/cortex/atmel/sam3xa/source/as_gcc
-   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(uart_port) $(CONSOLE_BAUDRATE) 12000
+   RUN_TERMINAL   ?= $(LPC21ISP) -termonly -term $(HEX) $(SERIAL_PORT) $(CONSOLE_BAUDRATE) 12000
 
 endef
 
@@ -1180,8 +1202,8 @@ ifeq ($(CHIP),esp8266)
 
    RESULTS        += $(ELF) $(BIN1) $(BIN2)
 
-   PORT_CHECK     ?= $(CHECK_PORT) $(uart_port)
-   RUN            = $(ESP-LOADER) -p $(uart_port) -b $(SERIAL_BAUDRATE) write_flash 0x00000 $(BIN1) 0x40000 $(BIN2)
+   PORT_CHECK     ?= $(CHECK_PORT) $(UART_PORT)
+   RUN            = $(ESP-LOADER) -p $(UART_PORT) -b $(SERIAL_BAUDRATE) write_flash 0x00000 $(BIN1) 0x40000 $(BIN2)
    RUN_PAUSE      ?= $(PAUSE)
 
    $(BIN1): $(ELF)
@@ -1379,14 +1401,16 @@ ifeq ($(LANGUAGE),C)
    LINKER  := $(CC)
 # $(LN_FLAGS)
    AS      := $(AS)   $(AS_FLAGS)
-#   CC      := $(CC)   $(C_FLAGS)
+   CC      := $(CC)   $(C_FLAGS)
    CPP     :=
+   COMPILE := $(CC)
 else
    LINKER  := $(CPP)
 # $(LN_FLAGS)
    AS      := $(AS)   $(AS_FLAGS)
 #   CC      := $(CC)   $(C_FLAGS)
 #   CPP     := $(CPP)  $(CPP_FLAGS)
+   COMPILE := $(CPP)
 endif
 
 
@@ -1431,9 +1455,8 @@ endif
 .PHONY: version
 build: version
 version:
-	@echo 'Show toolchain version at $(CPP)'
-	@echo $(CPP_FLAGS) > _cpp_flags
-	@$(CPP) @_cpp_flags --version
+	@echo 'Show toolchain version at $(COMPILE)'
+	@$(COMPILE) --version
 
 .PHONY: terminal
 terminal:
@@ -1718,6 +1741,7 @@ else
    OSNAME ?= linux
 endif
 
+codelite:
 codelite_workspace:
 	$(PYTHON) $(BMPTK)/tools/bmptk-mef.py -os $(OSNAME)
 

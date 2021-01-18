@@ -23,6 +23,11 @@ covered by different licenses:
       check the license in the files, basically it says just
       "free for use with cortex-M chips", plus a disclaimer
       
+   bmptk/targets/nordic
+      drom https://github.com/NordicSemiconductor/nrfx
+      check the license in the files, basically BSD
+      (with attribution required for binary forms - check with your lawyer)      
+      
    bmptk/tool/avrdude
       from http://download.savannah.gnu.org/releases/avrdude/
       GNU General Public License v2 or later

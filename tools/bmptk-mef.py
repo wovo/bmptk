@@ -52,7 +52,7 @@ class projectdir:
       self.name = subdir
 
       for file in self.files:
-         if file in [ "main.c", "main.cpp" ]:
+         if file in [ "main.asm", "main.c", "main.cpp" ]:
             self.is_project = 1
             self.main = file            
       
@@ -187,7 +187,9 @@ def run():
 # =========================================================================== 
 
 def add_to_edit_files( file ):
-   if file == "main.cpp": return 0
+   if file in [ "main.asm", "main.c", "main.cpp" ]: return 0
+   if file.find( ".c" ) >= 0: return 1
+   if file.find( ".asm" ) >= 0: return 1
    if file.find( ".cpp" ) >= 0: return 1
    if file.find( ".hpp" ) >= 0: return 1
    if file.find( ".py" ) >= 0: return 1
@@ -251,7 +253,7 @@ def codelite_project_template_bmptk( target ):
   <Dependencies/>
   <VirtualDirectory Name="source">
     <File Name="%%MAIN%%"/>%%FILES%%
-    <File Name="Makefile"/>
+    <File Name="makefile"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
