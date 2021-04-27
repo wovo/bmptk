@@ -105,6 +105,7 @@ ifeq ($(OS),Windows_NT)
    TERMINAL      ?= "$(BMPTK)/tools/Terminal.exe"
    BOSSAC        ?= "$(BMPTK)/tools/bmptk-bossac.exe"
    DUE_BOOTMODE  ?= "$(BMPTK)/tools/due_bootmode/due_bootmode.exe" $(SERIAL_PORT)
+   TEENSY_CLI_EXE ?= $(BMPTK)/tools/teensy_loader_cli/teensy_loader_cli.exe
 
    # installed separately
    ATPROGRAM     ?= "$(AtmelToolchain)/../Atmel Studio 6.2/atbackend/atprogram.exe"
@@ -144,8 +145,9 @@ else
    # installed separately
    AVRDUDE       ?= $(SUDO) avrdude
    AVRDUDEC      ?= "$(BMPTK)/tools/avrdude/avrdude.conf"
-   # MADE BY OSCAR
-   TEENSY_LOADER ?= $(SUDO) teensy_loader_cli # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
+
+   # built from source
+   TEENSY_CLI_EXE ?= $(BMPTK)/tools/teensy_loader_cli/teensy_loader_cli
 
    # Serial ports are not properly forwarded from windows to WSL yet, so use the windows executables for serial port interaction
    ifeq ($(WSL),true)
@@ -174,6 +176,13 @@ $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 
 $(BMPTK)/tools/BOSSA-Arduino/bin/bossac:
 	cd $(BMPTK)/tools/BOSSA-Arduino; make bin/bossac
+   
+MAKE_TEENSY_CLI := gcc -O2 -Wall -DUSE_LIBUSB -o teensy_loader_cli.exe teensy_loader_cli.c -lusb
+
+$(BMPTK)/tools/teensy_loader_cli/teensy_loader_cli:
+	cd $(BMPTK)/tools/teensy_loader_cli; $(MAKE_TEENSY_CLI_EXE)
+   
+      
    
 AVR-EABI    ?= avr   
 ARM-EABI    ?= arm-none-eabi
@@ -901,7 +910,7 @@ define IMXRT106x
    SEARCH         += $(BMPTK)/targets/cortex/M7/GCC
    SEARCH         += $(BMPTK)/targets/cortex/teensy/
    RESULTS        += $(HEX)
-   RUN            ?= $(TEENSY_LOADER) -mmcu=$(MCU) -wv $(HEX) # https://github.com/PaulStoffregen/teensy_loader_cli build this one and put it in usr/bin/ for the latest teensy 4.0
+   RUN            ?= $(SUDO) $(TEENSY_CLI_EXE) -mmcu=$(MCU) -wv $(HEX) 
    RUN_PAUSE      ?= $(PAUSE)
 endef
 
@@ -1711,7 +1720,7 @@ $(PROJECT): $(RESULTS)
 PORT_CHECK :=
 
 # Run (= download and start) the project
-run: $(PROJECT) $(LPC21ISP_EXE) $(BOSSAC_EXE)
+run: $(PROJECT) $(LPC21ISP_EXE) $(BOSSAC_EXE) $(TEENSY_CLI_EXE)
 	$(PORT_CHECK)
 	$(RUN_PRE)
 	-$(RUN)

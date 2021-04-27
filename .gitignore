@@ -6,3 +6,5 @@ tools/lpc21isp_197/lpc21isp_hr_linux.exe
 tools/BOSSA-Arduino/obj
 tools/BOSSA-Arduino/bin/bossac
 tools/due_bootmode_osx/due_bootmode
+tools/teensy_loader_cli/teensy_loader_cli
+
