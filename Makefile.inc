@@ -177,7 +177,7 @@ $(BMPTK)/tools/lpc21isp_197/lpc21isp_hr_linux.exe:
 $(BMPTK)/tools/BOSSA-Arduino/bin/bossac:
 	cd $(BMPTK)/tools/BOSSA-Arduino; make bin/bossac
    
-MAKE_TEENSY_CLI_EXE := gcc -O2 -Wall -DUSE_LIBUSB -o teensy_loader_cli.exe teensy_loader_cli.c -lusb
+MAKE_TEENSY_CLI_EXE := gcc -O2 -Wall -DUSE_LIBUSB -o teensy_loader_cli teensy_loader_cli.c -lusb
 
 $(TEENSY_CLI_EXE):
 	cd $(BMPTK)/tools/teensy_loader_cli; $(MAKE_TEENSY_CLI_EXE)
