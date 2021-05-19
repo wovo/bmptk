@@ -19,7 +19,7 @@
 # nor periods (problems on xtensa)
 
 VERSION := V05_00_work_in_progress_2021_01_04
-WSL := $(strip $(shell grep -qE "(microsoft|Microsoft|WSL)" /proc/version @> /dev/null && printf true))
+
 
 #============================================================================
 #
@@ -39,6 +39,7 @@ ifeq ($(OS),Windows_NT)
    endif
    SUDO ?=
 else
+   WSL := $(strip $(shell grep -qE "(microsoft|Microsoft|WSL)" /proc/version @> /dev/null && printf true))
    # should no longer be needed
    SUDO ?= 
 endif
