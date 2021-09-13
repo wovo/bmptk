@@ -70,8 +70,8 @@ else
    SERIAL_PORT          ?= $(UART_PORT_UNO)
 endif
 
-SERIAL_PORT ?= UART_PORT
-UART_PORT ?= SERIAL_PORT
+SERIAL_PORT ?= $(UART_PORT)
+UART_PORT ?= $(SERIAL_PORT)
 
 #============================================================================
 #
