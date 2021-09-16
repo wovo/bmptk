@@ -7,7 +7,7 @@
 // open the comport argv[1] at 1200 baud, wait a little, close it, wait a little more
 
 int main( int argc, char *argv[] ){
-   if( argc < 1 ){
+   if( argc < 2 ){
        printf( "error: %s called without argument\n", argv[ 0 ] );
    } else {
          

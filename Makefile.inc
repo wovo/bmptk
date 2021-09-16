@@ -1720,7 +1720,8 @@ $(PROJECT): $(RESULTS)
 PORT_CHECK :=
 
 # Run (= download and start) the project
-run: $(PROJECT) $(LPC21ISP_EXE) $(BOSSAC_EXE) $(TEENSY_CLI_EXE)
+# $(TEENSY_CLI_EXE) (temporary?) removed
+run: $(PROJECT) $(LPC21ISP_EXE) $(BOSSAC_EXE) 
 	$(PORT_CHECK)
 	$(RUN_PRE)
 	-$(RUN)
